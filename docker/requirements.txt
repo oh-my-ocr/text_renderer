@@ -1,0 +1,12 @@
+opencv-python==3.4.5.20
+fontTools==4.12.1
+lmdb==0.98
+Pillow==5.4.1
+numpy
+tenacity
+fire
+tqdm
+loguru
+cffi
+sphinx==3.1.2
+dataclasses
