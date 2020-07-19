@@ -1,0 +1,45 @@
+name: Sphinx Pages
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.7'
+
+    - name: Install dependencies
+      run: |
+        python3 -m pip install --upgrade pip setuptools wheel
+        pip3 install -r docker/requirements.txt
+
+    - name: Make html
+      run: |
+        cd docs
+        make html
+        
+    - name: Push to gh-pages branch
+      run: |
+        cd _build/html
+        git init
+        git config user.name "ohmyocr"
+        git config user.email "ohmyocr@gmail.com"
+        git add .
+        git commit -m "pages"
+        git branch -m gh-pages
+        git remote add origin https://$GITHUB_ACTOR:${{ secrets.GITHUB_TOKEN }}@github.com/text_renderer.git
+        git push origin gh-pages -f
