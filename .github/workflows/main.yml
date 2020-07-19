@@ -34,12 +34,12 @@ jobs:
         
     - name: Push to gh-pages branch
       run: |
-        cd _build/html
+        cd docs/_build/html
         git init
         git config user.name "ohmyocr"
         git config user.email "ohmyocr@gmail.com"
         git add .
         git commit -m "pages"
         git branch -m gh-pages
-        git remote add origin https://$GITHUB_ACTOR:${{ secrets.GITHUB_TOKEN }}@github.com/text_renderer.git
+        git remote add origin https://$GITHUB_ACTOR:${{ secrets.GITHUB_TOKEN }}@github.com/oh-my-ocr/text_renderer.git
         git push origin gh-pages -f
