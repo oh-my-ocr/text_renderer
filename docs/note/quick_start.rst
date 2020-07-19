@@ -7,7 +7,11 @@ Quick start
     cd text_renderer
     python3 setup.py develop
     pip3 install -r requirements.txt
-    python3 main.py --config example_data/example.py
+    python3 main.py \
+        --config example_data/example.py \
+        --dataset lmdb \
+        --num_processes 2 \
+        --log_period 10
 
 The data is generated in the `example_data/output` directory
 
