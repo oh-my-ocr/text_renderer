@@ -26,6 +26,7 @@ jobs:
       run: |
         python3 -m pip install --upgrade pip setuptools wheel
         pip3 install -r docker/requirements.txt
+        python3 setup.py develop
 
     - name: Make html
       run: |

@@ -29,8 +29,8 @@ def draw_text_on_bg(
     Args:
         font_text:
         text_color: RGBA。default is black
-        bg: default will draw on a transparent RGBA image
-        xy:
+        bg: If None, draw on a transparent RGBA image
+        xy: if None, get xy from font_text
 
     Returns:
 
