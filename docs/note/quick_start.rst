@@ -9,13 +9,20 @@ Quick start
     pip3 install -r requirements.txt
     python3 main.py \
         --config example_data/example.py \
-        --dataset lmdb \
+        --dataset img \
         --num_processes 2 \
         --log_period 10
 
 The data is generated in the `example_data/output` directory
 
-All parameters related to the generation process are configured in `example.py`.
+`main.py` only has 4 arguments:
+
+    - config：Python config file path
+    - dataset: Dataset format `img`/`lmdb`
+    - num_processes: Number of processes used
+    - log_period: Period of log printing. (0, 100)
+
+All parameters related to the generation process are all configured in `example.py`.
 Check :doc:`../config` for all configurations
 
 
