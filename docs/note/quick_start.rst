@@ -1,6 +1,15 @@
 Quick start
 ===========
 
+To use text_renderer, you should prepare:
+
+    - Font file: `.ttf` or...
+    - Background image
+    - Text: Optional. Depends on the :doc:`../corpus/index` ) you use.
+    - Character set: Optional. Depends on the :doc:`../corpus/index` ) you use.
+
+Run following command to generate example data:
+
 .. code-block:: bash
 
     git clone https://github.com/oh-my-ocr/text_renderer
@@ -22,8 +31,10 @@ The data is generated in the `example_data/output` directory
     - num_processes: Number of processes used
     - log_period: Period of log printing. (0, 100)
 
-All parameters related to the generation process are all configured in `example.py`.
-Check :doc:`../config` for all configurations
+All parameters related to the example data generation process are all configured in
+`example.py <https://github.com/oh-my-ocr/text_renderer/blob/master/example_data/example.py>`_
+
+Check :doc:`../config` and :doc:`../corpus/index` for all configurations
 
 
 Run in Docker
