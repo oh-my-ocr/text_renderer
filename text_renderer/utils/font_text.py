@@ -15,6 +15,10 @@ class FontText:
         return 0 - offset[0] - left, 0 - offset[1]
 
     @property
+    def offset(self):
+        return self.font.getoffset(self.text)
+
+    @property
     def size(self) -> [int, int]:
         """
         Get text size without offset

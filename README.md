@@ -6,7 +6,6 @@ Generate text images for training deep learning OCR model (e.g. [CRNN](https://g
 - [x] Support render multi corpus on image with different font, font size or font color. [Layout](https://oh-my-ocr.github.io/text_renderer/layout/index.html) is responsible for the layout between multiple corpora
 - [ ] Generate vertical text
 - [ ] Corpus sampler: helpful to perform character balance
-- [ ] Generate data for text detection
 
 ## Quick Start
 

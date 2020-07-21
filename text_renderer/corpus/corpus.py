@@ -2,7 +2,7 @@ import os
 from abc import abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Tuple
+from typing import Tuple, Union
 
 from loguru import logger
 from tenacity import retry
@@ -19,17 +19,27 @@ class CorpusCfg:
     """
     Base config for corpus
 
-    args:
-        font_dir (path): font files directory
-        font_list_file (path): font file names to load from **font_dir**
-        font_size (tuple[int, int]): font size in point (min_font_size, max_font_size)
-        clip_length (int): clip :func:`~text_renderer.corpus.Corpus.get_text` output. set **-1** disables clip
-        text_color_cfg (TextColorCfg): see :class:`~text_renderer.utils.TextColorCfg`
+    Parameters
+    ----------
+        font_dir : path
+            font files directory
+        font_list_file : path
+            font file names to load from **font_dir**
+        font_size : tuple[int, int]
+            font size in point (min_font_size, max_font_size)
+        clip_length : int
+            clip :func:`~text_renderer.corpus.Corpus.get_text` output. set **-1** disables clip
+        char_spacing : (Union[float, tuple[float, float]])
+            Draw character with spacing. If tuple, random choice between [min, max)
+            Set -1 to disable
+        text_color_cfg : TextColorCfg
+            see :class:`~text_renderer.utils.TextColorCfg`
     """
     font_dir: Path
     font_list_file: Path
     font_size: Tuple[int, int]
     clip_length: int = -1
+    char_spacing: Union[float, Tuple[float, float]] = -1
     text_color_cfg: TextColorCfg = SimpleTextColorCfg()
 
     def __init_subclass__(cls, **kwargs):

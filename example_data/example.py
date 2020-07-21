@@ -41,6 +41,7 @@ chn_data = GeneratorCfg(
                 filter_by_chars=True,
                 chars_file=CHAR_DIR / "chn.txt",
                 length=(5, 10),
+                char_spacing=(-0.3, 1.3),
                 **font_cfg
             ),
         ),
