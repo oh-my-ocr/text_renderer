@@ -55,6 +55,9 @@ so we map this directory to the host.
     docker run --rm \
     -v `pwd`/example_data/docker_output/:/app/example_data/output \
     --env CONFIG=/app/example_data/example.py \
+    --env DATASET=img \
+    --env NUM_PROCESSES=2 \
+    --env LOG_PERIOD=10 \
     text_renderer
 
 Build docs

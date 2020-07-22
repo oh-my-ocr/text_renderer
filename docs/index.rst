@@ -13,6 +13,7 @@ Text Renderer
    :maxdepth: 2
    :caption: Modules
 
+   dataset
    corpus/index
    effect/index
    layout/index
