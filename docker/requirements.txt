@@ -11,3 +11,4 @@ cffi
 sphinx==3.1.2
 sphinx-rtd-theme
 dataclasses
+pytest
