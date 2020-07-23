@@ -74,7 +74,7 @@ class ImgDataset(Dataset):
                 "000000000": [width, height],
                 "000000001": [width, height],
              }
-             "count": 2,
+             "num-samples": 2,
         }
     """
 
@@ -87,7 +87,7 @@ class ImgDataset(Dataset):
             os.makedirs(self._img_dir)
         self._label_path = os.path.join(data_dir, self.LABEL_NAME)
 
-        self._data = {"count": 0, "labels": {}, "sizes": {}}
+        self._data = {"num-samples": 0, "labels": {}, "sizes": {}}
         if os.path.exists(self._label_path):
             with open(self._label_path, "r", encoding="utf-8") as f:
                 self._data = json.load(f)
@@ -111,10 +111,10 @@ class ImgDataset(Dataset):
         return self._data["sizes"][name]
 
     def read_count(self) -> int:
-        return self._data.get("count", 0)
+        return self._data.get("num-samples", 0)
 
     def write_count(self, count: int):
-        self._data["count"] = count
+        self._data["num-samples"] = count
 
     def close(self):
         with open(self._label_path, "w", encoding="utf-8") as f:
@@ -176,13 +176,13 @@ class LmdbDataset(Dataset):
         return width, height
 
     def read_count(self) -> int:
-        count = self._lmdb_txn.get("count".encode())
+        count = self._lmdb_txn.get("num-samples".encode())
         if count is None:
             return 0
         return int(count)
 
     def write_count(self, count: int):
-        self._lmdb_txn.put("count".encode(), str(count).encode())
+        self._lmdb_txn.put("num-samples".encode(), str(count).encode())
 
     def image_key(self, name: str):
         return f"image-{name}".encode()

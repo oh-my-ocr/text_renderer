@@ -13,6 +13,7 @@ def test_lmdb():
         name = f"{idx:09d}"
         with LmdbDataset(d) as dataset:
             dataset.write(name, img, label)
+            dataset.write_count(1)
 
         with LmdbDataset(d) as dataset:
             data = dataset.read(name)
@@ -21,3 +22,4 @@ def test_lmdb():
             # print(np.array_equal(data["image"], img))
             assert data["label"] == label
             assert data["size"] == [width, height]
+            assert dataset.read_count() == 1
