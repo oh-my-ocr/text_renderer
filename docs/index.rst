@@ -5,7 +5,6 @@ Text Renderer
    :maxdepth: 1
    :caption: Notes
 
-   note/quick_start
    config
    note/render_pipeline
 
