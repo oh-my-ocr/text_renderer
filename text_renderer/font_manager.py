@@ -27,6 +27,9 @@ class FontManager:
             lines = f.readlines()
             lines = [line.strip() for line in lines]
 
+        if len(lines) == 0:
+            raise PanicError(f"font list file is empty: {font_list_file}")
+
         for line in lines:
             font_path = font_dir / line
             if font_path.exists():

@@ -141,7 +141,7 @@ class Corpus:
                     out += c
                 else:
                     filtered_count += 1
-        logger.info(f"filter {filtered_count} chars")
+        logger.info(f"filter {filtered_count} chars in input text")
         return out
 
     @staticmethod
