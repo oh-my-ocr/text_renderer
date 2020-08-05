@@ -92,7 +92,7 @@ class FontManager:
         chars = load_chars_file(chars_file)
         for font_path in self.font_paths:
             removed_chars = []
-            font = self._get_font(font_path, 40)
+            font = self._get_font(font_path, 10)
             for c in chars:
                 bbox = font.getmask(c).getbbox()
                 if (
@@ -138,7 +138,10 @@ class FontManager:
                 continue
 
             new_font_paths.append(font_path)
-        self.font_paths = new_font_paths
+
+        if len(new_font_paths) != self.font_paths:
+            logger.info(f"Filter font path: {len(self.font_paths)} -> {len(new_font_paths)}")
+            self.font_paths = new_font_paths
 
     def _load_ttfont(self, font_path: str) -> TTFont:
         """
