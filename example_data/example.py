@@ -84,7 +84,12 @@ eng_word_data = GeneratorCfg(
         bg_dir=BG_DIR,
         perspective_transform=perspective_transform,
         corpus=WordCorpus(
-            WordCorpusCfg(text_paths=[TEXT_DIR / "eng_text.txt"], **font_cfg),
+            WordCorpusCfg(
+                text_paths=[TEXT_DIR / "eng_text.txt"],
+                filter_by_chars=True,
+                chars_file=CHAR_DIR / "eng.txt",
+                **font_cfg
+            ),
         ),
     ),
 )

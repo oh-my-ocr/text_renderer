@@ -49,7 +49,7 @@ class WordCorpus(Corpus):
         for text_path in self.cfg.text_paths:
             with open(text_path, "r", encoding="utf-8") as f:
                 text = f.read()
-                texts.append(text)
+                texts.append(text.strip())
 
         if self.cfg.filter_by_chars:
             texts = Corpus.filter_by_chars(texts, self.cfg.chars_file)

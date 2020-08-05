@@ -3,6 +3,9 @@ import random
 import cv2
 import numpy as np
 from loguru import logger
+from text_renderer.utils.errors import PanicError
+
+SPACE_CHAR = " "
 
 
 def prob(percent):
@@ -128,9 +131,27 @@ def load_chars_file(chars_file):
         Set: chars in file
 
     """
+    assumed_space = False
     with open(str(chars_file), "r", encoding="utf-8") as f:
         lines = f.readlines()
-        lines = [it.strip() for it in lines]
+        _lines = []
+        for i, line in enumerate(lines):
+            line_striped = line.strip()
+            if len(line_striped) > 1:
+                raise PanicError(f"Line {i} in {chars_file} is invalid, make sure one char one line")
+
+            if len(line_striped) == 0 and SPACE_CHAR in line:
+                if assumed_space is True:
+                    raise PanicError(f"Find two space in {chars_file}")
+
+                logger.info(f"Find space in line {i} when load {chars_file}")
+                assumed_space = True
+                _lines.append(SPACE_CHAR)
+                continue
+
+            _lines.append(line_striped)
+
+        lines = _lines
         chars = set("".join(lines))
     logger.info(f"load {len(chars)} chars from: {chars_file}")
     return chars
