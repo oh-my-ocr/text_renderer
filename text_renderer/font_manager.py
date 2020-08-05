@@ -98,7 +98,10 @@ class FontManager:
                     self.font_support_chars_cache[font_path].remove(c)
                     removed_chars.append(c)
 
-            logger.info(f"Remove {len(removed_chars)} empty char mask from font [{font_path}]: {removed_chars}")
+            if len(removed_chars) != 0:
+                logger.info(
+                    f"Remove {len(removed_chars)} empty char mask from font [{font_path}]: {removed_chars}"
+                )
 
     def _load_ttfont(self, font_path: str) -> TTFont:
         """

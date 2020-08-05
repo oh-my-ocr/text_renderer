@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import List, Tuple
 
 import numpy as np
+from loguru import logger
 
 from text_renderer.utils.errors import PanicError
 
@@ -56,6 +57,8 @@ class WordCorpus(Corpus):
 
         for text in texts:
             self.words.extend(text.split(self.cfg.separator))
+
+        logger.info(f"Load {len(self.words)} words")
 
         if len(self.words) < self.cfg.num_word[1]:
             raise PanicError("too few words")
