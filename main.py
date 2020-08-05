@@ -123,4 +123,3 @@ if __name__ == "__main__":
 
         data_queue.put(STOP_TOKEN)
         db_writer_process.join()
-        db_writer_process.close()
