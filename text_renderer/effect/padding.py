@@ -12,7 +12,7 @@ from .base_effect import Effect
 
 class Padding(Effect):
     def __init__(
-        self, p=0.5, w_ratio=(0.0, 0.2), h_ratio=(0.0, 0.3),
+        self, p=0.5, w_ratio=(0.0, 0.05), h_ratio=(0.0, 0.3),
     ):
         """
 

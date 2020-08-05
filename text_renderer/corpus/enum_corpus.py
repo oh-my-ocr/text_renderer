@@ -18,6 +18,10 @@ class EnumCorpusCfg(CorpusCfg):
         items (List[str]): Texts to choice. Only works if text_paths is empty
         filter_by_chars (bool): If True, filtering text by character set
         chars_file (Path): Character set
+        filter_font (bool): Only work when filter_by_chars is True. If True, filter font file
+                            by intersection of font support chars with chars file
+        filter_font_min_support_chars (int): If intersection of font support chars with chars file is lower
+                                             than filter_font_min_support_chars, filter this font file.
 
     """
 
@@ -25,6 +29,8 @@ class EnumCorpusCfg(CorpusCfg):
     items: List[str] = field(default_factory=list)
     filter_by_chars: bool = False
     chars_file: Path = None
+    filter_font: bool = False
+    filter_font_min_support_chars: int = 100
 
 
 class EnumCorpus(Corpus):
@@ -55,6 +61,8 @@ class EnumCorpus(Corpus):
         if self.cfg.filter_by_chars:
             self.texts = Corpus.filter_by_chars(self.texts, self.cfg.chars_file)
             self.font_manager.update_font_support_chars(self.cfg.chars_file)
+            if self.cfg.filter_font:
+                self.font_manager.filter_font_path(self.cfg.filter_font_min_support_chars)
 
     def get_text(self):
         return np.random.choice(self.texts)

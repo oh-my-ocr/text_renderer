@@ -77,7 +77,7 @@ class Corpus:
             text = self.get_text()
         except Exception as e:
             err_msg = f"get_text() error: {e}"
-            logger.error(err_msg)
+            logger.debug(err_msg)
             raise RetryError(err_msg)
 
         if self.cfg.clip_length != -1 and len(text) > self.cfg.clip_length:
@@ -89,7 +89,7 @@ class Corpus:
             err_msg = (
                 f"{self.__class__.__name__} {font_path} not support chars: {intersect}"
             )
-            logger.error(err_msg)
+            logger.debug(err_msg)
             raise RetryError(err_msg)
 
         return FontText(font, text)

@@ -24,6 +24,8 @@ class FontManager:
         self.font_size_max = font_size[1]
         self.font_paths: List[str] = []
         self.font_support_chars_cache: Dict[str, Set] = {}
+        # Created in self.update_font_support_chars(), used to filter font_path
+        self.font_support_chars_intersection_with_chars: Dict[str, Set] = {}
 
         with open(str(font_list_file), "r", encoding="utf-8") as f:
             lines = f.readlines()
@@ -63,9 +65,12 @@ class FontManager:
             ttf = self._load_ttfont(font_path)
 
             chars_int = set()
-            for table in ttf["cmap"].tables:
-                for k, v in table.cmap.items():
-                    chars_int.add(k)
+            try:
+                for table in ttf["cmap"].tables:
+                    for k, v in table.cmap.items():
+                        chars_int.add(k)
+            except AssertionError as e:
+                logger.error(f"Load font file {font_path} failed, skip it. Error: {e}")
 
             supported_chars = set([chr(c_int) for c_int in chars_int])
 
@@ -99,9 +104,41 @@ class FontManager:
                     removed_chars.append(c)
 
             if len(removed_chars) != 0:
+                if len(removed_chars) > 10:
+                    logger.info(
+                        f"Remove {len(removed_chars)} empty char mask from font [{font_path}]: {removed_chars[:10]}..."
+                    )
+                else:
+                    logger.info(
+                        f"Remove {len(removed_chars)} empty char mask from font [{font_path}]: {removed_chars}"
+                    )
+
+            self.font_support_chars_intersection_with_chars[font_path] = (
+                self.font_support_chars_cache[font_path] & chars
+            )
+
+    def filter_font_path(self, min_support_chars: int):
+        """
+        Filter font_path if intersection of font support chars with chars file is too few.
+        This method will change content of self.font_paths. Must be called after update_font_support_chars.
+
+        Parameters
+        ----------
+        min_support_chars: int
+            if intersection of font support chars with chars file is lower than min_support_chars, filter this font
+
+        """
+        new_font_paths = []
+        for font_path in self.font_paths:
+            inter = len(self.font_support_chars_intersection_with_chars[font_path])
+            if inter < min_support_chars:
                 logger.info(
-                    f"Remove {len(removed_chars)} empty char mask from font [{font_path}]: {removed_chars}"
+                    f"{font_path} is filtered cause intersection of font supported chars and chars file is too few: {inter}<{min_support_chars}"
                 )
+                continue
+
+            new_font_paths.append(font_path)
+        self.font_paths = new_font_paths
 
     def _load_ttfont(self, font_path: str) -> TTFont:
         """
