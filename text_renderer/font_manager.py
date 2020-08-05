@@ -89,9 +89,9 @@ class FontManager:
         """
         white_list = [" "]
 
-        removed_chars = []
         chars = load_chars_file(chars_file)
         for font_path in self.font_paths:
+            removed_chars = []
             font = self._get_font(font_path, 40)
             for c in chars:
                 bbox = font.getmask(c).getbbox()
