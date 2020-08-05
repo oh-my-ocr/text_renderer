@@ -1,10 +1,8 @@
-import glob
-import os
 import random
+
 import cv2
 import numpy as np
-import hashlib
-from PIL import Image
+from loguru import logger
 
 
 def prob(percent):
@@ -118,3 +116,21 @@ def size_to_pnts(size) -> np.ndarray:
     width = size[0]
     height = size[1]
     return np.array([[0, 0], [width, 0], [width, height], [0, height]])
+
+
+def load_chars_file(chars_file):
+    """
+
+    Args:
+        chars_file (Path): one char per line
+
+    Returns:
+        Set: chars in file
+
+    """
+    with open(str(chars_file), "r", encoding="utf-8") as f:
+        lines = f.readlines()
+        lines = [it.strip() for it in lines]
+        chars = set("".join(lines))
+    logger.info(f"load {len(chars)} chars from: {chars_file}")
+    return chars

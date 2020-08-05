@@ -4,6 +4,7 @@ from typing import Tuple
 
 import numpy as np
 from text_renderer.utils.errors import PanicError
+from text_renderer.utils.utils import load_chars_file
 
 from .corpus import Corpus, CorpusCfg
 
@@ -35,7 +36,7 @@ class RandCorpus(Corpus):
         if self.cfg.chars_file is None or not self.cfg.chars_file.exists():
             raise PanicError(f"chars_file not exists: {self.cfg.chars_file}")
 
-        self.chars = list(Corpus.load_chars_file(self.cfg.chars_file))
+        self.chars = list(load_chars_file(self.cfg.chars_file))
 
     def get_text(self):
         length = np.random.randint(*self.cfg.length)

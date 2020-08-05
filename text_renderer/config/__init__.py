@@ -177,7 +177,7 @@ def get_cfg(config_file: str) -> List[GeneratorCfg]:
     module = import_module_from_file(config_file)
     cfgs = getattr(module, "configs", None)
     if cfgs is None:
-        raise RuntimeError(f"No configs variable found in {config_file}")
+        raise RuntimeError(f"Load configs failed: {config_file}")
 
     assert all(
         [isinstance(cfg, GeneratorCfg) for cfg in cfgs]

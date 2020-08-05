@@ -54,6 +54,7 @@ class EnumCorpus(Corpus):
 
         if self.cfg.filter_by_chars:
             self.texts = Corpus.filter_by_chars(self.texts, self.cfg.chars_file)
+            self.font_manager.update_font_support_chars(self.cfg.chars_file)
 
     def get_text(self):
         return np.random.choice(self.texts)

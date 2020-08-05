@@ -52,6 +52,7 @@ class WordCorpus(Corpus):
 
         if self.cfg.filter_by_chars:
             texts = Corpus.filter_by_chars(texts, self.cfg.chars_file)
+            self.font_manager.update_font_support_chars(self.cfg.chars_file)
 
         for text in texts:
             self.words.extend(text.split(self.cfg.separator))

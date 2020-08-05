@@ -5,12 +5,13 @@ from pathlib import Path
 from typing import Tuple, Union
 
 from loguru import logger
-from tenacity import retry
+from tenacity import retry, stop_after_attempt
 
 from text_renderer.font_manager import FontManager
 from text_renderer.config import TextColorCfg, SimpleTextColorCfg
 from text_renderer.utils.errors import RetryError, PanicError
 from text_renderer.utils import FontText
+from text_renderer.utils.utils import load_chars_file
 
 
 @dataclass
@@ -63,7 +64,7 @@ class Corpus:
             cfg.font_dir, cfg.font_list_file, cfg.font_size,
         )
 
-    @retry()
+    @retry
     def sample(self):
         """
         This method ensures that the selected font supports all characters.
@@ -117,7 +118,7 @@ class Corpus:
         if chars_file is None or not chars_file.exists():
             raise PanicError(f"chars_file not exists: {chars_file}")
 
-        chars = Corpus.load_chars_file(chars_file)
+        chars = load_chars_file(chars_file)
 
         logger.info("filtering text by chars...")
 
@@ -149,20 +150,3 @@ class Corpus:
         )
         return out
 
-    @staticmethod
-    def load_chars_file(chars_file):
-        """
-
-        Args:
-            chars_file (Path): one char per line
-
-        Returns:
-            Set: chars in file
-
-        """
-        with open(str(chars_file), "r", encoding="utf-8") as f:
-            lines = f.readlines()
-            lines = [it.strip() for it in lines]
-            chars = set("".join(lines))
-        logger.info(f"load {len(chars)} chars from: {chars_file}.")
-        return chars
