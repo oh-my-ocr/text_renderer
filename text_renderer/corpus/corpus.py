@@ -121,6 +121,7 @@ class Corpus:
 
         logger.info("filtering text by chars...")
 
+        total_count = 0
         filtered_count = 0
 
         # TODO: find a more efficient way
@@ -133,6 +134,7 @@ class Corpus:
                         _text += c
                     else:
                         filtered_count += 1
+                    total_count += 1
                 out.append(_text)
         else:
             out = ""
@@ -141,7 +143,10 @@ class Corpus:
                     out += c
                 else:
                     filtered_count += 1
-        logger.info(f"filter {filtered_count} chars in input text")
+                total_count += 1
+        logger.info(
+            f"filter {(filtered_count/total_count)*100:.2f}%({filtered_count}) chars in input text"
+        )
         return out
 
     @staticmethod
