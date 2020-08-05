@@ -118,7 +118,7 @@ class Corpus:
         if chars_file is None or not chars_file.exists():
             raise PanicError(f"chars_file not exists: {chars_file}")
 
-        chars = load_chars_file(chars_file)
+        chars = load_chars_file(chars_file, log=True)
 
         logger.info("filtering text by chars...")
 

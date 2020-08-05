@@ -121,11 +121,12 @@ def size_to_pnts(size) -> np.ndarray:
     return np.array([[0, 0], [width, 0], [width, height], [0, height]])
 
 
-def load_chars_file(chars_file):
+def load_chars_file(chars_file, log=False):
     """
 
     Args:
         chars_file (Path): one char per line
+        log (bool): Whether to print log
 
     Returns:
         Set: chars in file
@@ -144,7 +145,8 @@ def load_chars_file(chars_file):
                 if assumed_space is True:
                     raise PanicError(f"Find two space in {chars_file}")
 
-                logger.info(f"Find space in line {i} when load {chars_file}")
+                if log:
+                    logger.info(f"Find space in line {i} when load {chars_file}")
                 assumed_space = True
                 _lines.append(SPACE_CHAR)
                 continue
@@ -153,5 +155,6 @@ def load_chars_file(chars_file):
 
         lines = _lines
         chars = set("".join(lines))
-    logger.info(f"load {len(chars)} chars from: {chars_file}")
+    if log:
+        logger.info(f"load {len(chars)} chars from: {chars_file}")
     return chars
