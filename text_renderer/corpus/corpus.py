@@ -76,9 +76,8 @@ class Corpus:
         try:
             text = self.get_text()
         except Exception as e:
-            err_msg = f"get_text() error: {e}"
-            logger.debug(err_msg)
-            raise RetryError(err_msg)
+            logger.exception(e)
+            raise RetryError()
 
         if self.cfg.clip_length != -1 and len(text) > self.cfg.clip_length:
             text = text[: self.cfg.clip_length]

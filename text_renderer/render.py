@@ -5,6 +5,7 @@ import cv2
 import numpy as np
 from PIL.Image import Image as PILImage
 from PIL.ImageFont import FreeTypeFont
+from tenacity import retry
 
 from text_renderer.bg_manager import BgManager
 from text_renderer.config import RenderCfg
@@ -42,7 +43,7 @@ class Render:
 
         self.bg_manager = BgManager(cfg.bg_dir, cfg.pre_load_bg_img)
 
-    # @retry
+    @retry
     def __call__(self, *args, **kwargs) -> Tuple[np.ndarray, str]:
         try:
             if self._should_apply_layout():
@@ -83,10 +84,15 @@ class Render:
             # TODO: refactor this, now we must call get_transformed_size to call gen_warp_matrix
             _ = transformer.get_transformed_size(text_mask.size)
 
-            (
-                transformed_text_mask,
-                transformed_text_pnts,
-            ) = transformer.do_warp_perspective(text_mask)
+            try:
+                (
+                    transformed_text_mask,
+                    transformed_text_pnts,
+                ) = transformer.do_warp_perspective(text_mask)
+            except Exception as e:
+                logger.exception(e)
+                logger.error(font_text.font_path, "text", font_text.text)
+                raise e
         else:
             transformed_text_mask = text_mask
 
