@@ -89,11 +89,12 @@ class FontManager:
         """
         white_list = [" "]
 
-        chars = load_chars_file(chars_file)
+        charset = load_chars_file(chars_file)
         for font_path in self.font_paths:
             removed_chars = []
             font = self._get_font(font_path, 10)
-            for c in chars:
+            chars = self.font_support_chars_cache[font_path].copy()
+            for c in (chars & charset):
                 bbox = font.getmask(c).getbbox()
                 if (
                     c not in white_list
