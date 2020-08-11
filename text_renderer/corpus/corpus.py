@@ -92,7 +92,7 @@ class Corpus:
             logger.debug(err_msg)
             raise RetryError(err_msg)
 
-        return FontText(font, text)
+        return FontText(font, text, font_path)
 
     @abstractmethod
     def get_text(self):

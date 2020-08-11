@@ -7,6 +7,7 @@ from PIL.ImageFont import FreeTypeFont
 class FontText:
     font: FreeTypeFont
     text: str
+    font_path: str
 
     @property
     def xy(self):
