@@ -5,6 +5,7 @@ from typing import List, Tuple
 import numpy as np
 from PIL import Image
 from PIL.Image import Image as PILImage
+from text_renderer.utils.utils import random_choice
 
 IMAGE_EXTENSIONS = {".jpeg", ".jpg", ".JPG", ".JPEG", ".PNG", ".png", ".bmp", ".BMP"}
 
@@ -24,9 +25,9 @@ class BgManager:
     def get_bg(self) -> PILImage:
         # TODO: add efficient data augmentation
         if self.pre_load:
-            return self.bg_imgs[np.random.choice(len(self.bg_imgs))]
+            return random_choice(self.bg_imgs)
 
-        bg_path = np.random.choice(self.bg_paths)
+        bg_path = random_choice(self.bg_paths)
         pil_img = self._get_bg(bg_path)
 
         return pil_img

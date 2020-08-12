@@ -4,7 +4,7 @@ from typing import Tuple
 
 import numpy as np
 from text_renderer.utils.errors import PanicError
-from text_renderer.utils.utils import load_chars_file
+from text_renderer.utils.utils import load_chars_file, random_choice
 
 from .corpus import Corpus, CorpusCfg
 
@@ -49,6 +49,6 @@ class RandCorpus(Corpus):
 
     def get_text(self):
         length = np.random.randint(*self.cfg.length)
-        chars = np.random.choice(self.chars, length)
+        chars = random_choice(self.chars, length)
         text = "".join(chars)
         return text

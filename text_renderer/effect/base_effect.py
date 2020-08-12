@@ -7,7 +7,7 @@ import numpy as np
 
 from text_renderer.utils.bbox import BBox
 from text_renderer.utils.types import PILImage
-from text_renderer.utils.utils import prob
+from text_renderer.utils.utils import prob, random_choice
 
 
 class Effect:
@@ -93,7 +93,7 @@ class OneOf:
         self.effects = effects
 
     def __call__(self, img: PILImage, text_bbox: BBox) -> Tuple[PILImage, BBox]:
-        effect = np.random.choice(self.effects)
+        effect = random_choice(self.effects)
         return effect.apply(img, text_bbox)
 
 

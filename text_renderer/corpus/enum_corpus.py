@@ -5,6 +5,7 @@ from typing import List
 import numpy as np
 from loguru import logger
 from text_renderer.utils.errors import PanicError
+from text_renderer.utils.utils import random_choice
 
 from .corpus import Corpus, CorpusCfg
 
@@ -58,6 +59,7 @@ class EnumCorpus(Corpus):
                 with open(str(text_path), "r", encoding="utf-8") as f:
                     for line in f.readlines():
                         self.texts.append(line.strip())
+
         elif len(self.cfg.items) != 0:
             self.texts = self.cfg.items
 
@@ -70,5 +72,5 @@ class EnumCorpus(Corpus):
                 )
 
     def get_text(self):
-        text = np.random.choice(self.texts, size=self.cfg.num_pick).tolist()
+        text = random_choice(self.texts, self.cfg.num_pick)
         return "".join(text)

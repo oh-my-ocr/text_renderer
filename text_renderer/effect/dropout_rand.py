@@ -17,7 +17,7 @@ class DropoutRand(Effect):
         ----------
         p : float
             Probability of apply this effect
-        dropout_p : float, float
+        dropout_p : Tuple[float, float]
             The percentage range of pixels to be discarded
 
         """

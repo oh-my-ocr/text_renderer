@@ -18,6 +18,17 @@ def prob(percent):
     return False
 
 
+def random_choice(items, size=1):
+    # np.random.choice is very slow
+    out = []
+    for _ in range(size):
+        i = np.random.randint(0, len(items))
+        out.append(items[i])
+    if size == 1:
+        return out[0]
+    return out
+
+
 def draw_box(img, pnts, color):
     """
     :param img: gray image, will be convert to BGR image
@@ -139,7 +150,9 @@ def load_chars_file(chars_file, log=False):
         for i, line in enumerate(lines):
             line_striped = line.strip()
             if len(line_striped) > 1:
-                raise PanicError(f"Line {i} in {chars_file} is invalid, make sure one char one line")
+                raise PanicError(
+                    f"Line {i} in {chars_file} is invalid, make sure one char one line"
+                )
 
             if len(line_striped) == 0 and SPACE_CHAR in line:
                 if assumed_space is True:
