@@ -125,6 +125,7 @@ class Corpus:
         filtered_count = 0
 
         # TODO: find a more efficient way
+        filtered_chars = []
         if isinstance(text, list):
             out = []
             for t in text:
@@ -134,6 +135,7 @@ class Corpus:
                         _text += c
                     else:
                         filtered_count += 1
+                        filtered_chars.append(c)
                     total_count += 1
                 out.append(_text)
         else:
@@ -143,9 +145,10 @@ class Corpus:
                     out += c
                 else:
                     filtered_count += 1
+                    filtered_chars.append(c)
                 total_count += 1
         logger.info(
-            f"filter {(filtered_count/total_count)*100:.2f}%({filtered_count}) chars in input text"
+            f"Filter {(filtered_count/total_count)*100:.2f}%({filtered_count}) chars in input text。"
+            f"Unique chars({len(set(filtered_chars))}): {set(filtered_chars)}"
         )
         return out
-
