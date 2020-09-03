@@ -1,3 +1,4 @@
+import random
 from typing import List
 
 from text_renderer.utils.bbox import BBox
@@ -26,12 +27,20 @@ class ExtraTextLineLayout(Layout):
 
         if prob(0.5):
             # above extra line
-            extra_text_mask_bbox.offset_(
-                extra_text_mask_bbox.left_top,
+            main_offset = int(main_text_mask_bbox.height * random.uniform(0.3, 0.4))
+            main_text_mask_bbox.offset_(
+                main_text_mask_bbox.left_top,
                 (
                     main_text_mask_bbox.left_top[0],
-                    main_text_mask_bbox.left_top[1]
-                    - int(extra_text_mask_bbox.height * 0.8),
+                    main_text_mask_bbox.left_top[1] + main_offset,
+                ),
+            )
+            extra_offset = int(random.uniform(0, main_offset // 2))
+            extra_text_mask_bbox.offset_(
+                extra_text_mask_bbox.left_bottom,
+                (
+                    main_text_mask_bbox.left_top[0],
+                    main_text_mask_bbox.left_top[1] - extra_offset,
                 ),
             )
         else:
@@ -39,7 +48,7 @@ class ExtraTextLineLayout(Layout):
             extra_text_mask_bbox.offset_(
                 extra_text_mask_bbox.left_top, main_text_mask_bbox.left_bottom
             )
-            extra_text_mask_bbox.bottom -= int(extra_text_mask_bbox.height * 0.8)
+            extra_text_mask_bbox.bottom -= int(extra_text_mask_bbox.height * random.uniform(0.65, 0.9))
 
         if extra_text_mask_bbox.width > main_text_mask_bbox.width:
             extra_text_mask_bbox.right -= (
