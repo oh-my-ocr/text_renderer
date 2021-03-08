@@ -75,3 +75,14 @@ make html
 Open `_build/html/index.html`
 
 
+## Citing text_renderer
+If you use text_renderer in your research, please consider use the following BibTeX entry.
+
+```BibTeX
+@misc{text_renderer,
+  author =       {weiqing.chu},
+  title =        {text_renderer},
+  howpublished = {\url{https://github.com/oh-my-ocr/text_renderer}},
+  year =         {2021}
+}
+```
