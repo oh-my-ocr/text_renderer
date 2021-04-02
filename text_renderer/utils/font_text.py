@@ -8,6 +8,7 @@ class FontText:
     font: FreeTypeFont
     text: str
     font_path: str
+    horizontal: bool = True
 
     @property
     def xy(self):
@@ -27,9 +28,15 @@ class FontText:
         Returns:
             width, height
         """
-        offset = self.font.getoffset(self.text)
-        size = self.font.getsize(self.text)
-        width = size[0] - offset[0]
-        height = size[1] - offset[1]
-        left, top, right, bottom = self.font.getmask(self.text).getbbox()
-        return right - left, height
+        if self.horizontal:
+            offset = self.font.getoffset(self.text)
+            size = self.font.getsize(self.text)
+            width = size[0] - offset[0]
+            height = size[1] - offset[1]
+            left, top, right, bottom = self.font.getmask(self.text).getbbox()
+            return right - left, height
+        else:
+            widths = [self.font.getsize(c)[0] - self.font.getoffset(c)[0] for c in self.text]
+            width = max(widths)
+            height = sum([self.font.getsize(c)[1] for c in self.text])
+            return height, width

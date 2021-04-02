@@ -42,6 +42,7 @@ class CorpusCfg:
     clip_length: int = -1
     char_spacing: Union[float, Tuple[float, float]] = -1
     text_color_cfg: TextColorCfg = SimpleTextColorCfg()
+    horizontal: bool = True
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
@@ -91,7 +92,7 @@ class Corpus:
             logger.debug(err_msg)
             raise RetryError(err_msg)
 
-        return FontText(font, text, font_path)
+        return FontText(font, text, font_path, self.cfg.horizontal)
 
     @abstractmethod
     def get_text(self):
