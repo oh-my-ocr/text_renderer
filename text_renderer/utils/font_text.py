@@ -38,5 +38,5 @@ class FontText:
         else:
             widths = [self.font.getsize(c)[0] - self.font.getoffset(c)[0] for c in self.text]
             width = max(widths)
-            height = sum([self.font.getsize(c)[1] for c in self.text])
+            height = sum([self.font.getsize(c)[1] for c in self.text]) - self.font.getoffset(self.text[0])[1]
             return height, width
