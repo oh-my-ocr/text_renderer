@@ -35,6 +35,7 @@ class EnumCorpusCfg(CorpusCfg):
     chars_file: Path = None
     filter_font: bool = False
     filter_font_min_support_chars: int = 100
+    join_str:str = ""
 
 
 class EnumCorpus(Corpus):
@@ -73,4 +74,4 @@ class EnumCorpus(Corpus):
 
     def get_text(self):
         text = random_choice(self.texts, self.cfg.num_pick)
-        return "".join(text)
+        return self.cfg.join_str.join(text)

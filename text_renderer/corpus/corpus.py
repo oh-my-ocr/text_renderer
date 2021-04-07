@@ -35,6 +35,9 @@ class CorpusCfg:
             Set -1 to disable
         text_color_cfg : TextColorCfg
             see :class:`~text_renderer.utils.TextColorCfg`
+        horizontal : bool
+            generate the horizontal(default) or vertical text
+            Set False to generate vertical text
     """
     font_dir: Path
     font_size: Tuple[int, int]

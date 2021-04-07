@@ -56,7 +56,7 @@ def draw_text_on_bg(
         size = font_text.font.getsize(c)
         chars_size.append(size)
         widths.append(size[0])
-        heights.append(font_text.size[1])
+        heights.append(size[1])
 
     if font_text.horizontal:
         width = sum(widths)
@@ -66,12 +66,14 @@ def draw_text_on_bg(
         height = sum(heights)
 
     char_spacings = []
+
+    cs_height = font_text.size[1]
     for i in range(len(font_text.text)):
         if isinstance(char_spacing, list) or isinstance(char_spacing, tuple):
             s = np.random.uniform(*char_spacing)
-            char_spacings.append(int(s * height))
+            char_spacings.append(int(s * cs_height))
         else:
-            char_spacings.append(int(char_spacing * height))
+            char_spacings.append(int(char_spacing * cs_height))
 
     if font_text.horizontal:
         width += sum(char_spacings[:-1])
