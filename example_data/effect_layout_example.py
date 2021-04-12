@@ -19,6 +19,7 @@ from text_renderer.config import (
     FixedTextColorCfg,
     FixedPerspectiveTransformCfg,
 )
+from text_renderer.effect.curve import Curve
 from text_renderer.layout import SameLineLayout
 
 CURRENT_DIR = Path(os.path.abspath(os.path.dirname(__file__)))
@@ -139,13 +140,39 @@ def perspective_transform():
     return cfg
 
 
+def compact_char_spacing():
+    cfg = base_cfg(inspect.currentframe().f_code.co_name)
+    cfg.render_cfg.corpus.cfg.char_spacing = -0.3
+    return cfg
+
+
+def large_char_spacing():
+    cfg = base_cfg(inspect.currentframe().f_code.co_name)
+    cfg.render_cfg.corpus.cfg.char_spacing = 0.5
+    return cfg
+
+
+def curve():
+    cfg = base_cfg(inspect.currentframe().f_code.co_name)
+    cfg.render_cfg.corpus_effects = Effects(
+        [
+            Padding(p=1, w_ratio=[0.2, 0.21], h_ratio=[0.7, 0.71], center=True),
+            Curve(p=1, period=180, amplitude=(4, 5)),
+        ]
+    )
+    return cfg
+
+
 configs = [
-    *line(),
-    perspective_transform(),
-    color_image(),
-    dropout_rand(),
-    dropout_horizontal(),
-    dropout_vertical(),
-    padding(),
-    same_line_layout_different_font_size(),
+    curve()
+    # compact_char_spacing(),
+    # large_char_spacing(),
+    # *line(),
+    # perspective_transform(),
+    # color_image(),
+    # dropout_rand(),
+    # dropout_horizontal(),
+    # dropout_vertical(),
+    # padding(),
+    # same_line_layout_different_font_size(),
 ]

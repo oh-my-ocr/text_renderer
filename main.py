@@ -84,9 +84,7 @@ def process_setup(*args):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--config", required=True, help="python file path"
-    )
+    parser.add_argument("--config", required=True, help="python file path")
     parser.add_argument("--dataset", default="img", choices=["lmdb", "img"])
     parser.add_argument("--num_processes", type=int, default=2)
     parser.add_argument("--log_period", type=float, default=10)
@@ -109,17 +107,23 @@ if __name__ == "__main__":
         )
         db_writer_process.start()
 
-        with mp.Pool(
-            processes=args.num_processes,
-            initializer=process_setup,
-            initargs=(generator_cfg.render_cfg,),
-        ) as pool:
-
+        if args.num_processes == 0:
+            process_setup(generator_cfg.render_cfg)
             for _ in range(generator_cfg.num_image):
-                pool.apply_async(generate_img, args=(data_queue,))
+                generate_img(data_queue)
+            data_queue.put(STOP_TOKEN)
+            db_writer_process.join()
+        else:
+            with mp.Pool(
+                processes=args.num_processes,
+                initializer=process_setup,
+                initargs=(generator_cfg.render_cfg,),
+            ) as pool:
+                for _ in range(generator_cfg.num_image):
+                    pool.apply_async(generate_img, args=(data_queue,))
 
-            pool.close()
-            pool.join()
+                pool.close()
+                pool.join()
 
-        data_queue.put(STOP_TOKEN)
-        db_writer_process.join()
+            data_queue.put(STOP_TOKEN)
+            db_writer_process.join()
