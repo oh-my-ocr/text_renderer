@@ -7,16 +7,11 @@ Generate text images for training deep learning OCR model (e.g. [CRNN](https://g
 - [ ] Generate vertical text
 - [ ] Corpus sampler: helpful to perform character balance
 
-## Quick Start
+[Documentation](https://oh-my-ocr.github.io/text_renderer/index.html)
 
-To use text_renderer, you should prepare:
+## Run Example
 
-  - Font file: `.ttf` or...
-  - Background image
-  - Text: Optional. Depends on the [corpus](https://oh-my-ocr.github.io/text_renderer/corpus/index.html) you use.
-  - Character set: Optional. Depends on the [corpus](https://oh-my-ocr.github.io/text_renderer/corpus/index.html) you use.
-
-Run following command to generate image using example data:
+Run following command to generate images using example data:
 
 ```bash
 git clone https://github.com/oh-my-ocr/text_renderer
@@ -32,16 +27,109 @@ python3 main.py \
 
 The data is generated in the `example_data/output` directory.
 
-`main.py` script only has 4 arguments:
+You can check config file [example_data/example.py](https://github.com/oh-my-ocr/text_renderer/blob/master/example_data/example.py) to learn how to use text_renderer,
+or follow the [Quick Start](https://github.com/oh-my-ocr/text_renderer#quick-start) to learn how to setup configuration
+ 
+
+## Quick Start
+1. Prepare file resources:
+
+- Font files: `.ttf`、`.otf`、`.ttc`
+- Background images of any size, either from your business scenario or from publicly available datasets ([COCO](https://cocodataset.org/#home), [VOC](http://host.robots.ox.ac.uk/pascal/VOC/))
+- Corpus: text_renderer offers a wide variety of [text sampling methods](https://oh-my-ocr.github.io/text_renderer/corpus/index.html), 
+  to use these methods, you need to consider the preparation of the corpus from two perspectives：
+  1. The corpus must be in the target language for which you want to perform OCR recognition
+  2. The corpus should meets your actual business needs, such as education field, medical field, etc.
+- Charset file [Optional but recommend]: OCR models in real-world scenarios (e.g. CRNN) usually support only a limited character set, 
+  so it's better to filter out characters outside the character set during data generation. 
+  You can do this by setting the [chars_file](https://oh-my-ocr.github.io/text_renderer/corpus/char_corpus.html) parameter
+
+You can download pre-prepared file resources for this `Quick Start` from here: 
+- [simsun.ttf](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/font/simsun.ttf)
+- [background.png](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/bg/background.png)
+- [eng_text.txt](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/text/eng_text.txt)
+
+Save these resource files in the same directory:
+```
+workspace
+├── bg
+│ └── background.png
+├── corpus
+│ └── eng_text.txt
+└── font
+    └── simsun.ttf
+```
+
+2. Create a `config.py` file in `workspace` directory. One configuration file must have a `configs` variable, it's 
+a list of [GeneratorCfg](https://oh-my-ocr.github.io/text_renderer/config.html#text_renderer.config.GeneratorCfg). 
+
+The complete configuration file is as follows:
+```python
+import os
+from pathlib import Path
+
+from text_renderer.effect import *
+from text_renderer.corpus import *
+from text_renderer.config import (
+    RenderCfg,
+    NormPerspectiveTransformCfg,
+    GeneratorCfg,
+    SimpleTextColorCfg,
+)
+
+CURRENT_DIR = Path(os.path.abspath(os.path.dirname(__file__)))
+
+
+def story_data():
+    return GeneratorCfg(
+        num_image=10,
+        save_dir=CURRENT_DIR / "output",
+        render_cfg=RenderCfg(
+            bg_dir=CURRENT_DIR / "bg",
+            height=32,
+            perspective_transform=NormPerspectiveTransformCfg(20, 20, 1.5),
+            corpus=WordCorpus(
+                WordCorpusCfg(
+                    text_paths=[CURRENT_DIR / "corpus" / "eng_text.txt"],
+                    font_dir=CURRENT_DIR / "font",
+                    font_size=(20, 30),
+                    num_word=(2, 3),
+                ),
+            ),
+            corpus_effects=Effects(Line(0.9, thickness=(2, 5))),
+            gray=False,
+            text_color_cfg=SimpleTextColorCfg(),
+        ),
+    )
+
+
+configs = [story_data()]
+```
+
+In the above configuration we have done the following things:
+1. Specify the location of the resource file
+2. Specified text sampling method: 2 or 3 words are randomly selected from the corpus
+3. Configured some effects for generation
+   - Perspective transformation [NormPerspectiveTransformCfg](https://oh-my-ocr.github.io/text_renderer/_modules/text_renderer/config.html#NormPerspectiveTransformCfg)
+   - Random [Line Effect](https://oh-my-ocr.github.io/text_renderer/effect/line.html)
+   - Fix output image height to 32
+   - Generate color image. `gray=False`, `SimpleTextColorCfg()`
+4. Specifies font-related parameters: `font_size`, `font_dir`
+
+3. Run `main.py`, it only has 4 arguments:
 - config：Python config file path
-- dataset: Dataset format `img`/`lmdb`
+- dataset: Dataset format `img` or `lmdb`
 - num_processes: Number of processes used
 - log_period: Period of log printing. (0, 100)
 
-All parameters related to the example image generation process are all configured in
-[example.py](https://github.com/oh-my-ocr/text_renderer/blob/master/example_data/example.py)
+See more Corpus, Effect, Layout you can use in the [documentation](https://oh-my-ocr.github.io/text_renderer/index.html)
 
-Learn more at [documentation](https://oh-my-ocr.github.io/text_renderer/index.html)
+## Contribution
+
+- Corpus: Feel free to contribute more corpus generators to the project, 
+  It does not necessarily need to be a generic corpus generator, but can also be a business-specific generator, 
+  such as generating ID numbers
+
 
 ## Run in Docker
 
@@ -80,7 +168,7 @@ If you use text_renderer in your research, please consider use the following Bib
 
 ```BibTeX
 @misc{text_renderer,
-  author =       {weiqing.chu},
+  author =       {oh-my-ocr},
   title =        {text_renderer},
   howpublished = {\url{https://github.com/oh-my-ocr/text_renderer}},
   year =         {2021}

@@ -37,7 +37,7 @@ class CharCorpusCfg(CorpusCfg):
 
 class CharCorpus(Corpus):
     """
-    Output contiguous characters of a certain length
+    Randomly sampling a certain length of strings from the corpus
     """
 
     def __init__(

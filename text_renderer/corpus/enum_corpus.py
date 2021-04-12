@@ -39,7 +39,7 @@ class EnumCorpusCfg(CorpusCfg):
 
 class EnumCorpus(Corpus):
     """
-    Output text in text_paths line by line or item from items
+    Randomly select items from the list
     """
 
     def __init__(self, cfg: "CorpusCfg"):

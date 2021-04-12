@@ -167,6 +167,7 @@ extra_text_line_data = GeneratorCfg(
 )
 
 # fmt: off
+# The configuration file must have a configs variable
 configs = [
     chn_data,
     enum_data,
