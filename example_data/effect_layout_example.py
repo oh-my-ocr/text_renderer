@@ -1,11 +1,12 @@
 # All Effect/Layout example config
 # 1. Run effect_layout_example.py, generate images in effect_layout_image
-# 2. Push generated images to always_force_push branch
-# 3. Update README.md
-# 4. Update docs file
-
+# 2. Update README.md
+import inspect
 import os
+from dataclasses import dataclass
 from pathlib import Path
+
+import numpy as np
 
 from text_renderer.effect import *
 from text_renderer.corpus import *
@@ -14,49 +15,137 @@ from text_renderer.config import (
     NormPerspectiveTransformCfg,
     GeneratorCfg,
     SimpleTextColorCfg,
+    TextColorCfg,
+    FixedTextColorCfg,
+    FixedPerspectiveTransformCfg,
 )
+from text_renderer.layout import SameLineLayout
 
 CURRENT_DIR = Path(os.path.abspath(os.path.dirname(__file__)))
 BG_DIR = CURRENT_DIR / "bg"
 
-enum_data = GeneratorCfg(
-    num_image=50,
-    save_dir=CURRENT_DIR / "effect_layout_image",
-    render_cfg=RenderCfg(
-        bg_dir=BG_DIR,
-        perspective_transform=perspective_transform,
-        corpus=EnumCorpus(
-            EnumCorpusCfg(
-                text_paths=[TEXT_DIR / "enum_text.txt"],
-                filter_by_chars=True,
-                chars_file=CHAR_DIR / "chn.txt",
-                **font_cfg
-            ),
-        ),
-    ),
+font_cfg = dict(
+    font_dir=CURRENT_DIR / "font",
+    font_size=(30, 31),
 )
 
-def story_data():
+small_font_cfg = dict(
+    font_dir=CURRENT_DIR / "font",
+    font_size=(20, 21),
+)
+
+
+def base_cfg(name: str):
     return GeneratorCfg(
-        num_image=10,
-        save_dir=CURRENT_DIR / "output",
+        num_image=5,
+        save_dir=CURRENT_DIR / "effect_layout_image" / name,
         render_cfg=RenderCfg(
-            bg_dir=CURRENT_DIR / "bg",
-            height=32,
-            perspective_transform=NormPerspectiveTransformCfg(20, 20, 1.5),
-            corpus=WordCorpus(
-                WordCorpusCfg(
-                    text_paths=[CURRENT_DIR / "corpus" / "eng_text.txt"],
-                    font_dir=CURRENT_DIR / "font",
-                    font_size=(20, 30),
-                    num_word=(2, 3),
+            bg_dir=BG_DIR,
+            corpus=EnumCorpus(
+                EnumCorpusCfg(
+                    items=["Hello World!"],
+                    text_color_cfg=FixedTextColorCfg(),
+                    **font_cfg,
                 ),
             ),
-            corpus_effects=Effects(Line(0.9, thickness=(2, 5))),
-            gray=False,
-            text_color_cfg=SimpleTextColorCfg(),
         ),
     )
 
 
-configs = [story_data()]
+def dropout_rand():
+    cfg = base_cfg(inspect.currentframe().f_code.co_name)
+    cfg.render_cfg.corpus_effects = Effects(DropoutRand(p=1, dropout_p=(0.3, 0.5)))
+    return cfg
+
+
+def dropout_horizontal():
+    cfg = base_cfg(inspect.currentframe().f_code.co_name)
+    cfg.render_cfg.corpus_effects = Effects(
+        DropoutHorizontal(p=1, num_line=2, thickness=3)
+    )
+    return cfg
+
+
+def dropout_vertical():
+    cfg = base_cfg(inspect.currentframe().f_code.co_name)
+    cfg.render_cfg.corpus_effects = Effects(DropoutVertical(p=1, num_line=15))
+    return cfg
+
+
+def line():
+    poses = [
+        "top",
+        "bottom",
+        "left",
+        "right",
+        "top_left",
+        "top_right",
+        "bottom_left",
+        "bottom_right",
+        "horizontal_middle",
+        "vertical_middle",
+    ]
+    cfgs = []
+    for i, pos in enumerate(poses):
+        pos_p = [0] * len(poses)
+        pos_p[i] = 1
+        cfg = base_cfg(f"{inspect.currentframe().f_code.co_name}_{pos}")
+        cfg.render_cfg.corpus_effects = Effects(
+            Line(p=1, thickness=(3, 4), line_pos_p=pos_p)
+        )
+        cfgs.append(cfg)
+    return cfgs
+
+
+def padding():
+    cfg = base_cfg(inspect.currentframe().f_code.co_name)
+    cfg.render_cfg.corpus_effects = Effects(
+        Padding(p=1, w_ratio=[0.2, 0.21], h_ratio=[0.7, 0.71], center=True)
+    )
+    return cfg
+
+
+def same_line_layout_different_font_size():
+    cfg = base_cfg(inspect.currentframe().f_code.co_name)
+    cfg.render_cfg.layout = SameLineLayout(h_spacing=(0.9, 0.91))
+    cfg.render_cfg.corpus = [
+        EnumCorpus(
+            EnumCorpusCfg(
+                items=["Hello "],
+                text_color_cfg=FixedTextColorCfg(),
+                **font_cfg,
+            ),
+        ),
+        EnumCorpus(
+            EnumCorpusCfg(
+                items=[" World!"],
+                text_color_cfg=FixedTextColorCfg(),
+                **small_font_cfg,
+            ),
+        ),
+    ]
+    return cfg
+
+
+def color_image():
+    cfg = base_cfg(inspect.currentframe().f_code.co_name)
+    cfg.render_cfg.gray = False
+    return cfg
+
+
+def perspective_transform():
+    cfg = base_cfg(inspect.currentframe().f_code.co_name)
+    cfg.render_cfg.perspective_transform = FixedPerspectiveTransformCfg(30, 30, 1.5)
+    return cfg
+
+
+configs = [
+    *line(),
+    perspective_transform(),
+    color_image(),
+    dropout_rand(),
+    dropout_horizontal(),
+    dropout_vertical(),
+    padding(),
+    same_line_layout_different_font_size(),
+]

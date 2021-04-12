@@ -70,6 +70,7 @@ class Render:
 
         bg = self.bg_manager.get_bg()
         text_color = self.corpus.cfg.text_color_cfg.get_color(bg)
+
         text_mask = draw_text_on_bg(
             font_text, text_color, char_spacing=self.corpus.cfg.char_spacing
         )

@@ -10,5 +10,6 @@ loguru
 cffi
 sphinx==3.1.2
 sphinx-rtd-theme
+recommonmark==0.6.0
 dataclasses
 pytest

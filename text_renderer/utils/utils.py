@@ -1,4 +1,5 @@
 import random
+from typing import Tuple
 
 import cv2
 import numpy as np
@@ -91,7 +92,7 @@ def draw_bbox(img, bbox, color):
     return draw_box(img, pnts, color)
 
 
-def random_xy_offset(small_size, big_size):
+def random_xy_offset(small_size, big_size) -> Tuple[int, int]:
     """
     Get random left-top point for putting a small rect in a large rect.
     Args:

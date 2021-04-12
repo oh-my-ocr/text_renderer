@@ -77,6 +77,11 @@ class Effect:
             random.randint(0, pim[col, row][3]),
         )
 
+    @staticmethod
+    def fix_pick(pim, col, row, value_range: Tuple[int, int]):
+        value = random.randint(*value_range)
+        pim[col, row] = (value, value, value, value)
+
 
 class OneOf:
     """

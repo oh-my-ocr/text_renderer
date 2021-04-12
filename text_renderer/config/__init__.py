@@ -22,6 +22,7 @@ class PerspectiveTransformCfg:
     """
     Base class for PerspectiveTransform
     """
+
     x: float = 10
     y: float = 5
     z: float = 1.5
@@ -31,6 +32,12 @@ class PerspectiveTransformCfg:
     @abstractmethod
     def get_xyz(self) -> Tuple[int, int, int]:
         pass
+
+
+@dataclass
+class FixedPerspectiveTransformCfg(PerspectiveTransformCfg):
+    def get_xyz(self) -> Tuple[float, float, float]:
+        return 15, 15, 1.2
 
 
 @dataclass
@@ -76,9 +83,20 @@ class TextColorCfg:
     """
     Base class for TextColorCfg
     """
+
     @abstractmethod
     def get_color(self, bg_img: PILImage) -> Tuple[int, int, int, int]:
         pass
+
+
+@dataclass
+class FixedTextColorCfg(TextColorCfg):
+    # For generate effect/layout example
+    def get_color(self, bg_img: PILImage) -> Tuple[int, int, int, int]:
+        alpha = 255
+        text_color = (255, 50, 0, alpha)
+
+        return text_color
 
 
 @dataclass
@@ -86,6 +104,7 @@ class SimpleTextColorCfg(TextColorCfg):
     """
     Randomly use mean value of background image
     """
+
     alpha: Tuple[int, int] = (110, 255)
 
     def get_color(self, bg_img: PILImage) -> Tuple[int, int, int, int]:

@@ -38,7 +38,8 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
     'sphinx_rtd_theme',
-    'sphinx.ext.githubpages'
+    'sphinx.ext.githubpages',
+    'recommonmark'
 ]
 
 

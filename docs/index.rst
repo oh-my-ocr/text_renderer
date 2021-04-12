@@ -5,6 +5,7 @@ Text Renderer
    :maxdepth: 1
    :caption: Notes
 
+   Readme <README.md>
    config
    note/render_pipeline
 
