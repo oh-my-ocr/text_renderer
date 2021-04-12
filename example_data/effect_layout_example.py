@@ -165,8 +165,8 @@ def curve():
 
 configs = [
     curve()
-    # compact_char_spacing(),
-    # large_char_spacing(),
+    # char_spacing_compact(),
+    # char_spacing_large(),
     # *line(),
     # perspective_transform(),
     # color_image(),
