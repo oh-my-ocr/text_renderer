@@ -15,7 +15,22 @@ class ExtraTextLineLayout(Layout):
     extra text: second corpus
     """
 
-    def apply(self, text_bboxes: List[BBox], img_bboxes: List[BBox],) -> List[BBox]:
+    def __init__(self, bottom_prob: float = 0.5):
+        """
+
+        Parameters
+        ----------
+        bottom_prob : float
+                   Probability of draw extra text under main text line
+        """
+        assert 0 <= bottom_prob <= 1
+        self.bottom_prob = bottom_prob
+
+    def apply(
+        self,
+        text_bboxes: List[BBox],
+        img_bboxes: List[BBox],
+    ) -> List[BBox]:
         assert (
             len(text_bboxes) == 2
         ), "ExtraTextLineLayout only support input two text bboxes"
@@ -25,7 +40,7 @@ class ExtraTextLineLayout(Layout):
             img_bboxes[1],
         )
 
-        if prob(0.5):
+        if prob(1 - self.bottom_prob):
             # above extra line
             main_offset = int(main_text_mask_bbox.height * random.uniform(0.3, 0.4))
             main_text_mask_bbox.offset_(
@@ -48,7 +63,9 @@ class ExtraTextLineLayout(Layout):
             extra_text_mask_bbox.offset_(
                 extra_text_mask_bbox.left_top, main_text_mask_bbox.left_bottom
             )
-            extra_text_mask_bbox.bottom -= int(extra_text_mask_bbox.height * random.uniform(0.65, 0.9))
+            extra_text_mask_bbox.bottom -= int(
+                extra_text_mask_bbox.height * random.uniform(0.65, 0.9)
+            )
 
         if extra_text_mask_bbox.width > main_text_mask_bbox.width:
             extra_text_mask_bbox.right -= (

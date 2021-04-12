@@ -20,7 +20,7 @@ from text_renderer.config import (
     FixedPerspectiveTransformCfg,
 )
 from text_renderer.effect.curve import Curve
-from text_renderer.layout import SameLineLayout
+from text_renderer.layout import SameLineLayout, ExtraTextLineLayout
 
 CURRENT_DIR = Path(os.path.abspath(os.path.dirname(__file__)))
 BG_DIR = CURRENT_DIR / "bg"
@@ -128,6 +128,28 @@ def same_line_layout_different_font_size():
     return cfg
 
 
+def extra_text_line_layout():
+    cfg = base_cfg(inspect.currentframe().f_code.co_name)
+    cfg.render_cfg.layout = ExtraTextLineLayout(bottom_prob=1.0)
+    cfg.render_cfg.corpus = [
+        EnumCorpus(
+            EnumCorpusCfg(
+                items=["Hello world"],
+                text_color_cfg=FixedTextColorCfg(),
+                **font_cfg,
+            ),
+        ),
+        EnumCorpus(
+            EnumCorpusCfg(
+                items=["THIS IS AN EXTRA TEXT LINE!"],
+                text_color_cfg=FixedTextColorCfg(),
+                **font_cfg,
+            ),
+        ),
+    ]
+    return cfg
+
+
 def color_image():
     cfg = base_cfg(inspect.currentframe().f_code.co_name)
     cfg.render_cfg.gray = False
@@ -171,7 +193,8 @@ def vertical_text():
 
 
 configs = [
-    vertical_text()
+    # vertical_text()
+    extra_text_line_layout()
     # char_spacing_compact(),
     # char_spacing_large(),
     # *line(),
