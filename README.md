@@ -32,19 +32,20 @@ or follow the [Quick Start](https://github.com/oh-my-ocr/text_renderer#quick-sta
  
 
 ## Quick Start
-1. Prepare file resources:
-
+### Prepare file resources
+   
 - Font files: `.ttf`、`.otf`、`.ttc`
 - Background images of any size, either from your business scenario or from publicly available datasets ([COCO](https://cocodataset.org/#home), [VOC](http://host.robots.ox.ac.uk/pascal/VOC/))
 - Corpus: text_renderer offers a wide variety of [text sampling methods](https://oh-my-ocr.github.io/text_renderer/corpus/index.html), 
-  to use these methods, you need to consider the preparation of the corpus from two perspectives：
-  1. The corpus must be in the target language for which you want to perform OCR recognition
-  2. The corpus should meets your actual business needs, such as education field, medical field, etc.
+to use these methods, you need to consider the preparation of the corpus from two perspectives：
+1. The corpus must be in the target language for which you want to perform OCR recognition
+2. The corpus should meets your actual business needs, such as education field, medical field, etc.
 - Charset file [Optional but recommend]: OCR models in real-world scenarios (e.g. CRNN) usually support only a limited character set, 
-  so it's better to filter out characters outside the character set during data generation. 
-  You can do this by setting the [chars_file](https://oh-my-ocr.github.io/text_renderer/corpus/char_corpus.html) parameter
+so it's better to filter out characters outside the character set during data generation. 
+You can do this by setting the [chars_file](https://oh-my-ocr.github.io/text_renderer/corpus/char_corpus.html) parameter
 
 You can download pre-prepared file resources for this `Quick Start` from here: 
+
 - [simsun.ttf](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/font/simsun.ttf)
 - [background.png](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/bg/background.png)
 - [eng_text.txt](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/text/eng_text.txt)
@@ -60,7 +61,8 @@ workspace
     └── simsun.ttf
 ```
 
-2. Create a `config.py` file in `workspace` directory. One configuration file must have a `configs` variable, it's 
+### Create config file
+Create a `config.py` file in `workspace` directory. One configuration file must have a `configs` variable, it's 
 a list of [GeneratorCfg](https://oh-my-ocr.github.io/text_renderer/config.html#text_renderer.config.GeneratorCfg). 
 
 The complete configuration file is as follows:
@@ -107,6 +109,7 @@ configs = [story_data()]
 ```
 
 In the above configuration we have done the following things:
+
 1. Specify the location of the resource file
 2. Specified text sampling method: 2 or 3 words are randomly selected from the corpus
 3. Configured some effects for generation
@@ -116,7 +119,8 @@ In the above configuration we have done the following things:
    - Generate color image. `gray=False`, `SimpleTextColorCfg()`
 4. Specifies font-related parameters: `font_size`, `font_dir`
 
-3. Run `main.py`, it only has 4 arguments:
+### Run 
+Run `main.py`, it only has 4 arguments:
 - config：Python config file path
 - dataset: Dataset format `img` or `lmdb`
 - num_processes: Number of processes used
