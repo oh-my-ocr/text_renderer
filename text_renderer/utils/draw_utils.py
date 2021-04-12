@@ -20,9 +20,9 @@ def transparent_img(size: Tuple[int, int]) -> PILImage:
 
 
 def draw_text_on_bg(
-        font_text: FontText,
-        text_color: Tuple[int, int, int, int] = (0, 0, 0, 255),
-        char_spacing: Union[float, Tuple[float, float]] = -1,
+    font_text: FontText,
+    text_color: Tuple[int, int, int, int] = (0, 0, 0, 255),
+    char_spacing: Union[float, Tuple[float, float]] = -1,
 ) -> PILImage:
     """
 
@@ -102,7 +102,8 @@ def draw_text_on_bg(
 
 
 def _draw_text_on_bg(
-        font_text: FontText, text_color: Tuple[int, int, int, int] = (0, 0, 0, 255),
+    font_text: FontText,
+    text_color: Tuple[int, int, int, int] = (0, 0, 0, 255),
 ) -> PILImage:
     """
     Draw text
@@ -126,7 +127,11 @@ def _draw_text_on_bg(
 
     # TODO: figure out anchor
     draw.text(
-        xy, font_text.text, font=font_text.font, fill=text_color, anchor=None,
+        xy,
+        font_text.text,
+        font=font_text.font,
+        fill=text_color,
+        anchor=None,
     )
 
     return text_mask

@@ -4,7 +4,7 @@ Generate text images for training deep learning OCR model (e.g. [CRNN](https://g
 - [x] Modular design. You can easily add [Corpus](https://oh-my-ocr.github.io/text_renderer/corpus/index.html), [Effect](https://oh-my-ocr.github.io/text_renderer/effect/index.html), [Layout](https://oh-my-ocr.github.io/text_renderer/layout/index.html).
 - [x] Support generate `lmdb` dataset which compatible with [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR), see [Dataset](https://oh-my-ocr.github.io/text_renderer/dataset.html)
 - [x] Support render multi corpus on image with different font, font size or font color. [Layout](https://oh-my-ocr.github.io/text_renderer/layout/index.html) is responsible for the layout between multiple corpora
-- [x] Generate vertical text
+- [x] Generate vertical text.
 - [ ] Corpus sampler: helpful to perform character balance
 
 [Documentation](https://oh-my-ocr.github.io/text_renderer/index.html)
@@ -126,10 +126,9 @@ Run `main.py`, it only has 4 arguments:
 - num_processes: Number of processes used
 - log_period: Period of log printing. (0, 100)
 
-See more Corpus, Effect, Layout you can use in the [documentation](https://oh-my-ocr.github.io/text_renderer/index.html)
-
-
 ## All Effect/Layout Examples
+
+Find all effect/layout config example at [link](https://github.com/oh-my-ocr/text_renderer/blob/master/example_data/effect_layout_example.py)
 
 |    | Name                                 | Example                                                                                                                                                                      |
 |---:|:-------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -153,6 +152,7 @@ See more Corpus, Effect, Layout you can use in the [documentation](https://oh-my
 | 17 | padding                              | ![padding.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/padding.jpg)                                                           |
 | 18 | perspective_transform                | ![perspective_transform.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/perspective_transform.jpg)                               |
 | 19 | same_line_layout_different_font_size | ![same_line_layout_different_font_size.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/same_line_layout_different_font_size.jpg) |
+| 20 | vertical_text                        | ![vertical_text.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/vertical_text.jpg)                                               |
 
 ## Contribution
 

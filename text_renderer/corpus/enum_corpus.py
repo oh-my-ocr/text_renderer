@@ -25,6 +25,7 @@ class EnumCorpusCfg(CorpusCfg):
                             by intersection of font support chars with chars file
         filter_font_min_support_chars (int): If intersection of font support chars with chars file is lower
                                              than filter_font_min_support_chars, filter this font file.
+        join_str (str):
 
     """
 
@@ -35,7 +36,7 @@ class EnumCorpusCfg(CorpusCfg):
     chars_file: Path = None
     filter_font: bool = False
     filter_font_min_support_chars: int = 100
-    join_str:str = ""
+    join_str: str = ""
 
 
 class EnumCorpus(Corpus):

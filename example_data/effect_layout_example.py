@@ -163,8 +163,15 @@ def curve():
     return cfg
 
 
+def vertical_text():
+    cfg = base_cfg(inspect.currentframe().f_code.co_name)
+    cfg.render_cfg.corpus.cfg.horizontal = False
+    # cfg.render_cfg.corpus.cfg.char_spacing = 0.1
+    return cfg
+
+
 configs = [
-    curve()
+    vertical_text()
     # char_spacing_compact(),
     # char_spacing_large(),
     # *line(),
