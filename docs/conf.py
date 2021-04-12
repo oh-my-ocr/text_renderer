@@ -39,7 +39,8 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx_rtd_theme',
     'sphinx.ext.githubpages',
-    'recommonmark'
+    'sphinx_markdown_tables',
+    'recommonmark',
 ]
 
 
