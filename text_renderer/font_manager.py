@@ -1,14 +1,11 @@
-import os
 import random
 from functools import lru_cache
-from itertools import chain
 from pathlib import Path
-from typing import List, Set, Tuple, Dict
+from typing import List, Set, Tuple, Dict, Optional
 
 from PIL import ImageFont
 from PIL.ImageFont import FreeTypeFont
 from fontTools.ttLib import TTFont, TTCollection
-from fontTools.unicode import Unicode
 from loguru import logger
 
 from text_renderer.utils.errors import PanicError
@@ -17,7 +14,7 @@ from text_renderer.utils.utils import load_chars_file
 
 class FontManager:
     def __init__(
-        self, font_dir: Path, font_list_file: Path, font_size: Tuple[int, int]
+        self, font_dir: Path, font_list_file: Optional[Path], font_size: Tuple[int, int]
     ):
         assert font_size[0] < font_size[1]
         self.font_size_min = font_size[0]
@@ -27,19 +24,24 @@ class FontManager:
         # Created in self.update_font_support_chars(), used to filter font_path
         self.font_support_chars_intersection_with_chars: Dict[str, Set] = {}
 
-        with open(str(font_list_file), "r", encoding="utf-8") as f:
-            lines = f.readlines()
-            lines = [line.strip() for line in lines]
+        if font_list_file is not None:
+            with open(str(font_list_file), "r", encoding="utf-8") as f:
+                lines = f.readlines()
+                lines = [line.strip() for line in lines]
 
-        if len(lines) == 0:
-            raise PanicError(f"font list file is empty: {font_list_file}")
+            if len(lines) == 0:
+                raise PanicError(f"font list file is empty: {font_list_file}")
 
-        for line in lines:
-            font_path = font_dir / line
-            if font_path.exists():
-                self.font_paths.append(str(font_path))
-            else:
-                raise PanicError(f"font file not exist: {font_path}")
+            for line in lines:
+                font_path = font_dir / line
+                if font_path.exists():
+                    self.font_paths.append(str(font_path))
+                else:
+                    raise PanicError(f"font file not exist: {font_path}")
+        else:
+            for font_path in font_dir.glob("**/*"):
+                if font_path.suffix in [".ttc", ".TTC", ".ttf", ".TTF", ".otf", ".OTF"]:
+                    self.font_paths.append(str(font_path))
 
         self._load_font_support_chars()
 
@@ -94,7 +96,7 @@ class FontManager:
             removed_chars = []
             font = self._get_font(font_path, 10)
             chars = self.font_support_chars_cache[font_path].copy()
-            for c in (chars & charset):
+            for c in chars & charset:
                 bbox = font.getmask(c).getbbox()
                 if (
                     c not in white_list
@@ -141,7 +143,9 @@ class FontManager:
             new_font_paths.append(font_path)
 
         if len(new_font_paths) != self.font_paths:
-            logger.info(f"Filter font path: {len(self.font_paths)} -> {len(new_font_paths)}")
+            logger.info(
+                f"Filter font path: {len(self.font_paths)} -> {len(new_font_paths)}"
+            )
             self.font_paths = new_font_paths
 
     def _load_ttfont(self, font_path: str) -> TTFont:

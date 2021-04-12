@@ -25,7 +25,7 @@ class CorpusCfg:
         font_dir : path
             font files directory
         font_list_file : path
-            font file names to load from **font_dir**
+            font file names to load from **font_dir**, if not provided, all fonts in font_dir will be used
         font_size : tuple[int, int]
             font size in point (min_font_size, max_font_size)
         clip_length : int
@@ -37,8 +37,8 @@ class CorpusCfg:
             see :class:`~text_renderer.utils.TextColorCfg`
     """
     font_dir: Path
-    font_list_file: Path
     font_size: Tuple[int, int]
+    font_list_file: Path = None
     clip_length: int = -1
     char_spacing: Union[float, Tuple[float, float]] = -1
     text_color_cfg: TextColorCfg = SimpleTextColorCfg()
