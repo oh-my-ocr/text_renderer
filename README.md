@@ -25,7 +25,32 @@ python3 main.py \
     --log_period 10
 ```
 
-The data is generated in the `example_data/output` directory.
+The data is generated in the `example_data/output` directory. A `labels.json` file contains all annotations in follow format:
+```json
+{
+  "labels": {
+    "000000000": "test",
+    "000000001": "text2"
+  },
+  "sizes": {
+    "000000000": [
+      120,
+      32 
+    ],
+    "000000001": [
+      128,
+      32 
+    ]
+  },
+  "num-samples": 2
+}
+```
+
+You can also use `--dataset lmdb` to store image in lmdb file, lmdb file contains follow keys:
+- num-samples
+- image-000000000
+- label-000000000
+- size-000000000
 
 You can check config file [example_data/example.py](https://github.com/oh-my-ocr/text_renderer/blob/master/example_data/example.py) to learn how to use text_renderer,
 or follow the [Quick Start](https://github.com/oh-my-ocr/text_renderer#quick-start) to learn how to setup configuration
