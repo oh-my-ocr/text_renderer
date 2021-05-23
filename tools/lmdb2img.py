@@ -28,7 +28,7 @@ def lmdb2img(input: str, output: str, num: int = -1):
 
         print(f"Total count: {count}, will convert: {convert_count}")
         for i in tqdm(range(convert_count)):
-            num = "{:08d}".format(i)
+            num = "{:09d}".format(i)
             ret = db.read(num)
             label = ret["label"]
             image = ret["image"]
