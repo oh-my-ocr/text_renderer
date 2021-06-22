@@ -73,7 +73,11 @@ class WordCorpus(Corpus):
 
     def get_text(self):
         self.cfg: WordCorpusCfg
-        length = np.random.randint(*self.cfg.num_word)
+        if self.cfg.num_word[0] == self.cfg.num_word[1]:
+            length = self.cfg.num_word[0]
+        else:
+            length = np.random.randint(*self.cfg.num_word)
+
         start = np.random.randint(0, len(self.words) - length + 1)
         words = self.words[start : start + length]
         word = self.cfg.separator.join(words)
