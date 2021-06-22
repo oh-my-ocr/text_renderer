@@ -150,6 +150,7 @@ class RenderCfg:
     text_color_cfg : TextColorCfg
         If not None, will overwrite text_color_cfg in CorpusCfg
         useful to set same text color when use multi corpus
+    return_bg_and_mask: bool
     """
 
     corpus: Union["Corpus", List["Corpus"]]
@@ -163,6 +164,7 @@ class RenderCfg:
     height: int = 32
     gray: bool = True
     text_color_cfg: TextColorCfg = None
+    return_bg_and_mask: bool = False
 
 
 # noinspection PyUnresolvedReferences

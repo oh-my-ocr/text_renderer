@@ -1,4 +1,6 @@
 from typing import Tuple, List
+
+from PIL import Image
 from loguru import logger
 
 import cv2
@@ -47,25 +49,45 @@ class Render:
     def __call__(self, *args, **kwargs) -> Tuple[np.ndarray, str]:
         try:
             if self._should_apply_layout():
-                img, text = self.gen_multi_corpus()
+                img, text, cropped_bg, transformed_text_mask = self.gen_multi_corpus()
             else:
-                img, text = self.gen_single_corpus()
+                img, text, cropped_bg, transformed_text_mask = self.gen_single_corpus()
 
             if self.cfg.render_effects is not None:
                 img, _ = self.cfg.render_effects.apply_effects(
                     img, BBox.from_size(img.size)
                 )
 
-            img = img.convert("RGB")
-            np_img = np.array(img)
-            np_img = cv2.cvtColor(np_img, cv2.COLOR_RGB2BGR)
-            np_img = self.norm(np_img)
+            if self.cfg.return_bg_and_mask:
+                gray_text_mask = np.array(transformed_text_mask.convert("L"))
+                _, gray_text_mask = cv2.threshold(
+                    gray_text_mask, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU
+                )
+                transformed_text_mask = Image.fromarray(255 - gray_text_mask)
+
+                merge_target = Image.new("RGBA", (img.width * 3, img.height))
+                merge_target.paste(img, (0, 0))
+                merge_target.paste(cropped_bg, (img.width, 0))
+                merge_target.paste(
+                    transformed_text_mask,
+                    (img.width * 2, 0),
+                    mask=transformed_text_mask,
+                )
+
+                np_img = np.array(merge_target)
+                np_img = cv2.cvtColor(np_img, cv2.COLOR_RGBA2BGR)
+                np_img = self.norm(np_img)
+            else:
+                img = img.convert("RGB")
+                np_img = np.array(img)
+                np_img = cv2.cvtColor(np_img, cv2.COLOR_RGB2BGR)
+                np_img = self.norm(np_img)
             return np_img, text
         except Exception as e:
             logger.exception(e)
             raise e
 
-    def gen_single_corpus(self) -> Tuple[PILImage, str]:
+    def gen_single_corpus(self) -> Tuple[PILImage, str, PILImage, PILImage]:
         font_text = self.corpus.sample()
 
         bg = self.bg_manager.get_bg()
@@ -97,11 +119,11 @@ class Render:
         else:
             transformed_text_mask = text_mask
 
-        img = self.paste_text_mask_on_bg(bg, transformed_text_mask)
+        img, cropped_bg = self.paste_text_mask_on_bg(bg, transformed_text_mask)
 
-        return img, font_text.text
+        return img, font_text.text, cropped_bg, transformed_text_mask
 
-    def gen_multi_corpus(self) -> Tuple[PILImage, str]:
+    def gen_multi_corpus(self) -> Tuple[PILImage, str, PILImage, PILImage]:
         font_texts: List[FontText] = [it.sample() for it in self.corpus]
 
         bg = self.bg_manager.get_bg()
@@ -162,13 +184,13 @@ class Render:
                 transformed_text_mask, BBox.from_size(transformed_text_mask.size)
             )
 
-        img = self.paste_text_mask_on_bg(bg, transformed_text_mask)
+        img, cropped_bg = self.paste_text_mask_on_bg(bg, transformed_text_mask)
 
-        return img, merged_text
+        return img, merged_text, cropped_bg, transformed_text_mask
 
     def paste_text_mask_on_bg(
         self, bg: PILImage, transformed_text_mask: PILImage
-    ) -> PILImage:
+    ) -> Tuple[PILImage, PILImage]:
         """
 
         Args:
@@ -188,8 +210,12 @@ class Render:
                 y_offset + transformed_text_mask.height,
             )
         )
+        if self.cfg.return_bg_and_mask:
+            _bg = bg.copy()
+        else:
+            _bg = bg
         bg.paste(transformed_text_mask, (0, 0), mask=transformed_text_mask)
-        return bg
+        return bg, _bg
 
     def get_text_color(self, bg: PILImage, text: str, font: FreeTypeFont) -> FontColor:
         # TODO: better get text color

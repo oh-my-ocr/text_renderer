@@ -192,9 +192,18 @@ def vertical_text():
     return cfg
 
 
+def bg_and_text_mask():
+    cfg = base_cfg(inspect.currentframe().f_code.co_name)
+    cfg.render_cfg.perspective_transform = FixedPerspectiveTransformCfg(30, 30, 1.5)
+    cfg.render_cfg.return_bg_and_mask = True
+    cfg.render_cfg.height = 48
+    return cfg
+
+
 configs = [
+    bg_and_text_mask()
     # vertical_text()
-    extra_text_line_layout()
+    # extra_text_line_layout()
     # char_spacing_compact(),
     # char_spacing_large(),
     # *line(),
