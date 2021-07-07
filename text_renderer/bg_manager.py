@@ -22,6 +22,8 @@ class BgManager:
                 if pre_load:
                     self.bg_imgs.append(self._get_bg(str(p)))
 
+        assert len(self.bg_imgs) != 0, "background image is empty"
+
     def get_bg(self) -> PILImage:
         # TODO: add efficient data augmentation
         if self.pre_load:
