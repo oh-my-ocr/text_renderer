@@ -83,7 +83,7 @@ class Effect:
         pim[col, row] = (value, value, value, value)
 
 
-class OneOf:
+class OneOf(Effect):
     """
     Selects a random Effect from given list
     """
@@ -95,11 +95,12 @@ class OneOf:
         ----------
         effects : :obj:`list` of :obj:`Effect`
         """
+        super().__init__(p=1.0)
         self.effects = effects
 
-    def __call__(self, img: PILImage, text_bbox: BBox) -> Tuple[PILImage, BBox]:
+    def apply(self, img: PILImage, text_bbox: BBox) -> Tuple[PILImage, BBox]:
         effect = random_choice(self.effects)
-        return effect.apply(img, text_bbox)
+        return effect(img, text_bbox)
 
 
 class NoEffects:
