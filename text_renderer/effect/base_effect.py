@@ -99,7 +99,7 @@ class OneOf:
 
     def __call__(self, img: PILImage, text_bbox: BBox) -> Tuple[PILImage, BBox]:
         effect = random_choice(self.effects)
-        return effect.apply(img, text_bbox)
+        return effect(img, text_bbox)
 
 
 class NoEffects:
