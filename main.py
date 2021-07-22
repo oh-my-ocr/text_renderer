@@ -54,7 +54,7 @@ class DBWriterProcess(Process):
                     count += 1
                     if count % log_period == 0:
                         logger.info(
-                            f"{(count/num_image)*100:.2f}%({count}/{num_image}) {log_period/(time.time() - start):.1f} img/s"
+                            f"{(count/num_image)*100:.2f}%({count}/{num_image}) {log_period/(time.time() - start + 1e-8):.1f} img/s"
                         )
                         start = time.time()
                 db.write_count(count + exist_count)
