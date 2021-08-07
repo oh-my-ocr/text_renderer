@@ -1,4 +1,5 @@
-from .base_effect import Effect, Effects, NoEffects, OneOf
+from .base_effect import Effect, Effects, NoEffects
+from .selector import OneOf
 from .dropout_rand import DropoutRand
 from .dropout_horizontal import DropoutHorizontal
 from .dropout_vertical import DropoutVertical

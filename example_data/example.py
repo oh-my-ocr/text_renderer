@@ -73,7 +73,9 @@ rand_data = GeneratorCfg(
     render_cfg=RenderCfg(
         bg_dir=BG_DIR,
         perspective_transform=perspective_transform,
-        corpus=RandCorpus(RandCorpusCfg(chars_file=CHAR_DIR / "chn.txt", **font_cfg),),
+        corpus=RandCorpus(
+            RandCorpusCfg(chars_file=CHAR_DIR / "chn.txt", **font_cfg),
+        ),
     ),
 )
 
@@ -124,7 +126,7 @@ same_line_data = GeneratorCfg(
                 ),
             ),
         ],
-        corpus_effects=[Effects([Padding(), DropoutRand()]), NoEffects(),],
+        corpus_effects=[Effects([Padding(), DropoutRand()]), NoEffects()],
         layout_effects=Effects(Line(p=1)),
     ),
 )

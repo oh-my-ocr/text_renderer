@@ -3,11 +3,11 @@ from abc import abstractmethod
 from typing import List, Union, Tuple
 
 from PIL import PyAccess
-import numpy as np
 
+from text_renderer.effect.selector import Selector
 from text_renderer.utils.bbox import BBox
 from text_renderer.utils.types import PILImage
-from text_renderer.utils.utils import prob, random_choice
+from text_renderer.utils.utils import prob
 
 
 class Effect:
@@ -83,28 +83,9 @@ class Effect:
         pim[col, row] = (value, value, value, value)
 
 
-class OneOf:
-    """
-    Selects a random Effect from given list
-    """
-
-    def __init__(self, effects):
-        """
-
-        Parameters
-        ----------
-        effects : :obj:`list` of :obj:`Effect`
-        """
-        self.effects = effects
-
-    def __call__(self, img: PILImage, text_bbox: BBox) -> Tuple[PILImage, BBox]:
-        effect = random_choice(self.effects)
-        return effect(img, text_bbox)
-
-
 class NoEffects:
     """
-    Placeholder when you don't want to use effect.
+    Placeholder when you don't want to apply effects for multi corpus
     """
 
     def apply_effects(self, img: PILImage, bbox: BBox) -> Tuple[PILImage, BBox]:
@@ -116,7 +97,7 @@ class Effects:
     Apply multiple effects
     """
 
-    def __init__(self, effects: Union[Effect, List[Effect]]):
+    def __init__(self, effects: Union[Effect, List[Effect], Selector, List[Selector]]):
         """
 
         Parameters
