@@ -5,6 +5,7 @@ from .dropout_horizontal import DropoutHorizontal
 from .dropout_vertical import DropoutVertical
 from .line import Line
 from .padding import Padding
+from .imgaug_effect import ImgAugEffect
 
 
 __all__ = [
@@ -17,4 +18,5 @@ __all__ = [
     "DropoutVertical",
     "Line",
     "Padding",
+    "ImgAugEffect"
 ]

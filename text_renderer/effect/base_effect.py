@@ -34,7 +34,7 @@ class Effect:
         return img, text_bbox
 
     @abstractmethod
-    def apply(self, img, text_bbox):
+    def apply(self, img: PILImage, text_bbox: BBox):
         """
 
         Parameters
@@ -42,7 +42,7 @@ class Effect:
         img : PILImage
             Image to apply effect
         text_bbox : BBox
-            Text bbox on image
+            bbox of text on input Image
 
         Returns
         -------
@@ -113,7 +113,7 @@ class Effects:
 
         Args:
             img:
-            bbox: Text bbox on img
+            bbox: bbox of text on input Image
 
         Returns:
 

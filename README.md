@@ -1,10 +1,11 @@
 # Text Renderer
-Generate text images for training deep learning OCR model (e.g. [CRNN](https://github.com/bgshih/crnn)). ![example](./image/example.gif)
+Generate text line images for training deep learning OCR model (e.g. [CRNN](https://github.com/bgshih/crnn)). ![example](./image/example.gif)
 
-- [x] Modular design. You can easily add [Corpus](https://oh-my-ocr.github.io/text_renderer/corpus/index.html), [Effect](https://oh-my-ocr.github.io/text_renderer/effect/index.html), [Layout](https://oh-my-ocr.github.io/text_renderer/layout/index.html).
-- [x] Support generate `lmdb` dataset which compatible with [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR), see [Dataset](https://oh-my-ocr.github.io/text_renderer/dataset.html)
-- [x] Support render multi corpus on image with different font, font size or font color. [Layout](https://oh-my-ocr.github.io/text_renderer/layout/index.html) is responsible for the layout between multiple corpora
+- [x] Modular design. You can easily add different components: [Corpus](https://oh-my-ocr.github.io/text_renderer/corpus/index.html), [Effect](https://oh-my-ocr.github.io/text_renderer/effect/index.html), [Layout](https://oh-my-ocr.github.io/text_renderer/layout/index.html).
+- [x] Integrate with [imgaug](https://github.com/aleju/imgaug).
+- [x] Support render multi corpus on image with different effect. [Layout](https://oh-my-ocr.github.io/text_renderer/layout/index.html) is responsible for the layout between multiple corpora
 - [x] Generate vertical text.
+- [x] Support generate `lmdb` dataset which compatible with [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR), see [Dataset](https://oh-my-ocr.github.io/text_renderer/dataset.html)
 - [ ] Corpus sampler: helpful to perform character balance
 
 [Documentation](https://oh-my-ocr.github.io/text_renderer/index.html)
@@ -168,21 +169,23 @@ Find all effect/layout config example at [link](https://github.com/oh-my-ocr/tex
 |  5 | dropout_horizontal                   | ![dropout_horizontal.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/dropout_horizontal.jpg)                                     |
 |  6 | dropout_rand                         | ![dropout_rand.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/dropout_rand.jpg)                                                 |
 |  7 | dropout_vertical                     | ![dropout_vertical.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/dropout_vertical.jpg)                                         |
-|  8 | extra_text_line_layout               | ![extra_text_line_layout.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/extra_text_line_layout.jpg)                             |
-|  9 | line_bottom                          | ![line_bottom.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_bottom.jpg)                                                   |
-| 10 | line_bottom_left                     | ![line_bottom_left.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_bottom_left.jpg)                                         |
-| 11 | line_bottom_right                    | ![line_bottom_right.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_bottom_right.jpg)                                       |
-| 12 | line_horizontal_middle               | ![line_horizontal_middle.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_horizontal_middle.jpg)                             |
-| 13 | line_left                            | ![line_left.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_left.jpg)                                                       |
-| 14 | line_right                           | ![line_right.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_right.jpg)                                                     |
-| 15 | line_top                             | ![line_top.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_top.jpg)                                                         |
-| 16 | line_top_left                        | ![line_top_left.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_top_left.jpg)                                               |
-| 17 | line_top_right                       | ![line_top_right.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_top_right.jpg)                                             |
-| 18 | line_vertical_middle                 | ![line_vertical_middle.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_vertical_middle.jpg)                                 |
-| 19 | padding                              | ![padding.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/padding.jpg)                                                           |
-| 20 | perspective_transform                | ![perspective_transform.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/perspective_transform.jpg)                               |
-| 21 | same_line_layout_different_font_size | ![same_line_layout_different_font_size.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/same_line_layout_different_font_size.jpg) |
-| 22 | vertical_text                        | ![vertical_text.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/vertical_text.jpg)                                               |
+|  8 | emboss                               | ![emboss.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/emboss.jpg)                                                             |
+|  9 | extra_text_line_layout               | ![extra_text_line_layout.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/extra_text_line_layout.jpg)                             |
+| 10 | line_bottom                          | ![line_bottom.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_bottom.jpg)                                                   |
+| 11 | line_bottom_left                     | ![line_bottom_left.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_bottom_left.jpg)                                         |
+| 12 | line_bottom_right                    | ![line_bottom_right.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_bottom_right.jpg)                                       |
+| 13 | line_horizontal_middle               | ![line_horizontal_middle.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_horizontal_middle.jpg)                             |
+| 14 | line_left                            | ![line_left.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_left.jpg)                                                       |
+| 15 | line_right                           | ![line_right.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_right.jpg)                                                     |
+| 16 | line_top                             | ![line_top.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_top.jpg)                                                         |
+| 17 | line_top_left                        | ![line_top_left.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_top_left.jpg)                                               |
+| 18 | line_top_right                       | ![line_top_right.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_top_right.jpg)                                             |
+| 19 | line_vertical_middle                 | ![line_vertical_middle.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_vertical_middle.jpg)                                 |
+| 20 | padding                              | ![padding.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/padding.jpg)                                                           |
+| 21 | perspective_transform                | ![perspective_transform.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/perspective_transform.jpg)                               |
+| 22 | same_line_layout_different_font_size | ![same_line_layout_different_font_size.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/same_line_layout_different_font_size.jpg) |
+| 23 | vertical_text                        | ![vertical_text.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/vertical_text.jpg)                                               |
+
 
 ## Contribution
 
