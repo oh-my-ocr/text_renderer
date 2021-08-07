@@ -130,7 +130,8 @@ class RenderCfg:
     corpus : Union[Corpus, List[Corpus]]
 
     corpus_effects : Union[Effects, List[Effects]]
-        Apply on text mask image of each corpus
+        Effects apply on text mask image of each corpus.
+        Effects used at this stage must return changed bbox of text if it modified it.
     bg_dir : Path
         Background image directory
     pre_load_bg_img : bool
@@ -140,9 +141,9 @@ class RenderCfg:
     perspective_transform : PerspectiveTransformCfg
         Apply Perspective Transform
     layout_effects : Effects
-        Apply on merged text mask image output by Layout
+        Effects apply on merged text mask image output by Layout.
     render_effects : Effects
-        Apply on final image
+        Effects apply on final image.
     height : int
         Resize(keep ratio) image to height, set -1 disables resize
     gray : bool
