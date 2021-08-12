@@ -9,6 +9,7 @@ from text_renderer.config import (
     RenderCfg,
     NormPerspectiveTransformCfg,
     GeneratorCfg,
+    FixedTextColorCfg,
 )
 from text_renderer.layout.same_line import SameLineLayout
 from text_renderer.layout.extra_text_line import ExtraTextLineLayout
@@ -67,7 +68,12 @@ def chn_data():
     return base_cfg(
         inspect.currentframe().f_code.co_name,
         corpus=get_char_corpus(),
-        corpus_effects=Effects([Line(0.5), OneOf([DropoutRand(), DropoutVertical()])]),
+        corpus_effects=Effects(
+            [
+                Line(0.5, color_cfg=FixedTextColorCfg()),
+                OneOf([DropoutRand(), DropoutVertical()]),
+            ]
+        ),
     )
 
 
