@@ -1,4 +1,4 @@
-Emboss
+MotionBlur
 =======
 
-.. autoclass:: text_renderer.effect.Emboss
+.. autoclass:: text_renderer.effect.MotionBlur
