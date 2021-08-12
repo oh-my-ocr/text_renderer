@@ -91,7 +91,12 @@ class Render:
         font_text = self.corpus.sample()
 
         bg = self.bg_manager.get_bg()
-        text_color = self.corpus.cfg.text_color_cfg.get_color(bg)
+        if self.cfg.text_color_cfg is not None:
+            text_color = self.cfg.text_color_cfg.get_color(bg)
+
+        # corpus text_color has higher priority than RenderCfg.text_color_cfg
+        if self.corpus.cfg.text_color_cfg is not None:
+            text_color = self.corpus.cfg.text_color_cfg.get_color(bg)
 
         text_mask = draw_text_on_bg(
             font_text, text_color, char_spacing=self.corpus.cfg.char_spacing

@@ -34,7 +34,7 @@ class CorpusCfg:
             Draw character with spacing. If tuple, random choice between [min, max)
             Set -1 to disable
         text_color_cfg : TextColorCfg
-            see :class:`~text_renderer.utils.TextColorCfg`
+            see :class:`~text_renderer.utils.TextColorCfg`. has higher priority than RenderCfg.text_color_cfg
         horizontal : bool
             generate the horizontal(default) or vertical text
             Set False to generate vertical text
