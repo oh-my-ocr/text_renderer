@@ -59,9 +59,11 @@ class CharCorpus(Corpus):
             with open(p, "r", encoding="utf-8") as f:
                 self.text += "".join(f.readlines())
 
+        if self.cfg.chars_file is not None:
+            self.font_manager.update_font_support_chars(self.cfg.chars_file)
+
         if self.cfg.filter_by_chars:
             self.text = Corpus.filter_by_chars(self.text, self.cfg.chars_file)
-            self.font_manager.update_font_support_chars(self.cfg.chars_file)
             if self.cfg.filter_font:
                 self.font_manager.filter_font_path(self.cfg.filter_font_min_support_chars)
 
