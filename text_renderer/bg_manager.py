@@ -5,6 +5,8 @@ from typing import List, Tuple
 import numpy as np
 from PIL import Image
 from PIL.Image import Image as PILImage
+from loguru import logger
+
 from text_renderer.utils.utils import random_choice
 
 IMAGE_EXTENSIONS = {".jpeg", ".jpg", ".JPG", ".JPEG", ".PNG", ".png", ".bmp", ".BMP"}
@@ -18,11 +20,20 @@ class BgManager:
 
         for p in bg_dir.glob("**/*"):
             if p.suffix in IMAGE_EXTENSIONS:
+                if self._is_transparent_image(p):
+                    logger.warning(f"Ignore transparent background image, please convert is to JPEG: {p}")
+                    continue
                 self.bg_paths.append(str(p))
                 if pre_load:
                     self.bg_imgs.append(self._get_bg(str(p)))
 
         assert len(self.bg_imgs) != 0, "background image is empty"
+
+    def _is_transparent_image(self, p: Path):
+        pil_img: PILImage = Image.open(p)
+        pil_img = pil_img.convert("RGBA")
+        np_img = np.array(pil_img)
+        return not np.all(np_img[:, :, 3] == 255)
 
     def get_bg(self) -> PILImage:
         # TODO: add efficient data augmentation
