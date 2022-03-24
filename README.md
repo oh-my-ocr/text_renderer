@@ -190,6 +190,7 @@ Find all effect/layout config example at [link](https://github.com/oh-my-ocr/tex
 
 
 ## Contribution
+Setup [Commitizen](http://commitizen.github.io/cz-cli/) for commit message
 
 - Corpus: Feel free to contribute more corpus generators to the project, 
   It does not necessarily need to be a generic corpus generator, but can also be a business-specific generator, 
