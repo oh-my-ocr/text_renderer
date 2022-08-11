@@ -30,7 +30,7 @@ class WordCorpusCfg(CorpusCfg):
 
     text_paths: List[Path] = field(default_factory=list)
     separator: str = " "
-    num_word: (int, int) = (1, 5)
+    num_word: (int, int) = (3, 10)
     filter_by_chars: bool = False
     chars_file: Path = None
     filter_font: bool = False
@@ -57,11 +57,9 @@ class WordCorpus(Corpus):
                 text = f.read()
                 texts.append(text.strip())
 
-        if self.cfg.chars_file is not None:
-            self.font_manager.update_font_support_chars(self.cfg.chars_file)
-
         if self.cfg.filter_by_chars:
             texts = Corpus.filter_by_chars(texts, self.cfg.chars_file)
+            self.font_manager.update_font_support_chars(self.cfg.chars_file)
             if self.cfg.filter_font:
                 self.font_manager.filter_font_path(self.cfg.filter_font_min_support_chars)
 
@@ -75,11 +73,7 @@ class WordCorpus(Corpus):
 
     def get_text(self):
         self.cfg: WordCorpusCfg
-        if self.cfg.num_word[0] == self.cfg.num_word[1]:
-            length = self.cfg.num_word[0]
-        else:
-            length = np.random.randint(*self.cfg.num_word)
-
+        length = np.random.randint(*self.cfg.num_word)
         start = np.random.randint(0, len(self.words) - length + 1)
         words = self.words[start : start + length]
         word = self.cfg.separator.join(words)

@@ -8,7 +8,8 @@ COPY main.py /app/main.py
 COPY tools /app/tools
 COPY example_data /app/example_data
 COPY docker /app/docker
-
+RUN python -m pip install -i https://mirrors.aliyun.com/pypi/simple/ -U --no-cache-dir pip && \
+    pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
 RUN pip3 install -r docker/requirements.txt && \
     python3 setup.py develop
 

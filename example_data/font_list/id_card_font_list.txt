@@ -1,0 +1,11 @@
+chn/方正兰亭黑2009_GB18030.TTF
+chn/方正仿宋_GB18030 .ttf
+chn/方正书宋_GB18030 .ttf
+chn/方正兰亭黑_GB18030.ttf
+chn/方正楷体_GB18030.ttf
+chn/方正宋黑_GB18030.TTF
+chn/楷体_GB18030.ttf
+chn/方正黑体_GB18030.ttf
+chn/华文细黑.TTF
+simsun.ttf
+OCR-B-10-BT.ttf

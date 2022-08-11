@@ -44,7 +44,7 @@ def base_cfg(name: str):
             bg_dir=BG_DIR,
             corpus=EnumCorpus(
                 EnumCorpusCfg(
-                    items=["Hello! 你好！"],
+                    items=["Hello World!"],
                     text_color_cfg=FixedTextColorCfg(),
                     **font_cfg,
                 ),
@@ -188,39 +188,16 @@ def curve():
 def vertical_text():
     cfg = base_cfg(inspect.currentframe().f_code.co_name)
     cfg.render_cfg.corpus.cfg.horizontal = False
-    # cfg.render_cfg.corpus.cfg.char_spacing = 0.1
-    return cfg
-
-
-def bg_and_text_mask():
-    cfg = base_cfg(inspect.currentframe().f_code.co_name)
-    cfg.render_cfg.perspective_transform = FixedPerspectiveTransformCfg(30, 30, 1.5)
-    cfg.render_cfg.return_bg_and_mask = True
-    cfg.render_cfg.height = 48
-    return cfg
-
-
-def emboss():
-    import imgaug.augmenters as iaa
-
-    cfg = base_cfg(inspect.currentframe().f_code.co_name)
-    cfg.render_cfg.height = 48
-    cfg.render_cfg.corpus_effects = Effects(
-        [
-            Padding(p=1, w_ratio=[0.2, 0.21], h_ratio=[0.7, 0.71], center=True),
-            ImgAugEffect(aug=iaa.Emboss(alpha=(0.9, 1.0), strength=(1.5, 1.6))),
-        ]
-    )
+    cfg.render_cfg.corpus.cfg.char_spacing = 0.1
     return cfg
 
 
 configs = [
-    # bg_and_text_mask()
-    emboss()
-    # vertical_text()
-    # extra_text_line_layout()
-    # char_spacing_compact(),
+    vertical_text(),
+    # extra_text_line_layout(),
+    # compact_char_spacing(),
     # char_spacing_large(),
+    # large_char_spacing(),
     # *line(),
     # perspective_transform(),
     # color_image(),

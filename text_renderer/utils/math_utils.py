@@ -67,6 +67,19 @@ class PerspectiveTransform(object):
         self.scale = cfg.scale
         self.fovy = cfg.fovy
 
+    def transform_image(self, src):
+        if len(src.shape) > 2:
+            H, W, C = src.shape
+        else:
+            H, W = src.shape
+
+        M33, sl, _, ptsOut = self.gen_warp_matrix(W, H)
+        sl = int(sl)
+
+        dst = cv2.warpPerspective(src, M33, (sl, sl), flags=cv2.INTER_CUBIC)
+
+        return dst, M33, ptsOut
+
     def get_transformed_size(self, size: Tuple[int, int]) -> Tuple[int, int]:
         """
         Args:
@@ -97,11 +110,7 @@ class PerspectiveTransform(object):
         img = np.array(pil_img).astype(np.uint8)
 
         dst = cv2.warpPerspective(
-            img,
-            self.M33,
-            (self.sl, self.sl),
-            flags=cv2.INTER_CUBIC,
-            borderValue=(255, 255, 255, 0),
+            img, self.M33, (self.sl, self.sl), flags=cv2.INTER_CUBIC
         )
         transformed_pnts = self.transform_pnts(text_box_pnts, self.M33)
 

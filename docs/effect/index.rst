@@ -11,7 +11,5 @@ See :class:`~text_renderer.config.RenderCfg`
 
    base_effect
    dropout
-   emboss
-   motion_blur
    line
    padding

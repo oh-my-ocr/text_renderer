@@ -27,7 +27,7 @@ font_cfg = dict(
     font_size=(30, 31),
 )
 
-perspective_transform = NormPerspectiveTransformCfg(20, 20, 1.5)
+perspective_transform = NormPerspectiveTransformCfg(5, 5, 1.5)
 
 chn_data = GeneratorCfg(
     num_image=50,
@@ -78,16 +78,17 @@ rand_data = GeneratorCfg(
 )
 
 eng_word_data = GeneratorCfg(
-    num_image=50,
+    num_image=2000000,
     save_dir=OUT_DIR / "word_corpus",
     render_cfg=RenderCfg(
         bg_dir=BG_DIR,
         perspective_transform=perspective_transform,
         corpus=WordCorpus(
             WordCorpusCfg(
-                text_paths=[TEXT_DIR / "eng_text.txt"],
+                text_paths=[TEXT_DIR / "twitter_en_big.txt"],
                 filter_by_chars=True,
                 chars_file=CHAR_DIR / "eng.txt",
+                num_word = (3,10),
                 **font_cfg
             ),
         ),
@@ -166,18 +167,7 @@ extra_text_line_data = GeneratorCfg(
     ),
 )
 
-# fmt: off
-# The configuration file must have a configs variable
 configs = [
-    chn_data,
-    enum_data,
-    rand_data,
-    eng_word_data,
-    same_line_data,
-    extra_text_line_data
+    eng_word_data
 ]
-# fmt: on
-# configs = [
-#     ch_word_data,
-#     eng_word_data
-# ]
+

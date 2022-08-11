@@ -130,8 +130,7 @@ class RenderCfg:
     corpus : Union[Corpus, List[Corpus]]
 
     corpus_effects : Union[Effects, List[Effects]]
-        Effects apply on text mask image of each corpus.
-        Effects used at this stage must return changed bbox of text if it modified it.
+        Apply on text mask image of each corpus
     bg_dir : Path
         Background image directory
     pre_load_bg_img : bool
@@ -141,9 +140,9 @@ class RenderCfg:
     perspective_transform : PerspectiveTransformCfg
         Apply Perspective Transform
     layout_effects : Effects
-        Effects apply on merged text mask image output by Layout.
+        Apply on merged text mask image output by Layout
     render_effects : Effects
-        Effects apply on final image.
+        Apply on final image
     height : int
         Resize(keep ratio) image to height, set -1 disables resize
     gray : bool
@@ -151,7 +150,6 @@ class RenderCfg:
     text_color_cfg : TextColorCfg
         If not None, will overwrite text_color_cfg in CorpusCfg
         useful to set same text color when use multi corpus
-    return_bg_and_mask: bool
     """
 
     corpus: Union["Corpus", List["Corpus"]]
@@ -165,7 +163,6 @@ class RenderCfg:
     height: int = 32
     gray: bool = True
     text_color_cfg: TextColorCfg = None
-    return_bg_and_mask: bool = False
 
 
 # noinspection PyUnresolvedReferences

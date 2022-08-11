@@ -1,5 +1,6 @@
-import typing
-from typing import Tuple
+import random
+from dataclasses import dataclass, Field
+from typing import Tuple, List
 
 import numpy as np
 from PIL import ImageDraw
@@ -7,9 +8,6 @@ from PIL import ImageDraw
 from text_renderer.utils.bbox import BBox
 from text_renderer.utils.draw_utils import transparent_img
 from text_renderer.utils.types import PILImage
-
-if typing.TYPE_CHECKING:
-    from text_renderer.config import TextColorCfg
 
 from .base_effect import Effect
 
@@ -24,7 +22,6 @@ class Line(Effect):
         tb_in_offset=(0, 3),
         tb_out_offset=(0, 3),
         line_pos_p=(0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1),
-        color_cfg: 'TextColorCfg' = None,
     ):
         """
         Draw lines around text
@@ -38,7 +35,6 @@ class Line(Effect):
             tb_out_offset (int, int): top-bottom line outer offset
             line_pos_p (:obj:`tuple`) : Each value corresponds a line position. Must sum to 1.
                         top, bottom, left, right, top_left, top_right, bottom_left, bottom_right, horizontal_middle, vertical_middle
-            color_cfg (TextColorCfg): if not None, get color from cfg
         """
         super().__init__(p)
         self.thickness = thickness
@@ -47,7 +43,6 @@ class Line(Effect):
         self.tb_in_offset = tb_in_offset
         self.tb_out_offset = tb_out_offset
         self.line_pos_p = line_pos_p
-        self.color_cfg = color_cfg
 
     def apply(self, img: PILImage, text_bbox: BBox) -> Tuple[PILImage, BBox]:
         # TODO: merge apply top/bottom/left.. to make it more efficient
@@ -227,10 +222,7 @@ class Line(Effect):
         return in_offset, thickness, out_offset
 
     def _get_line_color(self, img: PILImage, text_bbox: BBox):
-        if self.color_cfg is not None:
-            # TODO: pass background image
-            return self.color_cfg.get_color(img)
-
+        # TODO: make this configurable
         return (
             np.random.randint(0, 170),
             np.random.randint(0, 170),

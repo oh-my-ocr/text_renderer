@@ -1,9 +1,7 @@
 Image rendering process
 =======================
 
-.. image:: ../media/rendering_process.jpeg
-    :align: center
-
+.. _single_corpus:
 
 Single Corpus
 -------------
