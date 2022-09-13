@@ -1,5 +1,5 @@
 import random
-from typing import Tuple
+from typing import Tuple, Set
 
 import cv2
 import numpy as np
@@ -133,7 +133,7 @@ def size_to_pnts(size) -> np.ndarray:
     return np.array([[0, 0], [width, 0], [width, height], [0, height]])
 
 
-def load_chars_file(chars_file, log=False):
+def load_chars_file(chars_file, log=False) -> Set:
     """
 
     Args:
