@@ -72,4 +72,12 @@ class CharCorpus(Corpus):
         length = np.random.randint(*self.cfg.length)
         start = np.random.randint(0, len(self.text) - length)
         word = self.text[start : start + length]
+        # TODO: 调整英文字符占比较多的情况
+        n = 0
+        for c in word:
+            if "a" <= c.lower() <= "z":
+                n+=1
+        if n/len(word) >0.8:
+            word = self.text[start: start + 2*length]
+        word = word.strip()
         return word

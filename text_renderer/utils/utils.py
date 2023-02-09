@@ -171,4 +171,7 @@ def load_chars_file(chars_file, log=False):
         chars = set("".join(lines))
     if log:
         logger.info(f"load {len(chars)} chars from: {chars_file}")
+    # TODO: 中英文场景支持空格
+    if SPACE_CHAR not in chars:
+        chars.add(SPACE_CHAR)
     return chars
