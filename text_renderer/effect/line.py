@@ -158,8 +158,12 @@ class Line(Effect):
         draw = ImageDraw.Draw(new_img)
 
         text_bbox.right += in_offset
+        [x_right_top, y_right_top] = text_bbox.right_top
+        [x_right_bottom, y_right_bottom] = text_bbox.right_bottom
+        right_top = (x_right_top, y_right_top - 10)
+        right_bottom = (x_right_bottom, y_right_bottom + 10)
         draw.line(
-            list(text_bbox.right_top) + list(text_bbox.right_bottom),
+            list(right_top) + list(right_bottom),
             fill=self._get_line_color(img, text_bbox),
             width=thickness,
         )
@@ -185,8 +189,8 @@ class Line(Effect):
 
         [x_left_top, y_left_top] = text_bbox.left_top
         [x_left_bottom, y_left_bottom] = text_bbox.left_bottom
-        left_top = (x_left_top, y_left_top + 10)
-        left_bottom = (x_left_bottom, y_left_bottom - 10)
+        left_top = (x_left_top, y_left_top - 10)
+        left_bottom = (x_left_bottom, y_left_bottom + 10)
         draw.line(
             list(left_top) + list(left_bottom),
             fill=self._get_line_color(img, text_bbox),
