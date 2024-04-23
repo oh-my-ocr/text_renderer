@@ -183,8 +183,12 @@ class Line(Effect):
         text_bbox.offset_(text_bbox.right_top, (new_w, 0))
         text_bbox.left -= in_offset
 
+        [x_left_top, y_left_top] = text_bbox.left_top
+        [x_left_bottom, y_left_bottom] = text_bbox.left_bottom
+        left_top = (x_left_top, y_left_top + 10)
+        left_bottom = (x_left_bottom, y_left_bottom - 10)
         draw.line(
-            list(text_bbox.left_top) + list(text_bbox.left_bottom),
+            list(left_top) + list(left_bottom),
             fill=self._get_line_color(img, text_bbox),
             width=thickness,
         )
