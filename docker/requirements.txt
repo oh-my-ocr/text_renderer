@@ -2,7 +2,7 @@ opencv-python
 imgaug
 fontTools
 lmdb
-pillow
+pillow<=9.5.0
 numpy
 tenacity
 fire
