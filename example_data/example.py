@@ -2,15 +2,6 @@ import inspect
 import os
 from pathlib import Path
 
-# Import imgaug if available, otherwise use Albumentations
-try:
-    import imgaug.augmenters as iaa
-    IMGAUG_AVAILABLE = True
-except ImportError:
-    IMGAUG_AVAILABLE = False
-    # Use Albumentations as fallback
-    import albumentations as A
-
 from text_renderer.effect import *
 from text_renderer.corpus import *
 from text_renderer.config import (
@@ -195,30 +186,17 @@ def extra_text_line_data():
     )
 
 
-def imgaug_emboss_example():
-    if IMGAUG_AVAILABLE:
-        return base_cfg(
-            inspect.currentframe().f_code.co_name,
-            corpus=get_char_corpus(),
-            corpus_effects=Effects(
-                [
-                    Padding(p=1, w_ratio=[0.2, 0.21], h_ratio=[0.7, 0.71], center=True),
-                    ImgAugEffect(aug=iaa.Emboss(alpha=(0.9, 1.0), strength=(1.5, 1.6))),
-                ]
-            ),
-        )
-    else:
-        # Fallback to Albumentations emboss
-        return base_cfg(
-            inspect.currentframe().f_code.co_name,
-            corpus=get_char_corpus(),
-            corpus_effects=Effects(
-                [
-                    Padding(p=1, w_ratio=[0.2, 0.21], h_ratio=[0.7, 0.71], center=True),
-                    AlbumentationsEmboss(alpha=(0.9, 1.0), strength=(1.5, 1.6)),
-                ]
-            ),
-        )
+def albumentations_emboss_example():
+    return base_cfg(
+        inspect.currentframe().f_code.co_name,
+        corpus=get_char_corpus(),
+        corpus_effects=Effects(
+            [
+                Padding(p=1, w_ratio=[0.2, 0.21], h_ratio=[0.7, 0.71], center=True),
+                AlbumentationsEmboss(alpha=(0.9, 1.0), strength=(1.5, 1.6)),
+            ]
+        ),
+    )
 
 
 # fmt: off
@@ -230,6 +208,6 @@ configs = [
     eng_word_data(),
     same_line_data(),
     extra_text_line_data(),
-    imgaug_emboss_example()
+    albumentations_emboss_example()
 ]
 # fmt: on

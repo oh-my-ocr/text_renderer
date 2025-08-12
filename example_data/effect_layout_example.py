@@ -204,23 +204,12 @@ def emboss():
     cfg = base_cfg(inspect.currentframe().f_code.co_name)
     cfg.render_cfg.height = 48
     
-    # Try to use imgaug if available, otherwise use Albumentations
-    try:
-        import imgaug.augmenters as iaa
-        cfg.render_cfg.corpus_effects = Effects(
-            [
-                Padding(p=1, w_ratio=[0.2, 0.21], h_ratio=[0.7, 0.71], center=True),
-                ImgAugEffect(aug=iaa.Emboss(alpha=(0.9, 1.0), strength=(1.5, 1.6))),
-            ]
-        )
-    except ImportError:
-        # Fallback to Albumentations emboss
-        cfg.render_cfg.corpus_effects = Effects(
-            [
-                Padding(p=1, w_ratio=[0.2, 0.21], h_ratio=[0.7, 0.71], center=True),
-                AlbumentationsEmboss(alpha=(0.9, 1.0), strength=(1.5, 1.6)),
-            ]
-        )
+    cfg.render_cfg.corpus_effects = Effects(
+        [
+            Padding(p=1, w_ratio=[0.2, 0.21], h_ratio=[0.7, 0.71], center=True),
+            AlbumentationsEmboss(alpha=(0.9, 1.0), strength=(1.5, 1.6)),
+        ]
+    )
     
     return cfg
 

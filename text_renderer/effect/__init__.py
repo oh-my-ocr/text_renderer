@@ -21,26 +21,6 @@ from .albumentations_effect import (
     OpticalDistortion
 )
 
-# Import imgaug effects if available (legacy support)
-try:
-    from .imgaug_effect import ImgAugEffect, Emboss, MotionBlur
-    IMGAUG_AVAILABLE = True
-except ImportError:
-    IMGAUG_AVAILABLE = False
-    # Create placeholder classes for backward compatibility
-    class ImgAugEffect:
-        def __init__(self, *args, **kwargs):
-            raise ImportError("imgaug is not installed. Please install imgaug or use Albumentations effects instead.")
-    
-    class Emboss:
-        def __init__(self, *args, **kwargs):
-            raise ImportError("imgaug is not installed. Please use AlbumentationsEmboss instead.")
-    
-    class MotionBlur:
-        def __init__(self, *args, **kwargs):
-            raise ImportError("imgaug is not installed. Please use AlbumentationsMotionBlur instead.")
-
-
 __all__ = [
     "Effect",
     "Effects",
@@ -51,9 +31,6 @@ __all__ = [
     "DropoutVertical",
     "Line",
     "Padding",
-    "ImgAugEffect",
-    "Emboss",
-    "MotionBlur",
     "AlbumentationsEffect",
     "AlbumentationsEmboss",
     "AlbumentationsMotionBlur",
