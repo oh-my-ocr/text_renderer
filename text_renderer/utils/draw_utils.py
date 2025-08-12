@@ -53,7 +53,13 @@ def draw_text_on_bg(
     heights = []
 
     for c in font_text.text:
-        size = font_text.font.getsize(c)
+        # Use getbbox() instead of deprecated getsize()
+        bbox = font_text.font.getbbox(c)
+        if bbox[2] > bbox[0] and bbox[3] > bbox[1]:  # Valid bbox
+            size = (bbox[2] - bbox[0], bbox[3] - bbox[1])
+        else:
+            # Fallback for empty or invalid bbox
+            size = (0, font_text.font.size)
         chars_size.append(size)
         widths.append(size[0])
         heights.append(size[1])

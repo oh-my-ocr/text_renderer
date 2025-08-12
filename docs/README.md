@@ -2,7 +2,8 @@
 Generate text line images for training deep learning OCR model (e.g. [CRNN](https://github.com/bgshih/crnn)). ![example](./image/example.gif)
 
 - [x] Modular design. You can easily add different components: [Corpus](https://oh-my-ocr.github.io/text_renderer/corpus/index.html), [Effect](https://oh-my-ocr.github.io/text_renderer/effect/index.html), [Layout](https://oh-my-ocr.github.io/text_renderer/layout/index.html).
-- [x] Integrate with [imgaug](https://github.com/aleju/imgaug), see [imgaug_example](https://github.com/oh-my-ocr/text_renderer/blob/master/example_data/example.py#L184) for usage.
+- [x] Integrate with [Albumentations](https://github.com/albumentations-team/albumentations), see [albumentations_example](https://github.com/oh-my-ocr/text_renderer/blob/master/example_data/albumentations_example.py) for usage.
+- [x] Legacy support for [imgaug](https://github.com/aleju/imgaug), see [imgaug_example](https://github.com/oh-my-ocr/text_renderer/blob/master/example_data/example.py#L184) for usage.
 - [x] Support render multi corpus on image with different effects. [Layout](https://oh-my-ocr.github.io/text_renderer/layout/index.html) is responsible for the layout between multiple corpora
 - [x] Support apply effects on different stages of rendering process [corpus_effects](https://oh-my-ocr.github.io/text_renderer/config.html#text_renderer.config.RenderCfg), [layout_effects](https://oh-my-ocr.github.io/text_renderer/config.html#text_renderer.config.RenderCfg), [render_effects](https://oh-my-ocr.github.io/text_renderer/config.html#text_renderer.config.RenderCfg).
 - [x] Generate vertical text.

@@ -1,6 +1,6 @@
 import os
 from abc import abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Tuple, Union
 
@@ -44,7 +44,7 @@ class CorpusCfg:
     font_list_file: Path = None
     clip_length: int = -1
     char_spacing: Union[float, Tuple[float, float]] = -1
-    text_color_cfg: TextColorCfg = SimpleTextColorCfg()
+    text_color_cfg: TextColorCfg = field(default_factory=SimpleTextColorCfg)
     horizontal: bool = True
 
     def __init_subclass__(cls, **kwargs):
