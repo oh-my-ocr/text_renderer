@@ -71,4 +71,4 @@ class Curve(Effect):
         return Image.fromarray(dst), bbox
 
     def _remap_y(self, x, max_val):
-        return int(max_val * np.math.sin(2 * 3.14 * x / self.period))
+        return int(max_val * np.sin(2 * 3.14 * x / self.period))
