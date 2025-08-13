@@ -9,6 +9,7 @@ from text_renderer.config import (
     NormPerspectiveTransformCfg,
     GeneratorCfg,
     FixedTextColorCfg,
+    RangeTextColorCfg,
 )
 from text_renderer.layout.same_line import SameLineLayout
 from text_renderer.layout.extra_text_line import ExtraTextLineLayout
@@ -194,6 +195,120 @@ def albumentations_emboss_example():
             [
                 Padding(p=1, w_ratio=[0.2, 0.21], h_ratio=[0.7, 0.71], center=True),
                 AlbumentationsEmboss(alpha=(0.9, 1.0), strength=(1.5, 1.6)),
+                GaussianBlur(blur_limit=(3, 7)),
+            ]
+        ),
+    )
+
+
+def range_color_example():
+    """
+    Example using RangeTextColorCfg with blue and brown color ranges
+    """
+    # Define color ranges with fractions
+    color_ranges = {
+        "blue": {
+            "fraction": 0.5,
+            "l_boundary": [0, 0, 150],
+            "h_boundary": [60, 60, 253]
+        },
+        "brown": {
+            "fraction": 0.5,
+            "l_boundary": [139, 70, 19],
+            "h_boundary": [160, 82, 43]
+        }
+    }
+    
+    return base_cfg(
+        inspect.currentframe().f_code.co_name,
+        corpus=get_char_corpus(),
+        gray=False,  # Set to False to enable color output
+        corpus_effects=Effects(
+            [
+                Line(0.5, color_cfg=RangeTextColorCfg(color_ranges=color_ranges)),
+                OneOf([DropoutRand(), DropoutVertical()]),
+            ]
+        ),
+    )
+
+
+def text_border_example():
+    """
+    Example using TextBorder effect with different styles
+    """
+    return base_cfg(
+        inspect.currentframe().f_code.co_name,
+        corpus=get_char_corpus(),
+        gray=False,  # Set to False to enable color output
+        corpus_effects=Effects(
+            [
+                # Solid border with red color
+                TextBorder(
+                    p=0.7,
+                    border_width=(2, 4),
+                    border_color_cfg=FixedTextColorCfg(),
+                    border_style='solid',
+                    blur_radius=0
+                ),
+                # Dashed border with blue color
+                TextBorder(
+                    p=0.3,
+                    border_width=(1, 2),
+                    border_color_cfg=RangeTextColorCfg({
+                        "blue": {
+                            "fraction": 1.0,
+                            "l_boundary": [0, 0, 200],
+                            "h_boundary": [50, 50, 255]
+                        }
+                    }),
+                    border_style='dashed',
+                    blur_radius=0
+                ),
+                # Dotted border with green color
+                TextBorder(
+                    p=0.2,
+                    border_width=(1, 3),
+                    border_color_cfg=RangeTextColorCfg({
+                        "green": {
+                            "fraction": 1.0,
+                            "l_boundary": [0, 150, 0],
+                            "h_boundary": [50, 255, 50]
+                        }
+                    }),
+                    border_style='dotted',
+                    blur_radius=1
+                ),
+            ]
+        ),
+    )
+
+
+def text_border_light_dark_example():
+    """
+    Example using TextBorder effect with light/dark configuration
+    """
+    return base_cfg(
+        inspect.currentframe().f_code.co_name,
+        corpus=get_char_corpus(),
+        gray=False,  # Set to False to enable color output
+        corpus_effects=Effects(
+            [
+                # Text border with light/dark configuration
+                TextBorder(
+                    p=1.0,  # Always apply when enabled
+                    border_width=(2, 3),
+                    border_style='solid',
+                    blur_radius=0,
+                    # Configuration following the standard format
+                    enable=True,
+                    fraction=0.5,
+                    light_enable=True,
+                    light_fraction=0.5,
+                    dark_enable=True,
+                    dark_fraction=0.5,
+                ),
+                # Add some dropout effects
+                OneOf([DropoutRand(), DropoutVertical()]),
             ]
         ),
     )
@@ -208,6 +323,9 @@ configs = [
     eng_word_data(),
     same_line_data(),
     extra_text_line_data(),
-    albumentations_emboss_example()
+    albumentations_emboss_example(),
+    range_color_example(),
+    text_border_example(),
+    text_border_light_dark_example()
 ]
 # fmt: on

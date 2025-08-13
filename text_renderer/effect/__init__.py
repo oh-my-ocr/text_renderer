@@ -5,6 +5,7 @@ from .dropout_horizontal import DropoutHorizontal
 from .dropout_vertical import DropoutVertical
 from .line import Line
 from .padding import Padding
+from .text_border import TextBorder
 
 # Import Albumentations effects
 from .albumentations_effect import (
@@ -13,6 +14,9 @@ from .albumentations_effect import (
     MotionBlur as AlbumentationsMotionBlur,
     GaussianBlur,
     Noise,
+    UniformNoise,
+    SaltPepperNoise,
+    PoissonNoise,
     BrightnessContrast,
     Rotate,
     ShiftScaleRotate,
@@ -31,11 +35,15 @@ __all__ = [
     "DropoutVertical",
     "Line",
     "Padding",
+    "TextBorder",
     "AlbumentationsEffect",
     "AlbumentationsEmboss",
     "AlbumentationsMotionBlur",
     "GaussianBlur",
     "Noise",
+    "UniformNoise",
+    "SaltPepperNoise",
+    "PoissonNoise",
     "BrightnessContrast",
     "Rotate",
     "ShiftScaleRotate",

@@ -124,6 +124,73 @@ class Noise(AlbumentationsEffect):
         super().__init__(p, transform)
 
 
+class UniformNoise(AlbumentationsEffect):
+    def __init__(self, p=1.0, intensity_range=(0.1, 0.3)):
+        """
+        Uniform noise effect using Albumentations
+
+        Parameters
+        ----------
+        p: float
+            Probability of applying this effect
+        intensity_range: tuple
+            Range for noise intensity (0.0 to 1.0)
+        """
+        # Use MultiplicativeNoise which adds uniform-like noise
+        transform = A.MultiplicativeNoise(
+            multiplier=(0.9, 1.1),
+            per_channel=True,
+            p=1.0
+        )
+        super().__init__(p, transform)
+
+
+class SaltPepperNoise(AlbumentationsEffect):
+    def __init__(self, p=1.0, noise_prob=0.05):
+        """
+        Salt and pepper noise effect using Albumentations
+
+        Parameters
+        ----------
+        p: float
+            Probability of applying this effect
+        noise_prob: float
+            Probability of noise pixels (0.0 to 1.0)
+        """
+        # Use CoarseDropout to simulate salt and pepper noise
+        transform = A.CoarseDropout(
+            max_holes=8,
+            max_height=8,
+            max_width=8,
+            min_holes=1,
+            min_height=1,
+            min_width=1,
+            fill_value=0,
+            p=1.0
+        )
+        super().__init__(p, transform)
+
+
+class PoissonNoise(AlbumentationsEffect):
+    def __init__(self, p=1.0, lam=10.0):
+        """
+        Poisson noise effect using Albumentations
+
+        Parameters
+        ----------
+        p: float
+            Probability of applying this effect
+        lam: float
+            Lambda parameter for Poisson distribution
+        """
+        # Use GaussNoise with higher variance to approximate Poisson noise
+        transform = A.GaussNoise(
+            var_limit=(lam, lam * 2),
+            p=1.0
+        )
+        super().__init__(p, transform)
+
+
 class BrightnessContrast(AlbumentationsEffect):
     def __init__(self, p=1.0, brightness_limit=0.2, contrast_limit=0.2):
         """

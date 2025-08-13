@@ -4,6 +4,7 @@ fontTools==4.12.1
 lmdb==0.98
 pillow==6.2.2
 numpy
+scipy
 tenacity
 fire
 tqdm
