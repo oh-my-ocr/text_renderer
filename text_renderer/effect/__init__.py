@@ -7,6 +7,10 @@ from .albumentations_effect import (
 from .albumentations_effect import Emboss as AlbumentationsEmboss
 from .albumentations_effect import GaussianBlur, GridDistortion
 from .albumentations_effect import MotionBlur as AlbumentationsMotionBlur
+
+# Create aliases for backward compatibility
+Emboss = AlbumentationsEmboss
+MotionBlur = AlbumentationsMotionBlur
 from .albumentations_effect import (
     Noise,
     OpticalDistortion,
@@ -24,6 +28,7 @@ from .line import Line
 from .padding import Padding
 from .selector import OneOf
 from .text_border import TextBorder
+from .curve import Curve
 
 __all__ = [
     "Effect",
@@ -36,9 +41,12 @@ __all__ = [
     "Line",
     "Padding",
     "TextBorder",
+    "Curve",
     "AlbumentationsEffect",
     "AlbumentationsEmboss",
     "AlbumentationsMotionBlur",
+    "Emboss",
+    "MotionBlur",
     "GaussianBlur",
     "Noise",
     "UniformNoise",

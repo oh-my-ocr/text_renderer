@@ -1,5 +1,5 @@
 # Text Renderer
-Generate text line images for training deep learning OCR model (e.g. [CRNN](https://github.com/bgshih/crnn)). ![example](./image/example.gif)
+Generate text line images for training deep learning OCR model (e.g. [CRNN](https://github.com/bgshih/crnn)). ![example](../image/example.gif)
 
 - [x] Modular design. You can easily add different components: [Corpus](https://oh-my-ocr.github.io/text_renderer/corpus/index.html), [Effect](https://oh-my-ocr.github.io/text_renderer/effect/index.html), [Layout](https://oh-my-ocr.github.io/text_renderer/layout/index.html).
 - [x] Integrate with [Albumentations](https://github.com/albumentations-team/albumentations), see [albumentations_example](https://github.com/oh-my-ocr/text_renderer/blob/master/example_data/albumentations_example.py) for usage.

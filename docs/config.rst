@@ -21,3 +21,9 @@ Config
 
 .. autoclass:: text_renderer.config.SimpleTextColorCfg
     :members:
+
+.. autoclass:: text_renderer.config.FixedTextColorCfg
+    :members:
+
+.. autoclass:: text_renderer.config.RangeTextColorCfg
+    :members:
