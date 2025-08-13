@@ -13,16 +13,20 @@ Generate text line images for training deep learning OCR model (e.g. [CRNN](http
 
 [Documentation](https://oh-my-ocr.github.io/text_renderer/index.html)
 
+## Installation
+
+```bash
+git clone https://github.com/oh-my-ocr/text_renderer
+cd text_renderer
+pip install -r requirements.txt
+```
+
 ## Run Example
 
 Run following command to generate images using example data:
 
 ```bash
-git clone https://github.com/oh-my-ocr/text_renderer
-cd text_renderer
-python3 setup.py develop
-pip3 install -r docker/requirements.txt
-python3 main.py \
+python main.py \
     --config example_data/example.py \
     --dataset img \
     --num_processes 2 \
@@ -198,27 +202,7 @@ Setup [Commitizen](http://commitizen.github.io/cz-cli/) for commit message
   such as generating ID numbers
 
 
-## Run in Docker
 
-Build image
-
-```bash
-docker build -f docker/Dockerfile -t text_renderer .
-```
-
-Config file is provided by `CONFIG` environment.
-In `example.py` file, data is generated in `example_data/output` directory,
-so we map this directory to the host.
-
-```bash
-docker run --rm \
--v `pwd`/example_data/docker_output/:/app/example_data/output \
---env CONFIG=/app/example_data/example.py \
---env DATASET=img \
---env NUM_PROCESSES=2 \
---env LOG_PERIOD=10 \
-text_renderer
-```
 
 ## Font Viewer
 Start font viewer
