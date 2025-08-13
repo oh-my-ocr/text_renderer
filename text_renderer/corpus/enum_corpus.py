@@ -4,6 +4,7 @@ from typing import List
 
 import numpy as np
 from loguru import logger
+
 from text_renderer.utils.errors import PanicError
 from text_renderer.utils.utils import random_choice
 

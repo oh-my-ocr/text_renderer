@@ -1,8 +1,8 @@
 from typing import Tuple, Union
 
-from PIL import ImageDraw, Image
-from PIL.Image import Image as PILImage
 import numpy as np
+from PIL import Image, ImageDraw
+from PIL.Image import Image as PILImage
 
 from text_renderer.utils.font_text import FontText
 

@@ -1,7 +1,7 @@
 import os
-from dataclasses import field, dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Tuple, List
+from typing import List, Tuple
 
 import numpy as np
 from loguru import logger
@@ -41,7 +41,8 @@ class CharCorpus(Corpus):
     """
 
     def __init__(
-        self, cfg: "CorpusCfg",
+        self,
+        cfg: "CorpusCfg",
     ):
         super().__init__(cfg)
 
@@ -65,7 +66,9 @@ class CharCorpus(Corpus):
         if self.cfg.filter_by_chars:
             self.text = Corpus.filter_by_chars(self.text, self.cfg.chars_file)
             if self.cfg.filter_font:
-                self.font_manager.filter_font_path(self.cfg.filter_font_min_support_chars)
+                self.font_manager.filter_font_path(
+                    self.cfg.filter_font_min_support_chars
+                )
 
         if len(self.text) < self.cfg.length[1]:
             raise PanicError("too few texts")

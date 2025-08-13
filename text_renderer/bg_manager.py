@@ -3,9 +3,9 @@ from pathlib import Path
 from typing import List, Tuple
 
 import numpy as np
+from loguru import logger
 from PIL import Image
 from PIL.Image import Image as PILImage
-from loguru import logger
 
 from text_renderer.utils.utils import random_choice
 
@@ -21,7 +21,9 @@ class BgManager:
         for p in bg_dir.glob("**/*"):
             if p.suffix in IMAGE_EXTENSIONS:
                 if self._is_transparent_image(p):
-                    logger.warning(f"Ignore transparent background image, please convert is to JPEG: {p}")
+                    logger.warning(
+                        f"Ignore transparent background image, please convert is to JPEG: {p}"
+                    )
                     continue
                 self.bg_paths.append(str(p))
                 if pre_load:

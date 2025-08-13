@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Tuple
 
 import numpy as np
+
 from text_renderer.utils.errors import PanicError
 from text_renderer.utils.utils import load_chars_file, random_choice
 

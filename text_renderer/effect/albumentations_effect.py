@@ -1,8 +1,8 @@
-from typing import Tuple, Union, List
+from typing import List, Tuple, Union
 
-from PIL import Image
 import albumentations as A
 import numpy as np
+from PIL import Image
 
 from text_renderer.utils.bbox import BBox
 from text_renderer.utils.types import PILImage
@@ -25,11 +25,11 @@ class AlbumentationsEffect(Effect):
 
         # Convert PIL image to numpy array
         img_array = np.array(img)
-        
+
         # Apply transformation
         transformed = self.transform(image=img_array)
-        transformed_img = transformed['image']
-        
+        transformed_img = transformed["image"]
+
         # Convert back to PIL image
         return Image.fromarray(transformed_img), text_bbox
 
@@ -51,16 +51,14 @@ class Emboss(AlbumentationsEffect):
         # Note: Albumentations doesn't have a direct emboss transform
         # We'll use a combination of transforms to simulate emboss effect
         # This is a simplified version - you might want to implement a custom emboss
-        transform = A.Compose([
-            A.RandomBrightnessContrast(
-                brightness_limit=0.1,
-                contrast_limit=0.2,
-                p=1.0
-            ),
-            A.GaussNoise(
-                p=1.0
-            )
-        ])
+        transform = A.Compose(
+            [
+                A.RandomBrightnessContrast(
+                    brightness_limit=0.1, contrast_limit=0.2, p=1.0
+                ),
+                A.GaussNoise(p=1.0),
+            ]
+        )
         super().__init__(p, transform)
 
 
@@ -80,10 +78,7 @@ class MotionBlur(AlbumentationsEffect):
         direction: tuple
             Range for blur direction (not directly supported in Albumentations)
         """
-        transform = A.MotionBlur(
-            blur_limit=blur_limit,
-            p=1.0
-        )
+        transform = A.MotionBlur(blur_limit=blur_limit, p=1.0)
         super().__init__(p, transform)
 
 
@@ -99,10 +94,7 @@ class GaussianBlur(AlbumentationsEffect):
         blur_limit: tuple
             Range for blur kernel size
         """
-        transform = A.GaussianBlur(
-            blur_limit=blur_limit,
-            p=1.0
-        )
+        transform = A.GaussianBlur(blur_limit=blur_limit, p=1.0)
         super().__init__(p, transform)
 
 
@@ -118,9 +110,7 @@ class Noise(AlbumentationsEffect):
         var_limit: tuple
             Range for noise variance
         """
-        transform = A.GaussNoise(
-            p=1.0
-        )
+        transform = A.GaussNoise(p=1.0)
         super().__init__(p, transform)
 
 
@@ -138,9 +128,7 @@ class UniformNoise(AlbumentationsEffect):
         """
         # Use MultiplicativeNoise which adds uniform-like noise
         transform = A.MultiplicativeNoise(
-            multiplier=(0.9, 1.1),
-            per_channel=True,
-            p=1.0
+            multiplier=(0.9, 1.1), per_channel=True, p=1.0
         )
         super().__init__(p, transform)
 
@@ -166,7 +154,7 @@ class SaltPepperNoise(AlbumentationsEffect):
             min_height=1,
             min_width=1,
             fill_value=0,
-            p=1.0
+            p=1.0,
         )
         super().__init__(p, transform)
 
@@ -184,10 +172,7 @@ class PoissonNoise(AlbumentationsEffect):
             Lambda parameter for Poisson distribution
         """
         # Use GaussNoise with higher variance to approximate Poisson noise
-        transform = A.GaussNoise(
-            var_limit=(lam, lam * 2),
-            p=1.0
-        )
+        transform = A.GaussNoise(var_limit=(lam, lam * 2), p=1.0)
         super().__init__(p, transform)
 
 
@@ -206,9 +191,7 @@ class BrightnessContrast(AlbumentationsEffect):
             Range for contrast adjustment
         """
         transform = A.RandomBrightnessContrast(
-            brightness_limit=brightness_limit,
-            contrast_limit=contrast_limit,
-            p=1.0
+            brightness_limit=brightness_limit, contrast_limit=contrast_limit, p=1.0
         )
         super().__init__(p, transform)
 
@@ -225,10 +208,7 @@ class Rotate(AlbumentationsEffect):
         limit: int
             Maximum rotation angle in degrees
         """
-        transform = A.Rotate(
-            limit=limit,
-            p=1.0
-        )
+        transform = A.Rotate(limit=limit, p=1.0)
         super().__init__(p, transform)
 
 
@@ -252,7 +232,7 @@ class ShiftScaleRotate(AlbumentationsEffect):
             shift_limit=shift_limit,
             scale_limit=scale_limit,
             rotate_limit=rotate_limit,
-            p=1.0
+            p=1.0,
         )
         super().__init__(p, transform)
 
@@ -273,11 +253,7 @@ class ElasticTransform(AlbumentationsEffect):
         alpha_affine: float
             Affine transformation parameter
         """
-        transform = A.ElasticTransform(
-            alpha=alpha,
-            sigma=sigma,
-            p=1.0
-        )
+        transform = A.ElasticTransform(alpha=alpha, sigma=sigma, p=1.0)
         super().__init__(p, transform)
 
 
@@ -296,9 +272,7 @@ class GridDistortion(AlbumentationsEffect):
             Maximum distortion
         """
         transform = A.GridDistortion(
-            num_steps=num_steps,
-            distort_limit=distort_limit,
-            p=1.0
+            num_steps=num_steps, distort_limit=distort_limit, p=1.0
         )
         super().__init__(p, transform)
 
@@ -317,8 +291,5 @@ class OpticalDistortion(AlbumentationsEffect):
         shift_limit: float
             Maximum shift
         """
-        transform = A.OpticalDistortion(
-            distort_limit=distort_limit,
-            p=1.0
-        )
+        transform = A.OpticalDistortion(distort_limit=distort_limit, p=1.0)
         super().__init__(p, transform)

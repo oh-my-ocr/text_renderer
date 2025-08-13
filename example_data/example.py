@@ -2,18 +2,17 @@ import inspect
 import os
 from pathlib import Path
 
-from text_renderer.effect import *
-from text_renderer.corpus import *
 from text_renderer.config import (
-    RenderCfg,
-    NormPerspectiveTransformCfg,
-    GeneratorCfg,
     FixedTextColorCfg,
+    GeneratorCfg,
+    NormPerspectiveTransformCfg,
     RangeTextColorCfg,
+    RenderCfg,
 )
-from text_renderer.layout.same_line import SameLineLayout
+from text_renderer.corpus import *
+from text_renderer.effect import *
 from text_renderer.layout.extra_text_line import ExtraTextLineLayout
-
+from text_renderer.layout.same_line import SameLineLayout
 
 CURRENT_DIR = Path(os.path.abspath(os.path.dirname(__file__)))
 OUT_DIR = CURRENT_DIR / "output"
@@ -210,15 +209,15 @@ def range_color_example():
         "blue": {
             "fraction": 0.5,
             "l_boundary": [0, 0, 150],
-            "h_boundary": [60, 60, 253]
+            "h_boundary": [60, 60, 253],
         },
         "brown": {
             "fraction": 0.5,
             "l_boundary": [139, 70, 19],
-            "h_boundary": [160, 82, 43]
-        }
+            "h_boundary": [160, 82, 43],
+        },
     }
-    
+
     return base_cfg(
         inspect.currentframe().f_code.co_name,
         corpus=get_char_corpus(),
@@ -247,36 +246,40 @@ def text_border_example():
                     p=0.7,
                     border_width=(2, 4),
                     border_color_cfg=FixedTextColorCfg(),
-                    border_style='solid',
-                    blur_radius=0
+                    border_style="solid",
+                    blur_radius=0,
                 ),
                 # Dashed border with blue color
                 TextBorder(
                     p=0.3,
                     border_width=(1, 2),
-                    border_color_cfg=RangeTextColorCfg({
-                        "blue": {
-                            "fraction": 1.0,
-                            "l_boundary": [0, 0, 200],
-                            "h_boundary": [50, 50, 255]
+                    border_color_cfg=RangeTextColorCfg(
+                        {
+                            "blue": {
+                                "fraction": 1.0,
+                                "l_boundary": [0, 0, 200],
+                                "h_boundary": [50, 50, 255],
+                            }
                         }
-                    }),
-                    border_style='dashed',
-                    blur_radius=0
+                    ),
+                    border_style="dashed",
+                    blur_radius=0,
                 ),
                 # Dotted border with green color
                 TextBorder(
                     p=0.2,
                     border_width=(1, 3),
-                    border_color_cfg=RangeTextColorCfg({
-                        "green": {
-                            "fraction": 1.0,
-                            "l_boundary": [0, 150, 0],
-                            "h_boundary": [50, 255, 50]
+                    border_color_cfg=RangeTextColorCfg(
+                        {
+                            "green": {
+                                "fraction": 1.0,
+                                "l_boundary": [0, 150, 0],
+                                "h_boundary": [50, 255, 50],
+                            }
                         }
-                    }),
-                    border_style='dotted',
-                    blur_radius=1
+                    ),
+                    border_style="dotted",
+                    blur_radius=1,
                 ),
             ]
         ),
@@ -297,7 +300,7 @@ def text_border_light_dark_example():
                 TextBorder(
                     p=1.0,  # Always apply when enabled
                     border_width=(2, 3),
-                    border_style='solid',
+                    border_style="solid",
                     blur_radius=0,
                     # Configuration following the standard format
                     enable=True,

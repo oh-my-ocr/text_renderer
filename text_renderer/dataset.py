@@ -1,81 +1,128 @@
-import os
-import json
-from typing import Dict
+"""
+Dataset utilities for text rendering operations.
 
-import lmdb
+This module provides dataset classes for storing and retrieving generated text images
+and their corresponding labels. It supports both image file storage and LMDB database storage.
+"""
+
+import json
+import os
+from typing import Dict, Tuple
+
 import cv2
+import lmdb
 import numpy as np
 
 
 class Dataset:
+    """
+    Abstract base class for dataset storage and retrieval.
+
+    This class provides a common interface for storing generated text images
+    and their corresponding labels. It supports both image file storage and
+    database storage formats.
+
+    Args:
+        data_dir (str): Directory path for storing dataset files
+        jpg_quality (int): JPEG compression quality (1-100, default: 95)
+    """
+
     def __init__(self, data_dir: str, jpg_quality: int = 95):
         self.data_dir = data_dir
         if not os.path.exists(data_dir):
             os.makedirs(data_dir)
         self.jpg_quality = jpg_quality
 
-    def encode_param(self):
+    def encode_param(self) -> list:
+        """
+        Get JPEG encoding parameters for image compression.
+
+        Returns:
+            list: OpenCV JPEG encoding parameters
+        """
         return [int(cv2.IMWRITE_JPEG_QUALITY), self.jpg_quality]
 
     def write(self, name: str, image: np.ndarray, label: str):
+        """
+        Write an image and its label to the dataset.
+
+        Args:
+            name (str): Unique identifier for the image
+            image (np.ndarray): Image data as numpy array
+            label (str): Text label corresponding to the image
+        """
         pass
 
-    def read(self, name) -> Dict:
+    def read(self, name: str) -> Dict:
         """
+        Read an image and its metadata from the dataset.
 
-        Parameters
-        ----------
-            name : str
-                000000001
+        Args:
+            name (str): Unique identifier for the image
 
-        Returns
-        -------
-            dict :
-
-                .. code-block:: bash
-
-                    {
-                        "image": ndarray,
-                        "label": "label",
-                        "size": [int_width, int_height]
-                    }
+        Returns:
+            Dict: Dictionary containing:
+                - "image": Image data as numpy array
+                - "label": Text label for the image
+                - "size": [width, height] of the image
         """
         pass
 
     def read_count(self) -> int:
+        """
+        Get the total number of samples in the dataset.
+
+        Returns:
+            int: Number of samples in the dataset
+        """
         pass
 
     def write_count(self, count: int):
+        """
+        Write the total count of samples to the dataset.
+
+        Args:
+            count (int): Total number of samples
+        """
         pass
 
     def close(self):
+        """
+        Close the dataset and release any resources.
+        """
         pass
 
     def __enter__(self):
+        """Context manager entry."""
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        """Context manager exit."""
         self.close()
 
 
 class ImgDataset(Dataset):
     """
-    Save generated image as jpg file, save label and meta in json
-    json file format:
+    Save generated images as JPEG files with labels and metadata in JSON.
 
-    .. code-block:: bash
+    This dataset implementation stores images as individual JPEG files in an
+    'images' subdirectory and maintains a JSON file with labels and metadata.
 
+    JSON file format:
         {
-             "labels": {
+            "labels": {
                 "000000000": "test",
                 "000000001": "text2"
-             },
-             "sizes": {
+            },
+            "sizes": {
                 "000000000": [width, height],
-                "000000001": [width, height],
-             }
-             "num-samples": 2,
+                "000000001": [width, height]
+            },
+            "num-samples": 2
         }
+
+    Args:
+        data_dir (str): Directory path for storing dataset files
     """
 
     LABEL_NAME = "labels.json"
@@ -93,6 +140,14 @@ class ImgDataset(Dataset):
                 self._data = json.load(f)
 
     def write(self, name: str, image: np.ndarray, label: str):
+        """
+        Write an image as JPEG file and update the JSON metadata.
+
+        Args:
+            name (str): Unique identifier for the image
+            image (np.ndarray): Image data as numpy array
+            label (str): Text label corresponding to the image
+        """
         img_path = os.path.join(self._img_dir, name + ".jpg")
         cv2.imwrite(img_path, image, self.encode_param())
         self._data["labels"][name] = label
@@ -107,7 +162,16 @@ class ImgDataset(Dataset):
         size = self._data["sizes"][name]
         return {"image": image, "label": label, "size": size}
 
-    def read_size(self, name: str) -> [int, int]:
+    def read_size(self, name: str) -> Tuple[int, int]:
+        """
+        Read only the size information for an image.
+
+        Args:
+            name (str): Unique identifier for the image
+
+        Returns:
+            Tuple[int, int]: (width, height) of the image
+        """
         return self._data["sizes"][name]
 
     def read_count(self) -> int:
@@ -123,21 +187,42 @@ class ImgDataset(Dataset):
 
 class LmdbDataset(Dataset):
     """
-    Save generated image into lmdb. Compatible with https://github.com/PaddlePaddle/PaddleOCR
-    Keys in lmdb:
+    Save generated images into LMDB database format.
 
-        - image-000000001: image raw bytes
-        - label-000000001: string
-        - size-000000001: "width,height"
+    This dataset implementation stores images in LMDB (Lightning Memory-Mapped Database)
+    format, which is compatible with PaddleOCR and provides efficient storage and
+    retrieval for large datasets.
 
+    LMDB Keys format:
+        - image-{name}: Image raw bytes (JPEG encoded)
+        - label-{name}: Text label as string
+        - size-{name}: Image dimensions as "width,height" string
+        - num-samples: Total number of samples in the dataset
+
+    Args:
+        data_dir (str): Directory path for the LMDB database
     """
 
     def __init__(self, data_dir: str):
+        """
+        Initialize the LMDB dataset.
+
+        Args:
+            data_dir (str): Directory path for the LMDB database
+        """
         super().__init__(data_dir)
         self._lmdb_env = lmdb.open(self.data_dir, map_size=1099511627776)  # 1T
         self._lmdb_txn = self._lmdb_env.begin(write=True)
 
     def write(self, name: str, image: np.ndarray, label: str):
+        """
+        Write an image and its label to the LMDB database.
+
+        Args:
+            name (str): Unique identifier for the image
+            image (np.ndarray): Image data as numpy array
+            label (str): Text label corresponding to the image
+        """
         self._lmdb_txn.put(
             self.image_key(name),
             cv2.imencode(".jpg", image, self.encode_param())[1].tobytes(),
@@ -148,6 +233,18 @@ class LmdbDataset(Dataset):
         self._lmdb_txn.put(self.size_key(name), f"{width},{height}".encode())
 
     def read(self, name: str) -> Dict:
+        """
+        Read an image and its metadata from the LMDB database.
+
+        Args:
+            name (str): Unique identifier for the image
+
+        Returns:
+            Dict: Dictionary containing:
+                - "image": Image data as numpy array
+                - "label": Text label for the image
+                - "size": [width, height] of the image
+        """
         label = self._lmdb_txn.get(self.label_key(name)).decode()
         size_str = self._lmdb_txn.get(self.size_key(name)).decode()
         size = [int(it) for it in size_str.split(",")]
@@ -158,45 +255,89 @@ class LmdbDataset(Dataset):
 
         return {"image": image, "label": label, "size": size}
 
-    def read_size(self, name: str) -> [int, int]:
+    def read_size(self, name: str) -> Tuple[int, int]:
         """
+        Read only the size information for an image from the LMDB database.
 
         Args:
-            name:
+            name (str): Unique identifier for the image
 
-        Returns: (width, height)
-
+        Returns:
+            Tuple[int, int]: (width, height) of the image
         """
-        size_key = f"size_{name}"
-
-        size = self._lmdb_txn.get(size_key.encode()).decode()
-        width = int(size.split[","][0])
-        height = int(size.split[","][1])
+        size_str = self._lmdb_txn.get(self.size_key(name)).decode()
+        width, height = map(int, size_str.split(","))
 
         return width, height
 
     def read_count(self) -> int:
+        """
+        Get the total number of samples in the LMDB dataset.
+
+        Returns:
+            int: Number of samples in the dataset
+        """
         count = self._lmdb_txn.get("num-samples".encode())
         if count is None:
             return 0
         return int(count)
 
     def write_count(self, count: int):
+        """
+        Write the total count of samples to the LMDB dataset.
+
+        Args:
+            count (int): Total number of samples
+        """
         self._lmdb_txn.put("num-samples".encode(), str(count).encode())
 
-    def image_key(self, name: str):
+    def image_key(self, name: str) -> bytes:
+        """
+        Generate the LMDB key for image data.
+
+        Args:
+            name (str): Image identifier
+
+        Returns:
+            bytes: Encoded key for image data
+        """
         return f"image-{name}".encode()
 
-    def label_key(self, name: str):
+    def label_key(self, name: str) -> bytes:
+        """
+        Generate the LMDB key for label data.
+
+        Args:
+            name (str): Image identifier
+
+        Returns:
+            bytes: Encoded key for label data
+        """
         return f"label-{name}".encode()
 
-    def size_key(self, name: str):
+    def size_key(self, name: str) -> bytes:
+        """
+        Generate the LMDB key for size data.
+
+        Args:
+            name (str): Image identifier
+
+        Returns:
+            bytes: Encoded key for size data
+        """
         return f"size-{name}".encode()
 
     def __enter__(self):
+        """Context manager entry."""
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
+        """
+        Context manager exit.
+
+        This method properly closes the LMDB transaction and environment
+        to ensure data is committed and resources are released.
+        """
         self._lmdb_txn.__exit__(exc_type, exc_value, traceback)
         self._lmdb_env.close()
 

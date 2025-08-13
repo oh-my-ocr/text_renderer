@@ -1,11 +1,18 @@
+"""
+Mathematical utilities for text rendering operations.
+
+This module provides mathematical functions and classes for geometric transformations,
+particularly perspective transformations used in text rendering.
+"""
+
+import math
+
 #!/usr/env/bin python3
 from functools import reduce
 from typing import Tuple
 
-import numpy as np
 import cv2
-import math
-
+import numpy as np
 from PIL import Image
 
 from text_renderer.config import PerspectiveTransformCfg
@@ -13,13 +20,21 @@ from text_renderer.utils import utils
 
 
 # http://planning.cs.uiuc.edu/node102.html
-def get_rotate_matrix(x, y, z):
+def get_rotate_matrix(x: float, y: float, z: float) -> np.matrix:
     """
-    按照 zyx 的顺序旋转，输入角度单位为 degrees, 均为顺时针旋转
-    :param x: X-axis
-    :param y: Y-axis
-    :param z: Z-axis
-    :return:
+    Generate rotation matrix for 3D rotation in ZYX order.
+
+    This function creates a 4x4 homogeneous transformation matrix for 3D rotation.
+    Rotations are applied in ZYX order (first around Z-axis, then Y-axis, then X-axis).
+    All rotations are clockwise when viewed from the positive axis direction.
+
+    Args:
+        x (float): Rotation angle around X-axis in degrees
+        y (float): Rotation angle around Y-axis in degrees
+        z (float): Rotation angle around Z-axis in degrees
+
+    Returns:
+        np.matrix: 4x4 homogeneous rotation matrix
     """
     x = math.radians(x)
     y = math.radians(y)
@@ -62,6 +77,17 @@ def get_rotate_matrix(x, y, z):
 # https://nbviewer.jupyter.org/github/manisoftwartist/perspectiveproj/blob/master/perspective.ipynb
 # http://planning.cs.uiuc.edu/node102.html
 class PerspectiveTransform(object):
+    """
+    Apply perspective transformation to images based on 3D rotation parameters.
+
+    This class implements perspective transformation using 3D rotation angles
+    and camera parameters to create realistic perspective effects on text images.
+
+    Args:
+        cfg (PerspectiveTransformCfg): Configuration object containing rotation
+                                      angles, scale, and field of view parameters
+    """
+
     def __init__(self, cfg: PerspectiveTransformCfg):
         self.x, self.y, self.z = cfg.get_xyz()
         self.scale = cfg.scale
@@ -69,11 +95,13 @@ class PerspectiveTransform(object):
 
     def get_transformed_size(self, size: Tuple[int, int]) -> Tuple[int, int]:
         """
+        Calculate the size of the image after perspective transformation.
+
         Args:
-            size: (width, height)
+            size (Tuple[int, int]): Original image size (width, height)
 
         Returns:
-            (width, height)
+            Tuple[int, int]: Size of the transformed image (width, height)
         """
         width, height = size
         _, _, _, text_box_pnts_transformed = self.gen_warp_matrix(width, height)
@@ -84,14 +112,19 @@ class PerspectiveTransform(object):
 
         return int(bbox_width), int(bbox_height)
 
-    def do_warp_perspective(self, pil_img):
+    def do_warp_perspective(
+        self, pil_img: Image.Image
+    ) -> Tuple[Image.Image, np.ndarray]:
         """
+        Apply perspective transformation to a PIL image.
 
         Args:
-            pil_img:
+            pil_img (Image.Image): Input PIL image to transform
 
         Returns:
-
+            Tuple[Image.Image, np.ndarray]: A tuple containing:
+                - Image.Image: Transformed image
+                - np.ndarray: Transformed corner points
         """
         text_box_pnts = utils.size_to_pnts(pil_img.size)
         img = np.array(pil_img).astype(np.uint8)
@@ -122,18 +155,40 @@ class PerspectiveTransform(object):
 
         return dst, transformed_pnts
 
-    def transform_pnts(self, pnts, M33):
+    def transform_pnts(self, pnts: np.ndarray, M33: np.ndarray) -> np.ndarray:
         """
-        :param pnts: 2D pnts, left-top, right-top, right-bottom, left-bottom
-        :param M33: output from transform_image()
-        :return: 2D pnts apply perspective transform
+        Transform 2D points using a perspective transformation matrix.
+
+        Args:
+            pnts (np.ndarray): 2D points in order: left-top, right-top, right-bottom, left-bottom
+            M33 (np.ndarray): 3x3 perspective transformation matrix
+
+        Returns:
+            np.ndarray: Transformed 2D points with integer coordinates
         """
         pnts = np.asarray(pnts, dtype=np.float32)
         pnts = np.array([pnts])
         dst_pnts = cv2.perspectiveTransform(pnts, M33)[0]
         return np.array(dst_pnts).astype(np.int32)
 
-    def get_warped_pnts(self, ptsIn, ptsOut, W, H, sidelength):
+    def get_warped_pnts(
+        self, ptsIn: np.ndarray, ptsOut: np.ndarray, W: int, H: int, sidelength: float
+    ) -> Tuple[np.ndarray, np.ndarray]:
+        """
+        Convert 3D points to 2D points for perspective transformation.
+
+        Args:
+            ptsIn (np.ndarray): Input 3D points
+            ptsOut (np.ndarray): Output 3D points
+            W (int): Width of the image
+            H (int): Height of the image
+            sidelength (float): Side length parameter for scaling
+
+        Returns:
+            Tuple[np.ndarray, np.ndarray]: A tuple containing:
+                - np.ndarray: Input 2D points
+                - np.ndarray: Output 2D points
+        """
         ptsIn2D = ptsIn[0, :]
         ptsOut2D = ptsOut[0, :]
         ptsOut2Dlist = []
@@ -150,7 +205,27 @@ class PerspectiveTransform(object):
 
         return pin, pout
 
-    def gen_warp_matrix(self, width, height):
+    def gen_warp_matrix(
+        self, width: int, height: int
+    ) -> Tuple[np.ndarray, float, np.ndarray, np.ndarray]:
+        """
+        Generate perspective transformation matrix and parameters.
+
+        This method creates the perspective transformation matrix using 3D rotation
+        angles, scale, and field of view parameters. It implements a complete 3D
+        to 2D projection pipeline.
+
+        Args:
+            width (int): Width of the input image
+            height (int): Height of the input image
+
+        Returns:
+            Tuple[np.ndarray, float, np.ndarray, np.ndarray]: A tuple containing:
+                - np.ndarray: 3x3 perspective transformation matrix
+                - float: Side length for output image
+                - np.ndarray: Input 2D points
+                - np.ndarray: Output 2D points
+        """
         x = self.x
         y = self.y
         z = self.z
