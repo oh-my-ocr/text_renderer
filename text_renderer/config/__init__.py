@@ -120,6 +120,49 @@ class SimpleTextColorCfg(TextColorCfg):
         return text_color
 
 
+@dataclass
+class RangeTextColorCfg(TextColorCfg):
+    """
+    Generate text color from specified color ranges with fractions
+    """
+    
+    color_ranges: dict  # e.g., {"blue": {"fraction": 0.5, "l_boundary": [0,0,150], "h_boundary": [60,60,253]}}
+    alpha: Tuple[int, int] = (200, 255)
+    
+    def get_color(self, bg_img: PILImage) -> Tuple[int, int, int, int]:
+        # Select color range based on fractions
+        colors = list(self.color_ranges.keys())
+        fractions = [self.color_ranges[color]["fraction"] for color in colors]
+        
+        # Normalize fractions to sum to 1
+        total_fraction = sum(fractions)
+        normalized_fractions = [f / total_fraction for f in fractions]
+        
+        # Select color based on fractions
+        rand_val = np.random.random()
+        cumulative_fraction = 0
+        selected_color = colors[0]  # default
+        
+        for i, fraction in enumerate(normalized_fractions):
+            cumulative_fraction += fraction
+            if rand_val <= cumulative_fraction:
+                selected_color = colors[i]
+                break
+        
+        # Get boundaries for selected color
+        color_config = self.color_ranges[selected_color]
+        l_boundary = color_config["l_boundary"]
+        h_boundary = color_config["h_boundary"]
+        
+        # Generate random color within boundaries
+        r = np.random.randint(l_boundary[0], h_boundary[0] + 1)
+        g = np.random.randint(l_boundary[1], h_boundary[1] + 1)
+        b = np.random.randint(l_boundary[2], h_boundary[2] + 1)
+        alpha = np.random.randint(*self.alpha)
+        
+        return (r, g, b, alpha)
+
+
 # noinspection PyUnresolvedReferences
 @dataclass
 class RenderCfg:

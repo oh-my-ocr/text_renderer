@@ -131,7 +131,7 @@ class PerspectiveTransform(object):
         pnts = np.asarray(pnts, dtype=np.float32)
         pnts = np.array([pnts])
         dst_pnts = cv2.perspectiveTransform(pnts, M33)[0]
-        return np.array(dst_pnts).astype(np.int)
+        return np.array(dst_pnts).astype(np.int32)
 
     def get_warped_pnts(self, ptsIn, ptsOut, W, H, sidelength):
         ptsIn2D = ptsIn[0, :]

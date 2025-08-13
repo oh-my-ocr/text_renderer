@@ -12,13 +12,24 @@ class FontText:
 
     @property
     def xy(self):
-        offset = self.font.getoffset(self.text)
-        left, top, right, bottom = self.font.getmask(self.text).getbbox()
-        return 0 - offset[0] - left, 0 - offset[1]
+        # Use getbbox() instead of deprecated getoffset()
+        bbox = self.font.getbbox(self.text)
+        if bbox[2] > bbox[0] and bbox[3] > bbox[1]:  # Valid bbox
+            left, top, right, bottom = bbox
+        else:
+            # Fallback for empty or invalid bbox
+            left, top, right, bottom = 0, 0, 0, self.font.size
+        return 0 - left, 0 - top
 
     @property
     def offset(self):
-        return self.font.getoffset(self.text)
+        # Use getbbox() instead of deprecated getoffset()
+        bbox = self.font.getbbox(self.text)
+        if bbox[2] > bbox[0] and bbox[3] > bbox[1]:  # Valid bbox
+            return (bbox[0], bbox[1])  # Return left, top as offset
+        else:
+            # Fallback for empty or invalid bbox
+            return (0, 0)
 
     @property
     def size(self) -> [int, int]:
@@ -29,14 +40,28 @@ class FontText:
             width, height
         """
         if self.horizontal:
-            offset = self.font.getoffset(self.text)
-            size = self.font.getsize(self.text)
-            width = size[0] - offset[0]
-            height = size[1] - offset[1]
-            left, top, right, bottom = self.font.getmask(self.text).getbbox()
-            return right - left, height
+            bbox = self.font.getbbox(self.text)
+            if bbox[2] > bbox[0] and bbox[3] > bbox[1]:  # Valid bbox
+                size = (bbox[2] - bbox[0], bbox[3] - bbox[1])
+            else:
+                # Fallback for empty or invalid bbox
+                size = (0, self.font.size)
+            # Use bbox directly instead of getoffset
+            width = size[0]
+            height = size[1]
+            return width, height
         else:
-            widths = [self.font.getsize(c)[0] - self.font.getoffset(c)[0] for c in self.text]
+            widths = []
+            heights = []
+            for c in self.text:
+                bbox = self.font.getbbox(c)
+                if bbox[2] > bbox[0] and bbox[3] > bbox[1]:  # Valid bbox
+                    char_size = (bbox[2] - bbox[0], bbox[3] - bbox[1])
+                else:
+                    # Fallback for empty or invalid bbox
+                    char_size = (0, self.font.size)
+                widths.append(char_size[0])
+                heights.append(char_size[1])
             width = max(widths)
-            height = sum([self.font.getsize(c)[1] for c in self.text]) - self.font.getoffset(self.text[0])[1]
+            height = sum(heights)
             return height, width
