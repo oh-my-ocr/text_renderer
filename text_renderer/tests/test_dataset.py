@@ -1,4 +1,5 @@
 from tempfile import TemporaryDirectory
+
 import numpy as np
 
 from text_renderer.dataset import LmdbDataset

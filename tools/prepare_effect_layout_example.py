@@ -1,6 +1,7 @@
 import os
-from pathlib import Path
 import shutil
+from pathlib import Path
+
 import pandas as pd
 
 CURRENT_DIR = Path(os.path.abspath(os.path.dirname(__file__)))

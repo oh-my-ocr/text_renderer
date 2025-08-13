@@ -1,3 +1,10 @@
+"""
+Main entry point for the text renderer application.
+
+This module provides the command-line interface and multiprocessing infrastructure
+for generating synthetic text images using the text_renderer library.
+"""
+
 import argparse
 import multiprocessing as mp
 import os
@@ -7,8 +14,8 @@ from multiprocessing.context import Process
 import cv2
 from loguru import logger
 
-from text_renderer.config import get_cfg, GeneratorCfg
-from text_renderer.dataset import LmdbDataset, ImgDataset
+from text_renderer.config import GeneratorCfg, get_cfg
+from text_renderer.dataset import ImgDataset, LmdbDataset
 from text_renderer.render import Render
 
 cv2.setNumThreads(1)
@@ -20,6 +27,20 @@ render: Render
 
 
 class DBWriterProcess(Process):
+    """
+    Database writer process for handling dataset storage operations.
+
+    This process runs in a separate process and handles writing generated images
+    and labels to the dataset storage (either LMDB or image files). It provides
+    progress logging and error handling for the storage operations.
+
+    Args:
+        dataset_cls: Dataset class to use for storage (LmdbDataset or ImgDataset)
+        data_queue: Multiprocessing queue for receiving image data
+        generator_cfg (GeneratorCfg): Configuration for the generation process
+        log_period (float): Logging period as percentage of total images (default: 1)
+    """
+
     def __init__(
         self,
         dataset_cls,
@@ -34,6 +55,13 @@ class DBWriterProcess(Process):
         self.log_period = log_period
 
     def run(self):
+        """
+        Main process loop for handling dataset storage operations.
+
+        This method continuously reads from the data queue and writes images
+        to the dataset until it receives a stop token. It provides progress
+        logging and handles the complete storage pipeline.
+        """
         num_image = self.generator_cfg.num_image
         save_dir = self.generator_cfg.save_dir
         log_period = max(1, int(self.log_period / 100 * num_image))
@@ -66,12 +94,30 @@ class DBWriterProcess(Process):
 
 
 def generate_img(data_queue):
+    """
+    Generate a single image and put it in the data queue.
+
+    This function is called by worker processes to generate images
+    using the global render instance and put the results in the queue.
+
+    Args:
+        data_queue: Multiprocessing queue for sending image data
+    """
     data = render()
     if data is not None:
         data_queue.put({"image": data[0], "label": data[1]})
 
 
 def process_setup(*args):
+    """
+    Initialize the render instance for a worker process.
+
+    This function is called by each worker process to set up its own
+    render instance with a unique random seed.
+
+    Args:
+        *args: Arguments passed to the process, first argument should be RenderCfg
+    """
     global render
     import numpy as np
 
@@ -83,6 +129,12 @@ def process_setup(*args):
 
 
 def parse_args():
+    """
+    Parse command line arguments for the text renderer application.
+
+    Returns:
+        argparse.Namespace: Parsed command line arguments
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", required=True, help="python file path")
     parser.add_argument("--dataset", default="img", choices=["lmdb", "img"])

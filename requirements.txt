@@ -18,3 +18,4 @@ dataclasses>=0.6
 pytest>=6.0.0
 typer>=0.4.0
 streamlit>=1.0.0
+pre-commit>=3.0.0

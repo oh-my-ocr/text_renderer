@@ -3,6 +3,7 @@ from typing import Tuple
 
 from text_renderer.utils.bbox import BBox
 from text_renderer.utils.types import PILImage
+
 from .base_effect import Effect
 
 

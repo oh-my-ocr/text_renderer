@@ -1,7 +1,7 @@
 from pathlib import Path
 
-import typer
 import streamlit as st
+import typer
 
 from text_renderer.font_manager import FontManager
 from text_renderer.utils import FontText

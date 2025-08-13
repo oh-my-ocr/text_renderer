@@ -5,6 +5,8 @@ Image rendering process
     :align: center
 
 
+.. _single_corpus:
+
 Single Corpus
 -------------
 

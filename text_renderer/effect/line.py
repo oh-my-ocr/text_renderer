@@ -24,7 +24,7 @@ class Line(Effect):
         tb_in_offset=(0, 3),
         tb_out_offset=(0, 3),
         line_pos_p=(0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1),
-        color_cfg: 'TextColorCfg' = None,
+        color_cfg: "TextColorCfg" = None,
     ):
         """
         Draw lines around text

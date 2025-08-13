@@ -4,8 +4,8 @@ import numpy as np
 
 from text_renderer.utils.bbox import BBox
 
-from .layout import Layout
 from ..utils import FontText
+from .layout import Layout
 
 
 class SameLineLayout(Layout):
@@ -22,7 +22,11 @@ class SameLineLayout(Layout):
         """
         self.h_spacing = h_spacing
 
-    def apply(self, text_bboxes: List[BBox], img_bboxes: List[BBox],) -> List[BBox]:
+    def apply(
+        self,
+        text_bboxes: List[BBox],
+        img_bboxes: List[BBox],
+    ) -> List[BBox]:
         avg_height = sum([it.height for it in img_bboxes]) / len(img_bboxes)
 
         for i in range(0, len(img_bboxes) - 1):

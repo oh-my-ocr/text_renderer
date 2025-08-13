@@ -1,26 +1,43 @@
-from typing import Tuple, List
-
-from PIL import Image
-from loguru import logger
+from typing import List, Tuple
 
 import cv2
 import numpy as np
+from loguru import logger
+from PIL import Image
 from PIL.Image import Image as PILImage
 from PIL.ImageFont import FreeTypeFont
 from tenacity import retry
 
 from text_renderer.bg_manager import BgManager
 from text_renderer.config import RenderCfg
-from text_renderer.utils.draw_utils import draw_text_on_bg, transparent_img
 from text_renderer.utils import utils
-from text_renderer.utils.errors import PanicError
-from text_renderer.utils.math_utils import PerspectiveTransform
 from text_renderer.utils.bbox import BBox
+from text_renderer.utils.draw_utils import draw_text_on_bg, transparent_img
+from text_renderer.utils.errors import PanicError
 from text_renderer.utils.font_text import FontText
+from text_renderer.utils.math_utils import PerspectiveTransform
 from text_renderer.utils.types import FontColor, is_list
 
 
 class Render:
+    """
+    Main text rendering engine for generating synthetic text images.
+
+    This class handles the complete pipeline of text rendering including:
+    - Text generation from corpus
+    - Font selection and text rendering
+    - Background image management
+    - Effect application at different stages
+    - Perspective transformation
+    - Layout management for multi-corpus scenarios
+
+    Args:
+        cfg (RenderCfg): Configuration object containing all rendering parameters
+
+    Raises:
+        PanicError: If corpus and corpus_effects configuration is inconsistent
+    """
+
     def __init__(self, cfg: RenderCfg):
         self.cfg = cfg
         self.layout = cfg.layout
@@ -47,6 +64,20 @@ class Render:
 
     @retry
     def __call__(self, *args, **kwargs) -> Tuple[np.ndarray, str]:
+        """
+        Generate a synthetic text image with the configured settings.
+
+        This method is the main entry point for text rendering. It handles
+        the complete pipeline from text generation to final image output.
+
+        Returns:
+            Tuple[np.ndarray, str]: A tuple containing:
+                - np.ndarray: The generated image as a numpy array (BGR format)
+                - str: The text that was rendered
+
+        Raises:
+            Exception: Any exception that occurs during rendering process
+        """
         try:
             if self._should_apply_layout():
                 img, text, cropped_bg, transformed_text_mask = self.gen_multi_corpus()
@@ -88,6 +119,25 @@ class Render:
             raise e
 
     def gen_single_corpus(self) -> Tuple[PILImage, str, PILImage, PILImage]:
+        """
+        Generate text image from a single corpus.
+
+        This method handles the rendering pipeline for a single corpus:
+        1. Sample text from corpus
+        2. Get background image
+        3. Determine text color
+        4. Render text mask
+        5. Apply corpus effects
+        6. Apply perspective transformation
+        7. Paste text on background
+
+        Returns:
+            Tuple[PILImage, str, PILImage, PILImage]: A tuple containing:
+                - PILImage: Final rendered image
+                - str: The text that was rendered
+                - PILImage: Cropped background image
+                - PILImage: Transformed text mask
+        """
         font_text = self.corpus.sample()
 
         bg = self.bg_manager.get_bg()
@@ -129,6 +179,27 @@ class Render:
         return img, font_text.text, cropped_bg, transformed_text_mask
 
     def gen_multi_corpus(self) -> Tuple[PILImage, str, PILImage, PILImage]:
+        """
+        Generate text image from multiple corpora using layout management.
+
+        This method handles the rendering pipeline for multiple corpora:
+        1. Sample text from each corpus
+        2. Get background image
+        3. Determine text colors
+        4. Render text masks for each corpus
+        5. Apply corpus effects to each text mask
+        6. Use layout to position multiple text masks
+        7. Apply perspective transformation
+        8. Apply layout effects
+        9. Paste merged text on background
+
+        Returns:
+            Tuple[PILImage, str, PILImage, PILImage]: A tuple containing:
+                - PILImage: Final rendered image
+                - str: The merged text that was rendered
+                - PILImage: Cropped background image
+                - PILImage: Transformed text mask
+        """
         font_texts: List[FontText] = [it.sample() for it in self.corpus]
 
         bg = self.bg_manager.get_bg()
@@ -197,13 +268,16 @@ class Render:
         self, bg: PILImage, transformed_text_mask: PILImage
     ) -> Tuple[PILImage, PILImage]:
         """
+        Paste the text mask onto a background image at a random position.
 
         Args:
-            bg:
-            transformed_text_mask:
+            bg (PILImage): Background image to paste text onto
+            transformed_text_mask (PILImage): Text mask to paste
 
         Returns:
-
+            Tuple[PILImage, PILImage]: A tuple containing:
+                - PILImage: Final image with text pasted on background
+                - PILImage: Cropped background image (if return_bg_and_mask is True)
         """
         x_offset, y_offset = utils.random_xy_offset(transformed_text_mask.size, bg.size)
         bg = self.bg_manager.guard_bg_size(bg, transformed_text_mask.size)
@@ -223,6 +297,23 @@ class Render:
         return bg, _bg
 
     def get_text_color(self, bg: PILImage, text: str, font: FreeTypeFont) -> FontColor:
+        """
+        Generate a text color based on background image characteristics.
+
+        This method analyzes the background image and generates a color
+        that should provide good contrast for text rendering.
+
+        Args:
+            bg (PILImage): Background image to analyze
+            text (str): Text to be rendered (not used in current implementation)
+            font (FreeTypeFont): Font object (not used in current implementation)
+
+        Returns:
+            FontColor: RGBA color tuple for text rendering
+
+        Note:
+            This is a TODO method that needs improvement for better color selection.
+        """
         # TODO: better get text color
         # text_mask = self.draw_text_on_transparent_bg(text, font)
         np_img = np.array(bg)
@@ -238,9 +329,30 @@ class Render:
         return fg_text_color
 
     def _should_apply_layout(self) -> bool:
+        """
+        Determine if layout management should be applied.
+
+        Layout is applied when there are multiple corpora to manage.
+
+        Returns:
+            bool: True if layout should be applied, False otherwise
+        """
         return isinstance(self.corpus, list) and len(self.corpus) > 1
 
     def norm(self, image: np.ndarray) -> np.ndarray:
+        """
+        Normalize the image according to configuration settings.
+
+        This method applies final image processing including:
+        - Grayscale conversion (if configured)
+        - Height normalization (if configured)
+
+        Args:
+            image (np.ndarray): Input image as numpy array
+
+        Returns:
+            np.ndarray: Normalized image
+        """
         if self.cfg.gray:
             image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 

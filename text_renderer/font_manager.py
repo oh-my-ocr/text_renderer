@@ -1,18 +1,38 @@
+"""
+Font management utilities for text rendering operations.
+
+This module provides the FontManager class for loading, caching, and managing
+font files and their character support information.
+"""
+
 import random
 from functools import lru_cache
 from pathlib import Path
-from typing import List, Set, Tuple, Dict, Optional
+from typing import Dict, List, Optional, Set, Tuple
 
+from fontTools.ttLib import TTCollection, TTFont
+from loguru import logger
 from PIL import ImageFont
 from PIL.ImageFont import FreeTypeFont
-from fontTools.ttLib import TTFont, TTCollection
-from loguru import logger
 
 from text_renderer.utils.errors import PanicError
 from text_renderer.utils.utils import load_chars_file
 
 
 class FontManager:
+    """
+    Manages font loading, caching, and character support checking.
+
+    This class handles the loading of font files from a directory, caches
+    character support information, and provides methods for font selection
+    and character support validation.
+
+    Args:
+        font_dir (Path): Directory containing font files
+        font_list_file (Optional[Path]): Optional file listing specific fonts to load
+        font_size (Tuple[int, int]): Range of font sizes (min, max) in points
+    """
+
     def __init__(
         self, font_dir: Path, font_list_file: Optional[Path], font_size: Tuple[int, int]
     ):
@@ -46,6 +66,15 @@ class FontManager:
         self._load_font_support_chars()
 
     def get_font(self) -> Tuple[FreeTypeFont, Set, str]:
+        """
+        Get a random font with random size and its character support information.
+
+        Returns:
+            Tuple[FreeTypeFont, Set, str]: A tuple containing:
+                - FreeTypeFont: PIL font object
+                - Set: Set of supported characters
+                - str: Path to the font file
+        """
         font_path = random.choice(self.font_paths)
         font_size = random.randint(self.font_size_min, self.font_size_max)
 
@@ -55,6 +84,18 @@ class FontManager:
         return font, font_support_chars, font_path
 
     def check_support(self, text: str, chars: Set) -> Tuple[bool, Set]:
+        """
+        Check whether all characters in text are supported by the font.
+
+        Args:
+            text (str): Text to check for character support
+            chars (Set): Set of characters supported by the font
+
+        Returns:
+            Tuple[bool, Set]: A tuple containing:
+                - bool: True if all characters are supported, False otherwise
+                - Set: Set of unsupported characters
+        """
         # Check whether all chars in text exist in chars
         text_set = set(text)
         intersect = text_set - chars
@@ -63,6 +104,12 @@ class FontManager:
         return status, intersect
 
     def _load_font_support_chars(self):
+        """
+        Load and cache character support information for all fonts.
+
+        This method iterates through all loaded font files and extracts
+        the character mapping information from the font's cmap table.
+        """
         for font_path in self.font_paths:
             ttf = self._load_ttfont(font_path)
 
@@ -80,14 +127,16 @@ class FontManager:
 
             self.font_support_chars_cache[font_path] = supported_chars
 
-    def update_font_support_chars(self, chars_file):
+    def update_font_support_chars(self, chars_file: Path):
         """
-        Although some fonts have a specific character in the cmap, the rendered text is blank on the image.
+        Update font character support by testing actual rendering.
 
-        Parameters
-        ----------
-        chars_file: Path
-            one char per line
+        Although some fonts have a specific character in the cmap, the rendered
+        text may be blank on the image. This method tests actual character
+        rendering to filter out characters that don't render properly.
+
+        Args:
+            chars_file (Path): Path to character file (one char per line)
         """
         white_list = [" "]
 

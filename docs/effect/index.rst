@@ -15,3 +15,10 @@ See :class:`~text_renderer.config.RenderCfg`
    motion_blur
    line
    padding
+   curve
+   text_border
+   gaussian_blur
+   brightness_contrast
+   rotate
+   noise
+   transform

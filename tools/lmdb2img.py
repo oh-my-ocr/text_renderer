@@ -1,8 +1,9 @@
 import os
-import cv2
 
+import cv2
 import fire
 from tqdm import tqdm
+
 from text_renderer.dataset import LmdbDataset
 
 
