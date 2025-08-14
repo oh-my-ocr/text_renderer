@@ -44,6 +44,8 @@ class Effect:
             Tuple[PILImage, BBox]: Modified image and updated bounding box
         """
         if prob(self.p):
+            # Create a copy to ensure the image is writable
+            img = img.copy()
             return self.apply(img, text_bbox)
         return img, text_bbox
 
@@ -161,6 +163,8 @@ class Effects:
         Returns:
             Tuple[PILImage, BBox]: Image with all effects applied and updated bounding box
         """
+        # Create a copy to ensure the image is writable
+        img = img.copy()
         for e in self.effects:
             img, bbox = e(img, bbox)
         return img, bbox
