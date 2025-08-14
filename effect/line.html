@@ -1,0 +1,158 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Line &mdash; Text Renderer 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=2389946f"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Padding" href="padding.html" />
+    <link rel="prev" title="MotionBlur" href="motion_blur.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Text Renderer
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">Readme</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config.html">Config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../note/render_pipeline.html">Image rendering process</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Modules</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../dataset.html">Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../corpus/index.html">Corpus</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Effect</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="base_effect.html">Effect</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dropout.html">Dropout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="emboss.html">Emboss</a></li>
+<li class="toctree-l2"><a class="reference internal" href="motion_blur.html">MotionBlur</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Line</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#text_renderer.effect.Line"><code class="docutils literal notranslate"><span class="pre">Line</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="padding.html">Padding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="curve.html">Curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="text_border.html">TextBorder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gaussian_blur.html">GaussianBlur</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brightness_contrast.html">BrightnessContrast</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rotate.html">Rotate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="noise.html">Noise Effects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transform.html">Transform Effects</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../layout/index.html">Layout</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Text Renderer</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Effect</a></li>
+      <li class="breadcrumb-item active">Line</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/effect/line.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="line">
+<h1>Line<a class="headerlink" href="#line" title="Permalink to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="text_renderer.effect.Line">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">text_renderer.effect.</span></span><span class="sig-name descname"><span class="pre">Line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thickness</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1,</span> <span class="pre">3)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_in_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">10)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_out_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">5)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tb_in_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">3)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tb_out_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">3)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_pos_p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.1,</span> <span class="pre">0.1,</span> <span class="pre">0.1,</span> <span class="pre">0.1,</span> <span class="pre">0.1,</span> <span class="pre">0.1,</span> <span class="pre">0.1,</span> <span class="pre">0.1,</span> <span class="pre">0.1,</span> <span class="pre">0.1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../config.html#text_renderer.config.TextColorCfg" title="text_renderer.config.TextColorCfg"><span class="pre">TextColorCfg</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/text_renderer/effect/line.html#Line"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#text_renderer.effect.Line" title="Permalink to this definition"></a></dt>
+<dd><p>Draw lines around text</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p</strong> (<em>float</em>) – probability to apply effect</p></li>
+<li><p><strong>thickness</strong> (<em>int</em><em>, </em><em>int</em>) – line thickness</p></li>
+<li><p><strong>lr_in_offset</strong> (<em>int</em><em>, </em><em>int</em>) – left-right line inner offset</p></li>
+<li><p><strong>lr_out_offset</strong> (<em>int</em><em>, </em><em>int</em>) – left-right line outer offset</p></li>
+<li><p><strong>tb_in_offset</strong> (<em>int</em><em>, </em><em>int</em>) – top-bottom line inner offset</p></li>
+<li><p><strong>tb_out_offset</strong> (<em>int</em><em>, </em><em>int</em>) – top-bottom line outer offset</p></li>
+<li><p><strong>line_pos_p</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code>) – Each value corresponds a line position. Must sum to 1.
+top, bottom, left, right, top_left, top_right, bottom_left, bottom_right, horizontal_middle, vertical_middle</p></li>
+<li><p><strong>color_cfg</strong> (<a class="reference internal" href="../config.html#text_renderer.config.TextColorCfg" title="text_renderer.config.TextColorCfg"><em>TextColorCfg</em></a>) – if not None, get color from cfg</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="motion_blur.html" class="btn btn-neutral float-left" title="MotionBlur" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="padding.html" class="btn btn-neutral float-right" title="Padding" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, ohmyocr.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

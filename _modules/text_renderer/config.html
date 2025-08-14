@@ -1,0 +1,387 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>text_renderer.config &mdash; Text Renderer 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=2389946f"></script>
+      <script src="../../_static/doctools.js?v=888ff710"></script>
+      <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Text Renderer
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Readme</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../config.html">Config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../note/render_pipeline.html">Image rendering process</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../dataset.html">Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../corpus/index.html">Corpus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../effect/index.html">Effect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../layout/index.html">Layout</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Text Renderer</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">text_renderer.config</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for text_renderer.config</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">typing</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PIL.Image</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span> <span class="k">as</span> <span class="n">PILImage</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">text_renderer.effect</span><span class="w"> </span><span class="kn">import</span> <span class="n">Effects</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">text_renderer.layout</span><span class="w"> </span><span class="kn">import</span> <span class="n">Layout</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">text_renderer.layout.same_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">SameLineLayout</span>
+
+<span class="k">if</span> <span class="n">typing</span><span class="o">.</span><span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">text_renderer.corpus</span><span class="w"> </span><span class="kn">import</span> <span class="n">Corpus</span>
+
+
+<div class="viewcode-block" id="PerspectiveTransformCfg"><a class="viewcode-back" href="../../config.html#text_renderer.config.PerspectiveTransformCfg">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PerspectiveTransformCfg</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for PerspectiveTransform</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.5</span>
+    <span class="n">scale</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">fovy</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+        <span class="k">pass</span></div>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FixedPerspectiveTransformCfg</span><span class="p">(</span><span class="n">PerspectiveTransformCfg</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mf">1.2</span>
+
+
+<div class="viewcode-block" id="UniformPerspectiveTransformCfg"><a class="viewcode-back" href="../../config.html#text_renderer.config.UniformPerspectiveTransformCfg">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UniformPerspectiveTransformCfg</span><span class="p">(</span><span class="n">PerspectiveTransformCfg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    x,y,z are uniform distributed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span></div>
+
+
+<div class="viewcode-block" id="NormPerspectiveTransformCfg"><a class="viewcode-back" href="../../config.html#text_renderer.config.NormPerspectiveTransformCfg">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NormPerspectiveTransformCfg</span><span class="p">(</span><span class="n">PerspectiveTransformCfg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    x,y,z are normally distributed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="NormPerspectiveTransformCfg.cliped_rand_norm"><a class="viewcode-back" href="../../config.html#text_renderer.config.NormPerspectiveTransformCfg.cliped_rand_norm">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">cliped_rand_norm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sigma3</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param mu: mean</span>
+<span class="sd">        :param sigma3: 99% (mu-3*sigma, mu+3*sigma)</span>
+<span class="sd">        :return:</span>
+<span class="sd">            float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># 标准差</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma3</span> <span class="o">/</span> <span class="mi">3</span>
+        <span class="n">dst</span> <span class="o">=</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">()</span> <span class="o">+</span> <span class="n">mu</span>
+        <span class="n">dst</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="mi">0</span> <span class="o">-</span> <span class="n">sigma3</span><span class="p">,</span> <span class="n">sigma3</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dst</span></div>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cliped_rand_norm</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cliped_rand_norm</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cliped_rand_norm</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span></div>
+
+
+<div class="viewcode-block" id="TextColorCfg"><a class="viewcode-back" href="../../config.html#text_renderer.config.TextColorCfg">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">TextColorCfg</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for TextColorCfg</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bg_img</span><span class="p">:</span> <span class="n">PILImage</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="FixedTextColorCfg"><a class="viewcode-back" href="../../config.html#text_renderer.config.FixedTextColorCfg">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FixedTextColorCfg</span><span class="p">(</span><span class="n">TextColorCfg</span><span class="p">):</span>
+    <span class="c1"># For generate effect/layout example</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bg_img</span><span class="p">:</span> <span class="n">PILImage</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="mi">255</span>
+        <span class="n">text_color</span> <span class="o">=</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">text_color</span></div>
+
+
+<div class="viewcode-block" id="SimpleTextColorCfg"><a class="viewcode-back" href="../../config.html#text_renderer.config.SimpleTextColorCfg">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimpleTextColorCfg</span><span class="p">(</span><span class="n">TextColorCfg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Randomly use mean value of background image</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">alpha</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">110</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bg_img</span><span class="p">:</span> <span class="n">PILImage</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+        <span class="n">np_img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bg_img</span><span class="p">)</span>
+        <span class="n">mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np_img</span><span class="p">)</span>
+
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">mean</span> <span class="o">*</span> <span class="mf">0.7</span><span class="p">))</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">mean</span> <span class="o">*</span> <span class="mf">0.7</span><span class="p">))</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">mean</span> <span class="o">*</span> <span class="mf">0.7</span><span class="p">))</span>
+        <span class="n">text_color</span> <span class="o">=</span> <span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">text_color</span></div>
+
+
+<div class="viewcode-block" id="RangeTextColorCfg"><a class="viewcode-back" href="../../config.html#text_renderer.config.RangeTextColorCfg">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RangeTextColorCfg</span><span class="p">(</span><span class="n">TextColorCfg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate text color from specified color ranges with fractions</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">color_ranges</span><span class="p">:</span> <span class="nb">dict</span>  <span class="c1"># e.g., {&quot;blue&quot;: {&quot;fraction&quot;: 0.5, &quot;l_boundary&quot;: [0,0,150], &quot;h_boundary&quot;: [60,60,253]}}</span>
+    <span class="n">alpha</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bg_img</span><span class="p">:</span> <span class="n">PILImage</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+        <span class="c1"># Select color range based on fractions</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">color_ranges</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">fractions</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">color_ranges</span><span class="p">[</span><span class="n">color</span><span class="p">][</span><span class="s2">&quot;fraction&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">colors</span><span class="p">]</span>
+
+        <span class="c1"># Normalize fractions to sum to 1</span>
+        <span class="n">total_fraction</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">fractions</span><span class="p">)</span>
+        <span class="n">normalized_fractions</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="o">/</span> <span class="n">total_fraction</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fractions</span><span class="p">]</span>
+
+        <span class="c1"># Select color based on fractions</span>
+        <span class="n">rand_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+        <span class="n">cumulative_fraction</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">selected_color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># default</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">fraction</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">normalized_fractions</span><span class="p">):</span>
+            <span class="n">cumulative_fraction</span> <span class="o">+=</span> <span class="n">fraction</span>
+            <span class="k">if</span> <span class="n">rand_val</span> <span class="o">&lt;=</span> <span class="n">cumulative_fraction</span><span class="p">:</span>
+                <span class="n">selected_color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="k">break</span>
+
+        <span class="c1"># Get boundaries for selected color</span>
+        <span class="n">color_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">color_ranges</span><span class="p">[</span><span class="n">selected_color</span><span class="p">]</span>
+        <span class="n">l_boundary</span> <span class="o">=</span> <span class="n">color_config</span><span class="p">[</span><span class="s2">&quot;l_boundary&quot;</span><span class="p">]</span>
+        <span class="n">h_boundary</span> <span class="o">=</span> <span class="n">color_config</span><span class="p">[</span><span class="s2">&quot;h_boundary&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Generate random color within boundaries</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">l_boundary</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">h_boundary</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">l_boundary</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">h_boundary</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">l_boundary</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">h_boundary</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span></div>
+
+
+<span class="c1"># noinspection PyUnresolvedReferences</span>
+<div class="viewcode-block" id="RenderCfg"><a class="viewcode-back" href="../../config.html#text_renderer.config.RenderCfg">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RenderCfg</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    corpus : Union[Corpus, List[Corpus]]</span>
+
+<span class="sd">    corpus_effects : Union[Effects, List[Effects]]</span>
+<span class="sd">        Effects apply on text mask image of each corpus.</span>
+<span class="sd">        Effects used at this stage must return changed bbox of text if it modified it.</span>
+<span class="sd">    bg_dir : Path</span>
+<span class="sd">        Background image directory</span>
+<span class="sd">    pre_load_bg_img : bool</span>
+<span class="sd">        True: Load all image into memory</span>
+<span class="sd">    layout : Layout</span>
+<span class="sd">        Layout will applied if corpus is a List</span>
+<span class="sd">    perspective_transform : PerspectiveTransformCfg</span>
+<span class="sd">        Apply Perspective Transform</span>
+<span class="sd">    layout_effects : Effects</span>
+<span class="sd">        Effects apply on merged text mask image output by Layout.</span>
+<span class="sd">    render_effects : Effects</span>
+<span class="sd">        Effects apply on final image.</span>
+<span class="sd">    height : int</span>
+<span class="sd">        Resize(keep ratio) image to height, set -1 disables resize</span>
+<span class="sd">    gray : bool</span>
+<span class="sd">        Save image as gray image</span>
+<span class="sd">    text_color_cfg : TextColorCfg</span>
+<span class="sd">        If not None, will overwrite text_color_cfg in CorpusCfg</span>
+<span class="sd">        useful to set same text color when use multi corpus</span>
+<span class="sd">    return_bg_and_mask: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">corpus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;Corpus&quot;</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Corpus&quot;</span><span class="p">]]</span>
+    <span class="n">corpus_effects</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Effects</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Effects</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">bg_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">pre_load_bg_img</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">layout</span><span class="p">:</span> <span class="n">Layout</span> <span class="o">=</span> <span class="n">SameLineLayout</span><span class="p">()</span>
+    <span class="n">perspective_transform</span><span class="p">:</span> <span class="n">PerspectiveTransformCfg</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">layout_effects</span><span class="p">:</span> <span class="n">Effects</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">render_effects</span><span class="p">:</span> <span class="n">Effects</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">32</span>
+    <span class="n">gray</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">text_color_cfg</span><span class="p">:</span> <span class="n">TextColorCfg</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">return_bg_and_mask</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+<span class="c1"># noinspection PyUnresolvedReferences</span>
+<div class="viewcode-block" id="GeneratorCfg"><a class="viewcode-back" href="../../config.html#text_renderer.config.GeneratorCfg">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GeneratorCfg</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    num_image : int</span>
+<span class="sd">        Number of images generated</span>
+<span class="sd">    save_dir : Path</span>
+<span class="sd">        The directory where the data is stored</span>
+<span class="sd">    render_cfg : RenderCfg</span>
+<span class="sd">        Configuration of Render</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">num_image</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">save_dir</span><span class="p">:</span> <span class="n">Path</span>
+    <span class="n">render_cfg</span><span class="p">:</span> <span class="n">RenderCfg</span></div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_cfg</span><span class="p">(</span><span class="n">config_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">GeneratorCfg</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config_file: full path of a config file</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">import_module_from_file</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+    <span class="n">cfgs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s2">&quot;configs&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cfgs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Load configs failed: </span><span class="si">{</span><span class="n">config_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span>
+        <span class="p">[</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">GeneratorCfg</span><span class="p">)</span> <span class="k">for</span> <span class="n">cfg</span> <span class="ow">in</span> <span class="n">cfgs</span><span class="p">]</span>
+    <span class="p">),</span> <span class="s2">&quot;Please make sure all items in configs is GeneratorCfg&quot;</span>
+
+    <span class="k">return</span> <span class="n">cfgs</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">import_module_from_file</span><span class="p">(</span><span class="n">full_path_to_module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Import a module given the full path/filename of the .py file</span>
+
+<span class="sd">    https://stackoverflow.com/questions/28836713/from-folder-name-import-variable-python-3-4-2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Get module name and path from full path</span>
+        <span class="n">module_dir</span><span class="p">,</span> <span class="n">module_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">full_path_to_module</span><span class="p">)</span>
+        <span class="n">module_name</span><span class="p">,</span> <span class="n">module_ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">module_file</span><span class="p">)</span>
+
+        <span class="c1"># Get module &quot;spec&quot; from filename</span>
+        <span class="n">spec</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">spec_from_file_location</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">full_path_to_module</span><span class="p">)</span>
+
+        <span class="n">module</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">load_module</span><span class="p">()</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ec</span><span class="p">:</span>
+        <span class="c1"># Simple error printing</span>
+        <span class="c1"># Insert &quot;sophisticated&quot; stuff here</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">ec</span><span class="p">)</span>
+
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">module</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, ohmyocr.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

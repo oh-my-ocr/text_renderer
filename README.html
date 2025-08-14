@@ -1,0 +1,467 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Text Renderer &mdash; Text Renderer 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=2389946f"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Config" href="config.html" />
+    <link rel="prev" title="Text Renderer" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Text Renderer
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Notes</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Readme</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#run-example">Run Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quick-start">Quick Start</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#prepare-file-resources">Prepare file resources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-config-file">Create config file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#run">Run</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#all-effect-layout-examples">All Effect/Layout Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#contribution">Contribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#build-docs">Build docs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#citing-text-renderer">Citing text_renderer</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="config.html">Config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="note/render_pipeline.html">Image rendering process</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="dataset.html">Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="corpus/index.html">Corpus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="effect/index.html">Effect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="layout/index.html">Layout</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Text Renderer</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Text Renderer</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/README.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="text-renderer">
+<h1>Text Renderer<a class="headerlink" href="#text-renderer" title="Permalink to this heading"></a></h1>
+<p>Generate text line images for training deep learning OCR model (e.g. <a class="reference external" href="https://github.com/bgshih/crnn">CRNN</a>). <img alt="example" src="_images/example.gif" /></p>
+<ul class="simple">
+<li><p>[x] Modular design. You can easily add different components: <a class="reference external" href="https://oh-my-ocr.github.io/text_renderer/corpus/index.html">Corpus</a>, <a class="reference external" href="https://oh-my-ocr.github.io/text_renderer/effect/index.html">Effect</a>, <a class="reference external" href="https://oh-my-ocr.github.io/text_renderer/layout/index.html">Layout</a>.</p></li>
+<li><p>[x] Integrate with <a class="reference external" href="https://github.com/albumentations-team/albumentations">Albumentations</a>, see <a class="reference external" href="https://github.com/oh-my-ocr/text_renderer/blob/master/example_data/albumentations_example.py">albumentations_example</a> for usage.</p></li>
+<li><p>[x] Support for <a class="reference external" href="https://github.com/albumentations-team/albumentations">Albumentations</a> for image augmentation effects.</p></li>
+<li><p>[x] Support render multi corpus on image with different effects. <a class="reference external" href="https://oh-my-ocr.github.io/text_renderer/layout/index.html">Layout</a> is responsible for the layout between multiple corpora</p></li>
+<li><p>[x] Support apply effects on different stages of rendering process <a class="reference external" href="https://oh-my-ocr.github.io/text_renderer/config.html#text_renderer.config.RenderCfg">corpus_effects</a>, <a class="reference external" href="https://oh-my-ocr.github.io/text_renderer/config.html#text_renderer.config.RenderCfg">layout_effects</a>, <a class="reference external" href="https://oh-my-ocr.github.io/text_renderer/config.html#text_renderer.config.RenderCfg">render_effects</a>.</p></li>
+<li><p>[x] Generate vertical text.</p></li>
+<li><p>[x] Support generate <code class="docutils literal notranslate"><span class="pre">lmdb</span></code> dataset which compatible with <a class="reference external" href="https://github.com/PaddlePaddle/PaddleOCR">PaddleOCR</a>, see <a class="reference external" href="https://oh-my-ocr.github.io/text_renderer/dataset.html">Dataset</a></p></li>
+<li><p>[ ] Corpus sampler: helpful to perform character balance</p></li>
+</ul>
+<p><a class="reference external" href="https://oh-my-ocr.github.io/text_renderer/index.html">Documentation</a></p>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/oh-my-ocr/text_renderer
+<span class="nb">cd</span><span class="w"> </span>text_renderer
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</pre></div>
+</div>
+</section>
+<section id="run-example">
+<h2>Run Example<a class="headerlink" href="#run-example" title="Permalink to this heading"></a></h2>
+<p>Run following command to generate images using example data:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>main.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--config<span class="w"> </span>example_data/example.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--dataset<span class="w"> </span>img<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--num_processes<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--log_period<span class="w"> </span><span class="m">10</span>
+</pre></div>
+</div>
+<p>The data is generated in the <code class="docutils literal notranslate"><span class="pre">example_data/output</span></code> directory. A <code class="docutils literal notranslate"><span class="pre">labels.json</span></code> file contains all annotations in follow format:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;labels&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;000000000&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;test&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;000000001&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;text2&quot;</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;sizes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;000000000&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="mi">120</span><span class="p">,</span>
+<span class="w">      </span><span class="mi">32</span><span class="w"> </span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;000000001&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="mi">128</span><span class="p">,</span>
+<span class="w">      </span><span class="mi">32</span><span class="w"> </span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;num-samples&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>You can also use <code class="docutils literal notranslate"><span class="pre">--dataset</span> <span class="pre">lmdb</span></code> to store image in lmdb file, lmdb file contains follow keys:</p>
+<ul class="simple">
+<li><p>num-samples</p></li>
+<li><p>image-000000000</p></li>
+<li><p>label-000000000</p></li>
+<li><p>size-000000000</p></li>
+</ul>
+<p>You can check config file <a class="reference external" href="https://github.com/oh-my-ocr/text_renderer/blob/master/example_data/example.py">example_data/example.py</a> to learn how to use text_renderer,
+or follow the <a class="reference external" href="https://github.com/oh-my-ocr/text_renderer#quick-start">Quick Start</a> to learn how to setup configuration</p>
+</section>
+<section id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this heading"></a></h2>
+<section id="prepare-file-resources">
+<h3>Prepare file resources<a class="headerlink" href="#prepare-file-resources" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>Font files: <code class="docutils literal notranslate"><span class="pre">.ttf</span></code>、<code class="docutils literal notranslate"><span class="pre">.otf</span></code>、<code class="docutils literal notranslate"><span class="pre">.ttc</span></code></p></li>
+<li><p>Background images of any size, either from your business scenario or from publicly available datasets (<a class="reference external" href="https://cocodataset.org/#home">COCO</a>, <a class="reference external" href="http://host.robots.ox.ac.uk/pascal/VOC/">VOC</a>)</p></li>
+<li><p>Corpus: text_renderer offers a wide variety of <a class="reference external" href="https://oh-my-ocr.github.io/text_renderer/corpus/index.html">text sampling methods</a>,
+to use these methods, you need to consider the preparation of the corpus from two perspectives：</p></li>
+</ul>
+<ol class="simple">
+<li><p>The corpus must be in the target language for which you want to perform OCR recognition</p></li>
+<li><p>The corpus should meets your actual business needs, such as education field, medical field, etc.</p></li>
+</ol>
+<ul class="simple">
+<li><p>Charset file [Optional but recommend]: OCR models in real-world scenarios (e.g. CRNN) usually support only a limited character set,
+so it’s better to filter out characters outside the character set during data generation.
+You can do this by setting the <a class="reference external" href="https://oh-my-ocr.github.io/text_renderer/corpus/char_corpus.html">chars_file</a> parameter</p></li>
+</ul>
+<p>You can download pre-prepared file resources for this <code class="docutils literal notranslate"><span class="pre">Quick</span> <span class="pre">Start</span></code> from here:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/font/simsun.ttf">simsun.ttf</a></p></li>
+<li><p><a class="reference external" href="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/bg/background.png">background.png</a></p></li>
+<li><p><a class="reference external" href="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/text/eng_text.txt">eng_text.txt</a></p></li>
+</ul>
+<p>Save these resource files in the same directory:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>workspace
+├── bg
+│ └── background.png
+├── corpus
+│ └── eng_text.txt
+└── font
+    └── simsun.ttf
+</pre></div>
+</div>
+</section>
+<section id="create-config-file">
+<h3>Create config file<a class="headerlink" href="#create-config-file" title="Permalink to this heading"></a></h3>
+<p>Create a <code class="docutils literal notranslate"><span class="pre">config.py</span></code> file in <code class="docutils literal notranslate"><span class="pre">workspace</span></code> directory. One configuration file must have a <code class="docutils literal notranslate"><span class="pre">configs</span></code> variable, it’s
+a list of <a class="reference external" href="https://oh-my-ocr.github.io/text_renderer/config.html#text_renderer.config.GeneratorCfg">GeneratorCfg</a>.</p>
+<p>The complete configuration file is as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">text_renderer.effect</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">text_renderer.corpus</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">text_renderer.config</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">RenderCfg</span><span class="p">,</span>
+    <span class="n">NormPerspectiveTransformCfg</span><span class="p">,</span>
+    <span class="n">GeneratorCfg</span><span class="p">,</span>
+    <span class="n">SimpleTextColorCfg</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">CURRENT_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">story_data</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">GeneratorCfg</span><span class="p">(</span>
+        <span class="n">num_image</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">save_dir</span><span class="o">=</span><span class="n">CURRENT_DIR</span> <span class="o">/</span> <span class="s2">&quot;output&quot;</span><span class="p">,</span>
+        <span class="n">render_cfg</span><span class="o">=</span><span class="n">RenderCfg</span><span class="p">(</span>
+            <span class="n">bg_dir</span><span class="o">=</span><span class="n">CURRENT_DIR</span> <span class="o">/</span> <span class="s2">&quot;bg&quot;</span><span class="p">,</span>
+            <span class="n">height</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+            <span class="n">perspective_transform</span><span class="o">=</span><span class="n">NormPerspectiveTransformCfg</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">),</span>
+            <span class="n">corpus</span><span class="o">=</span><span class="n">WordCorpus</span><span class="p">(</span>
+                <span class="n">WordCorpusCfg</span><span class="p">(</span>
+                    <span class="n">text_paths</span><span class="o">=</span><span class="p">[</span><span class="n">CURRENT_DIR</span> <span class="o">/</span> <span class="s2">&quot;corpus&quot;</span> <span class="o">/</span> <span class="s2">&quot;eng_text.txt&quot;</span><span class="p">],</span>
+                    <span class="n">font_dir</span><span class="o">=</span><span class="n">CURRENT_DIR</span> <span class="o">/</span> <span class="s2">&quot;font&quot;</span><span class="p">,</span>
+                    <span class="n">font_size</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span>
+                    <span class="n">num_word</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                <span class="p">),</span>
+            <span class="p">),</span>
+            <span class="n">corpus_effects</span><span class="o">=</span><span class="n">Effects</span><span class="p">(</span><span class="n">Line</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">thickness</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">))),</span>
+            <span class="n">gray</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">text_color_cfg</span><span class="o">=</span><span class="n">SimpleTextColorCfg</span><span class="p">(),</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+
+<span class="n">configs</span> <span class="o">=</span> <span class="p">[</span><span class="n">story_data</span><span class="p">()]</span>
+</pre></div>
+</div>
+<p>In the above configuration we have done the following things:</p>
+<ol class="simple">
+<li><p>Specify the location of the resource file</p></li>
+<li><p>Specified text sampling method: 2 or 3 words are randomly selected from the corpus</p></li>
+<li><p>Configured some effects for generation</p>
+<ul class="simple">
+<li><p>Perspective transformation <a class="reference external" href="https://oh-my-ocr.github.io/text_renderer/_modules/text_renderer/config.html#NormPerspectiveTransformCfg">NormPerspectiveTransformCfg</a></p></li>
+<li><p>Random <a class="reference external" href="https://oh-my-ocr.github.io/text_renderer/effect/line.html">Line Effect</a></p></li>
+<li><p>Fix output image height to 32</p></li>
+<li><p>Generate color image. <code class="docutils literal notranslate"><span class="pre">gray=False</span></code>, <code class="docutils literal notranslate"><span class="pre">SimpleTextColorCfg()</span></code></p></li>
+</ul>
+</li>
+<li><p>Specifies font-related parameters: <code class="docutils literal notranslate"><span class="pre">font_size</span></code>, <code class="docutils literal notranslate"><span class="pre">font_dir</span></code></p></li>
+</ol>
+</section>
+<section id="run">
+<h3>Run<a class="headerlink" href="#run" title="Permalink to this heading"></a></h3>
+<p>Run <code class="docutils literal notranslate"><span class="pre">main.py</span></code>, it only has 4 arguments:</p>
+<ul class="simple">
+<li><p>config：Python config file path</p></li>
+<li><p>dataset: Dataset format <code class="docutils literal notranslate"><span class="pre">img</span></code> or <code class="docutils literal notranslate"><span class="pre">lmdb</span></code></p></li>
+<li><p>num_processes: Number of processes used</p></li>
+<li><p>log_period: Period of log printing. (0, 100)</p></li>
+</ul>
+</section>
+</section>
+<section id="all-effect-layout-examples">
+<h2>All Effect/Layout Examples<a class="headerlink" href="#all-effect-layout-examples" title="Permalink to this heading"></a></h2>
+<p>Find all effect/layout config example at <a class="reference external" href="https://github.com/oh-my-ocr/text_renderer/blob/master/example_data/effect_layout_example.py">link</a></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">bg_and_text_mask</span></code>: Three images of the same width are merged together horizontally,
+it can be used to train GAN model like <a class="reference external" href="https://github.com/lcy0604/EraseNet">EraseNet</a></p></li>
+</ul>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: right;"></th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">bg_and_text_mask</td>
+<td style="text-align: left;"><img alt="bg_and_text_mask.jpg" src="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/bg_and_text_mask.jpg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">char_spacing_compact</td>
+<td style="text-align: left;"><img alt="char_spacing_compact.jpg" src="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/char_spacing_compact.jpg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">char_spacing_large</td>
+<td style="text-align: left;"><img alt="char_spacing_large.jpg" src="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/char_spacing_large.jpg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">color_image</td>
+<td style="text-align: left;"><img alt="color_image.jpg" src="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/color_image.jpg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">curve</td>
+<td style="text-align: left;"><img alt="curve.jpg" src="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/curve.jpg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">dropout_horizontal</td>
+<td style="text-align: left;"><img alt="dropout_horizontal.jpg" src="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/dropout_horizontal.jpg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">dropout_rand</td>
+<td style="text-align: left;"><img alt="dropout_rand.jpg" src="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/dropout_rand.jpg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">dropout_vertical</td>
+<td style="text-align: left;"><img alt="dropout_vertical.jpg" src="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/dropout_vertical.jpg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">emboss</td>
+<td style="text-align: left;"><img alt="emboss.jpg" src="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/emboss.jpg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">extra_text_line_layout</td>
+<td style="text-align: left;"><img alt="extra_text_line_layout.jpg" src="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/extra_text_line_layout.jpg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">line_bottom</td>
+<td style="text-align: left;"><img alt="line_bottom.jpg" src="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_bottom.jpg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;">11</td>
+<td style="text-align: left;">line_bottom_left</td>
+<td style="text-align: left;"><img alt="line_bottom_left.jpg" src="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_bottom_left.jpg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">line_bottom_right</td>
+<td style="text-align: left;"><img alt="line_bottom_right.jpg" src="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_bottom_right.jpg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;">13</td>
+<td style="text-align: left;">line_horizontal_middle</td>
+<td style="text-align: left;"><img alt="line_horizontal_middle.jpg" src="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_horizontal_middle.jpg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;">14</td>
+<td style="text-align: left;">line_left</td>
+<td style="text-align: left;"><img alt="line_left.jpg" src="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_left.jpg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">line_right</td>
+<td style="text-align: left;"><img alt="line_right.jpg" src="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_right.jpg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;">16</td>
+<td style="text-align: left;">line_top</td>
+<td style="text-align: left;"><img alt="line_top.jpg" src="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_top.jpg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;">17</td>
+<td style="text-align: left;">line_top_left</td>
+<td style="text-align: left;"><img alt="line_top_left.jpg" src="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_top_left.jpg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;">18</td>
+<td style="text-align: left;">line_top_right</td>
+<td style="text-align: left;"><img alt="line_top_right.jpg" src="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_top_right.jpg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;">19</td>
+<td style="text-align: left;">line_vertical_middle</td>
+<td style="text-align: left;"><img alt="line_vertical_middle.jpg" src="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/line_vertical_middle.jpg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;">20</td>
+<td style="text-align: left;">padding</td>
+<td style="text-align: left;"><img alt="padding.jpg" src="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/padding.jpg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;">21</td>
+<td style="text-align: left;">perspective_transform</td>
+<td style="text-align: left;"><img alt="perspective_transform.jpg" src="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/perspective_transform.jpg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;">22</td>
+<td style="text-align: left;">same_line_layout_different_font_size</td>
+<td style="text-align: left;"><img alt="same_line_layout_different_font_size.jpg" src="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/same_line_layout_different_font_size.jpg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;">23</td>
+<td style="text-align: left;">vertical_text</td>
+<td style="text-align: left;"><img alt="vertical_text.jpg" src="https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/vertical_text.jpg" /></td>
+</tr>
+</tbody>
+</table></section>
+<section id="contribution">
+<h2>Contribution<a class="headerlink" href="#contribution" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Corpus: Feel free to contribute more corpus generators to the project,
+It does not necessarily need to be a generic corpus generator, but can also be a business-specific generator,
+such as generating ID numbers</p></li>
+</ul>
+</section>
+<section id="build-docs">
+<h2>Build docs<a class="headerlink" href="#build-docs" title="Permalink to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>docs
+make<span class="w"> </span>html
+open<span class="w"> </span>_build/html/index.html
+</pre></div>
+</div>
+<p>Open <code class="docutils literal notranslate"><span class="pre">_build/html/index.html</span></code></p>
+</section>
+<section id="citing-text-renderer">
+<h2>Citing text_renderer<a class="headerlink" href="#citing-text-renderer" title="Permalink to this heading"></a></h2>
+<p>If you use text_renderer in your research, please consider use the following BibTeX entry.</p>
+<div class="highlight-BibTeX notranslate"><div class="highlight"><pre><span></span><span class="nc">@misc</span><span class="p">{</span><span class="nl">text_renderer</span><span class="p">,</span>
+<span class="w">  </span><span class="na">author</span><span class="w"> </span><span class="p">=</span><span class="w">       </span><span class="s">{oh-my-ocr}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">title</span><span class="w"> </span><span class="p">=</span><span class="w">        </span><span class="s">{text_renderer}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">howpublished</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{\url{https://github.com/oh-my-ocr/text_renderer}}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">year</span><span class="w"> </span><span class="p">=</span><span class="w">         </span><span class="s">{2021}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Text Renderer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="config.html" class="btn btn-neutral float-right" title="Config" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, ohmyocr.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

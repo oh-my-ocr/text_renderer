@@ -1,0 +1,228 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Config &mdash; Text Renderer 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=2389946f"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Image rendering process" href="note/render_pipeline.html" />
+    <link rel="prev" title="Text Renderer" href="README.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Text Renderer
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Notes</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">Readme</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Config</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#text_renderer.config.GeneratorCfg"><code class="docutils literal notranslate"><span class="pre">GeneratorCfg</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#text_renderer.config.RenderCfg"><code class="docutils literal notranslate"><span class="pre">RenderCfg</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#text_renderer.config.PerspectiveTransformCfg"><code class="docutils literal notranslate"><span class="pre">PerspectiveTransformCfg</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#text_renderer.config.UniformPerspectiveTransformCfg"><code class="docutils literal notranslate"><span class="pre">UniformPerspectiveTransformCfg</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#text_renderer.config.NormPerspectiveTransformCfg"><code class="docutils literal notranslate"><span class="pre">NormPerspectiveTransformCfg</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#text_renderer.config.NormPerspectiveTransformCfg.cliped_rand_norm"><code class="docutils literal notranslate"><span class="pre">NormPerspectiveTransformCfg.cliped_rand_norm()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#text_renderer.config.TextColorCfg"><code class="docutils literal notranslate"><span class="pre">TextColorCfg</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#text_renderer.config.SimpleTextColorCfg"><code class="docutils literal notranslate"><span class="pre">SimpleTextColorCfg</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#text_renderer.config.FixedTextColorCfg"><code class="docutils literal notranslate"><span class="pre">FixedTextColorCfg</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#text_renderer.config.RangeTextColorCfg"><code class="docutils literal notranslate"><span class="pre">RangeTextColorCfg</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="note/render_pipeline.html">Image rendering process</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="dataset.html">Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="corpus/index.html">Corpus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="effect/index.html">Effect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="layout/index.html">Layout</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Text Renderer</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Config</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/config.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="config">
+<h1>Config<a class="headerlink" href="#config" title="Permalink to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="text_renderer.config.GeneratorCfg">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">text_renderer.config.</span></span><span class="sig-name descname"><span class="pre">GeneratorCfg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">render_cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#text_renderer.config.RenderCfg" title="text_renderer.config.RenderCfg"><span class="pre">RenderCfg</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/text_renderer/config.html#GeneratorCfg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#text_renderer.config.GeneratorCfg" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_image</strong> (<em>int</em>) – Number of images generated</p></li>
+<li><p><strong>save_dir</strong> (<em>Path</em>) – The directory where the data is stored</p></li>
+<li><p><strong>render_cfg</strong> (<a class="reference internal" href="#text_renderer.config.RenderCfg" title="text_renderer.config.RenderCfg"><em>RenderCfg</em></a>) – Configuration of Render</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="text_renderer.config.RenderCfg">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">text_renderer.config.</span></span><span class="sig-name descname"><span class="pre">RenderCfg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">corpus:</span> <span class="pre">Corpus</span> <span class="pre">|</span> <span class="pre">~typing.List[Corpus],</span> <span class="pre">corpus_effects:</span> <span class="pre">~text_renderer.effect.base_effect.Effects</span> <span class="pre">|</span> <span class="pre">~typing.List[~text_renderer.effect.base_effect.Effects]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">bg_dir:</span> <span class="pre">~pathlib.Path</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">pre_load_bg_img:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">layout:</span> <span class="pre">~text_renderer.layout.layout.Layout</span> <span class="pre">=</span> <span class="pre">&lt;text_renderer.layout.same_line.SameLineLayout</span> <span class="pre">object&gt;,</span> <span class="pre">perspective_transform:</span> <span class="pre">~text_renderer.config.PerspectiveTransformCfg</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">layout_effects:</span> <span class="pre">~text_renderer.effect.base_effect.Effects</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">render_effects:</span> <span class="pre">~text_renderer.effect.base_effect.Effects</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">height:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">32,</span> <span class="pre">gray:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">text_color_cfg:</span> <span class="pre">~text_renderer.config.TextColorCfg</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">return_bg_and_mask:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/text_renderer/config.html#RenderCfg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#text_renderer.config.RenderCfg" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>corpus</strong> (<em>Union</em><em>[</em><a class="reference internal" href="corpus/corpus.html#text_renderer.corpus.Corpus" title="text_renderer.corpus.Corpus"><em>Corpus</em></a><em>, </em><em>List</em><em>[</em><a class="reference internal" href="corpus/corpus.html#text_renderer.corpus.Corpus" title="text_renderer.corpus.Corpus"><em>Corpus</em></a><em>]</em><em>]</em>) – </p></li>
+<li><p><strong>corpus_effects</strong> (<em>Union</em><em>[</em><a class="reference internal" href="effect/base_effect.html#text_renderer.effect.Effects" title="text_renderer.effect.Effects"><em>Effects</em></a><em>, </em><em>List</em><em>[</em><a class="reference internal" href="effect/base_effect.html#text_renderer.effect.Effects" title="text_renderer.effect.Effects"><em>Effects</em></a><em>]</em><em>]</em>) – Effects apply on text mask image of each corpus.
+Effects used at this stage must return changed bbox of text if it modified it.</p></li>
+<li><p><strong>bg_dir</strong> (<em>Path</em>) – Background image directory</p></li>
+<li><p><strong>pre_load_bg_img</strong> (<em>bool</em>) – True: Load all image into memory</p></li>
+<li><p><strong>layout</strong> (<a class="reference internal" href="layout/base.html#text_renderer.layout.Layout" title="text_renderer.layout.Layout"><em>Layout</em></a>) – Layout will applied if corpus is a List</p></li>
+<li><p><strong>perspective_transform</strong> (<a class="reference internal" href="#text_renderer.config.PerspectiveTransformCfg" title="text_renderer.config.PerspectiveTransformCfg"><em>PerspectiveTransformCfg</em></a>) – Apply Perspective Transform</p></li>
+<li><p><strong>layout_effects</strong> (<a class="reference internal" href="effect/base_effect.html#text_renderer.effect.Effects" title="text_renderer.effect.Effects"><em>Effects</em></a>) – Effects apply on merged text mask image output by Layout.</p></li>
+<li><p><strong>render_effects</strong> (<a class="reference internal" href="effect/base_effect.html#text_renderer.effect.Effects" title="text_renderer.effect.Effects"><em>Effects</em></a>) – Effects apply on final image.</p></li>
+<li><p><strong>height</strong> (<em>int</em>) – Resize(keep ratio) image to height, set -1 disables resize</p></li>
+<li><p><strong>gray</strong> (<em>bool</em>) – Save image as gray image</p></li>
+<li><p><strong>text_color_cfg</strong> (<a class="reference internal" href="#text_renderer.config.TextColorCfg" title="text_renderer.config.TextColorCfg"><em>TextColorCfg</em></a>) – If not None, will overwrite text_color_cfg in CorpusCfg
+useful to set same text color when use multi corpus</p></li>
+<li><p><strong>return_bg_and_mask</strong> (<em>bool</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="text_renderer.config.PerspectiveTransformCfg">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">text_renderer.config.</span></span><span class="sig-name descname"><span class="pre">PerspectiveTransformCfg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fovy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/text_renderer/config.html#PerspectiveTransformCfg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#text_renderer.config.PerspectiveTransformCfg" title="Permalink to this definition"></a></dt>
+<dd><p>Base class for PerspectiveTransform</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="text_renderer.config.UniformPerspectiveTransformCfg">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">text_renderer.config.</span></span><span class="sig-name descname"><span class="pre">UniformPerspectiveTransformCfg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fovy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/text_renderer/config.html#UniformPerspectiveTransformCfg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#text_renderer.config.UniformPerspectiveTransformCfg" title="Permalink to this definition"></a></dt>
+<dd><p>x,y,z are uniform distributed</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="text_renderer.config.NormPerspectiveTransformCfg">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">text_renderer.config.</span></span><span class="sig-name descname"><span class="pre">NormPerspectiveTransformCfg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fovy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/text_renderer/config.html#NormPerspectiveTransformCfg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#text_renderer.config.NormPerspectiveTransformCfg" title="Permalink to this definition"></a></dt>
+<dd><p>x,y,z are normally distributed</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="text_renderer.config.NormPerspectiveTransformCfg.cliped_rand_norm">
+<span class="sig-name descname"><span class="pre">cliped_rand_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/text_renderer/config.html#NormPerspectiveTransformCfg.cliped_rand_norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#text_renderer.config.NormPerspectiveTransformCfg.cliped_rand_norm" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mu</strong> – mean</p></li>
+<li><p><strong>sigma3</strong> – 99% (mu-3*sigma, mu+3*sigma)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="text_renderer.config.TextColorCfg">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">text_renderer.config.</span></span><span class="sig-name descname"><span class="pre">TextColorCfg</span></span><a class="reference internal" href="_modules/text_renderer/config.html#TextColorCfg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#text_renderer.config.TextColorCfg" title="Permalink to this definition"></a></dt>
+<dd><p>Base class for TextColorCfg</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="text_renderer.config.SimpleTextColorCfg">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">text_renderer.config.</span></span><span class="sig-name descname"><span class="pre">SimpleTextColorCfg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(110,</span> <span class="pre">255)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/text_renderer/config.html#SimpleTextColorCfg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#text_renderer.config.SimpleTextColorCfg" title="Permalink to this definition"></a></dt>
+<dd><p>Randomly use mean value of background image</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="text_renderer.config.FixedTextColorCfg">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">text_renderer.config.</span></span><span class="sig-name descname"><span class="pre">FixedTextColorCfg</span></span><a class="reference internal" href="_modules/text_renderer/config.html#FixedTextColorCfg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#text_renderer.config.FixedTextColorCfg" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="text_renderer.config.RangeTextColorCfg">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">text_renderer.config.</span></span><span class="sig-name descname"><span class="pre">RangeTextColorCfg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color_ranges</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(200,</span> <span class="pre">255)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/text_renderer/config.html#RangeTextColorCfg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#text_renderer.config.RangeTextColorCfg" title="Permalink to this definition"></a></dt>
+<dd><p>Generate text color from specified color ranges with fractions</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="README.html" class="btn btn-neutral float-left" title="Text Renderer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="note/render_pipeline.html" class="btn btn-neutral float-right" title="Image rendering process" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, ohmyocr.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
