@@ -25,13 +25,32 @@ class AlbumentationsEffect(Effect):
 
         # Convert PIL image to numpy array
         img_array = np.array(img)
+        
+        # Check if image has alpha channel (RGBA)
+        has_alpha = img_array.shape[-1] == 4
+        
+        if has_alpha:
+            # Convert RGBA to RGB for albumentations
+            # Create a white background and composite the RGBA image onto it
+            rgb_array = np.zeros((img_array.shape[0], img_array.shape[1], 3), dtype=np.uint8)
+            alpha = img_array[:, :, 3:4] / 255.0
+            rgb_array = (img_array[:, :, :3] * alpha + (1 - alpha) * 255).astype(np.uint8)
+        else:
+            rgb_array = img_array
 
         # Apply transformation
-        transformed = self.transform(image=img_array)
+        transformed = self.transform(image=rgb_array)
         transformed_img = transformed["image"]
 
         # Convert back to PIL image
-        return Image.fromarray(transformed_img), text_bbox
+        if has_alpha:
+            # Convert back to RGBA by adding the original alpha channel
+            rgba_array = np.zeros((transformed_img.shape[0], transformed_img.shape[1], 4), dtype=np.uint8)
+            rgba_array[:, :, :3] = transformed_img
+            rgba_array[:, :, 3] = img_array[:, :, 3]  # Preserve original alpha
+            return Image.fromarray(rgba_array, mode='RGBA'), text_bbox
+        else:
+            return Image.fromarray(transformed_img), text_bbox
 
 
 class Emboss(AlbumentationsEffect):
