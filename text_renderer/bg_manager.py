@@ -13,21 +13,22 @@ IMAGE_EXTENSIONS = {".jpeg", ".jpg", ".JPG", ".JPEG", ".PNG", ".png", ".bmp", ".
 
 
 class BgManager:
-    def __init__(self, bg_dir: Path, pre_load: bool = True):
+    def __init__(self, bg_dir: Path = None, pre_load: bool = True):
         self.bg_paths: List[str] = []
         self.bg_imgs: List[PILImage] = []
         self.pre_load = pre_load
 
-        for p in bg_dir.glob("**/*"):
-            if p.suffix in IMAGE_EXTENSIONS:
-                if self._is_transparent_image(p):
-                    logger.warning(
-                        f"Ignore transparent background image, please convert is to JPEG: {p}"
-                    )
-                    continue
-                self.bg_paths.append(str(p))
-                if pre_load:
-                    self.bg_imgs.append(self._get_bg(str(p)))
+        if bg_dir is not None:
+            for p in bg_dir.glob("**/*"):
+                if p.suffix in IMAGE_EXTENSIONS:
+                    if self._is_transparent_image(p):
+                        logger.warning(
+                            f"Ignore transparent background image, please convert is to JPEG: {p}"
+                        )
+                        continue
+                    self.bg_paths.append(str(p))
+                    if pre_load:
+                        self.bg_imgs.append(self._get_bg(str(p)))
 
         assert len(self.bg_imgs) != 0, "background image is empty"
 
