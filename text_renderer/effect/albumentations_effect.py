@@ -134,7 +134,7 @@ class UniformNoise(AlbumentationsEffect):
 
 
 class SaltPepperNoise(AlbumentationsEffect):
-    def __init__(self, p=1.0, noise_prob=0.05):
+    def __init__(self, p=1.0):
         """
         Salt and pepper noise effect using Albumentations
 
@@ -142,37 +142,35 @@ class SaltPepperNoise(AlbumentationsEffect):
         ----------
         p: float
             Probability of applying this effect
-        noise_prob: float
-            Probability of noise pixels (0.0 to 1.0)
         """
-        # Use CoarseDropout to simulate salt and pepper noise
-        transform = A.CoarseDropout(
-            max_holes=8,
-            max_height=8,
-            max_width=8,
-            min_holes=1,
-            min_height=1,
-            min_width=1,
-            fill_value=0,
-            p=1.0,
+        transform = A.SaltAndPepper(
+            p=p, salt_vs_pepper=(0.4, 0.6), amount=(0.02, 0.06)
         )
         super().__init__(p, transform)
 
 
 class PoissonNoise(AlbumentationsEffect):
-    def __init__(self, p=1.0, lam=10.0):
+    def __init__(self, p=1.0, intensity=(0.1, 0.5), color_shift=(0.01, 0.05)):
         """
-        Poisson noise effect using Albumentations
+        Poisson noise effect using Albumentations ISONoise
+        
+        ISONoise simulates camera sensor noise which follows a Poisson distribution
+        characteristic of photon counting noise in digital imaging.
 
         Parameters
         ----------
         p: float
             Probability of applying this effect
-        lam: float
-            Lambda parameter for Poisson distribution
+        intensity: tuple
+            Range for noise intensity (0.0 to 1.0)
+        color_shift: tuple
+            Range for color shift values
         """
-        # Use GaussNoise with higher variance to approximate Poisson noise
-        transform = A.GaussNoise(var_limit=(lam, lam * 2), p=1.0)
+        transform = A.ISONoise(
+            intensity=intensity,
+            color_shift=color_shift,
+            p=1.0
+        )
         super().__init__(p, transform)
 
 
