@@ -1,0 +1,174 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EnumCorpus &mdash; Text Renderer 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=2389946f"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="RandCorpus" href="rand_corpus.html" />
+    <link rel="prev" title="WordCorpus" href="word_corpus.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Text Renderer
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">Readme</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config.html">Config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../note/render_pipeline.html">Image rendering process</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Modules</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../dataset.html">Dataset</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Corpus</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="corpus.html">Corpus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="char_corpus.html">CharCorpus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="word_corpus.html">WordCorpus</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">EnumCorpus</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#text_renderer.corpus.EnumCorpus"><code class="docutils literal notranslate"><span class="pre">EnumCorpus</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#text_renderer.corpus.EnumCorpusCfg"><code class="docutils literal notranslate"><span class="pre">EnumCorpusCfg</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="rand_corpus.html">RandCorpus</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../effect/index.html">Effect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../layout/index.html">Layout</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Text Renderer</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Corpus</a></li>
+      <li class="breadcrumb-item active">EnumCorpus</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/corpus/enum_corpus.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="enumcorpus">
+<h1>EnumCorpus<a class="headerlink" href="#enumcorpus" title="Permalink to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="text_renderer.corpus.EnumCorpus">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">text_renderer.corpus.</span></span><span class="sig-name descname"><span class="pre">EnumCorpus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="corpus.html#text_renderer.corpus.CorpusCfg" title="text_renderer.corpus.corpus.CorpusCfg"><span class="pre">CorpusCfg</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/text_renderer/corpus/enum_corpus.html#EnumCorpus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#text_renderer.corpus.EnumCorpus" title="Permalink to this definition"></a></dt>
+<dd><p>Randomly select items from the list</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="text_renderer.corpus.EnumCorpusCfg">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">text_renderer.corpus.</span></span><span class="sig-name descname"><span class="pre">EnumCorpusCfg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">font_dir:</span> <span class="pre">~pathlib.Path,</span> <span class="pre">font_size:</span> <span class="pre">~typing.Tuple[int,</span> <span class="pre">int],</span> <span class="pre">font_list_file:</span> <span class="pre">~pathlib.Path</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">clip_length:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">-1,</span> <span class="pre">char_spacing:</span> <span class="pre">float</span> <span class="pre">|</span> <span class="pre">~typing.Tuple[float,</span> <span class="pre">float]</span> <span class="pre">=</span> <span class="pre">-1,</span> <span class="pre">text_color_cfg:</span> <span class="pre">~text_renderer.config.TextColorCfg</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;,</span> <span class="pre">horizontal:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">text_paths:</span> <span class="pre">~typing.List[~pathlib.Path]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;,</span> <span class="pre">items:</span> <span class="pre">~typing.List[str]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;,</span> <span class="pre">num_pick:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1,</span> <span class="pre">filter_by_chars:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">chars_file:</span> <span class="pre">~pathlib.Path</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">filter_font:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">filter_font_min_support_chars:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">100,</span> <span class="pre">join_str:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/text_renderer/corpus/enum_corpus.html#EnumCorpusCfg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#text_renderer.corpus.EnumCorpusCfg" title="Permalink to this definition"></a></dt>
+<dd><p>Enum corpus config</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text_paths</strong> (<em>List</em><em>[</em><em>Path</em><em>]</em>) – Text file paths</p></li>
+<li><p><strong>items</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – Texts to choice. Only works if text_paths is empty</p></li>
+<li><p><strong>num_pick</strong> (<em>int</em>) – Random choice {count} item from texts</p></li>
+<li><p><strong>filter_by_chars</strong> (<em>bool</em>) – If True, filtering text by character set</p></li>
+<li><p><strong>chars_file</strong> (<em>Path</em>) – Character set</p></li>
+<li><p><strong>filter_font</strong> (<em>bool</em>) – Only work when filter_by_chars is True. If True, filter font file
+by intersection of font support chars with chars file</p></li>
+<li><p><strong>filter_font_min_support_chars</strong> (<em>int</em>) – If intersection of font support chars with chars file is lower
+than filter_font_min_support_chars, filter this font file.</p></li>
+<li><p><strong>join_str</strong> (<em>str</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<p>Base config for corpus</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>font_dir</strong> (<em>path</em>) – font files directory</p></li>
+<li><p><strong>font_list_file</strong> (<em>path</em>) – font file names to load from <strong>font_dir</strong>, if not provided, all fonts in font_dir will be used</p></li>
+<li><p><strong>font_size</strong> (<em>tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em>) – font size in point (min_font_size, max_font_size)</p></li>
+<li><p><strong>clip_length</strong> (<em>int</em>) – clip <a class="reference internal" href="corpus.html#text_renderer.corpus.Corpus.get_text" title="text_renderer.corpus.Corpus.get_text"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_text()</span></code></a> output. set <strong>-1</strong> disables clip</p></li>
+<li><p><strong>char_spacing</strong> (<em>(</em><em>Union</em><em>[</em><em>float</em><em>, </em><em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>]</em><em>]</em><em>)</em>) – Draw character with spacing. If tuple, random choice between [min, max)
+Set -1 to disable</p></li>
+<li><p><strong>text_color_cfg</strong> (<a class="reference internal" href="../config.html#text_renderer.config.TextColorCfg" title="text_renderer.config.TextColorCfg"><em>TextColorCfg</em></a>) – see <code class="xref py py-class docutils literal notranslate"><span class="pre">TextColorCfg</span></code>. has higher priority than RenderCfg.text_color_cfg</p></li>
+<li><p><strong>horizontal</strong> (<em>bool</em>) – generate the horizontal(default) or vertical text
+Set False to generate vertical text</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="word_corpus.html" class="btn btn-neutral float-left" title="WordCorpus" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="rand_corpus.html" class="btn btn-neutral float-right" title="RandCorpus" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, ohmyocr.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
