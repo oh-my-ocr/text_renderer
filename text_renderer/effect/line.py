@@ -71,6 +71,11 @@ class Line(Effect):
     def apply_horizontal_middle(
         self, img: PILImage, text_bbox: BBox
     ) -> Tuple[PILImage, BBox]:
+        # Check if there's enough space for the horizontal line
+        if img.height <= 2:
+            # Not enough space for horizontal line, return original image
+            return img, text_bbox
+            
         row = np.random.randint(1, img.height - 1)
         thickness = np.random.randint(*self.thickness)
 
@@ -87,6 +92,11 @@ class Line(Effect):
     def apply_vertical_middle(
         self, img: PILImage, text_bbox: BBox
     ) -> Tuple[PILImage, BBox]:
+        # Check if there's enough space for the vertical line
+        if img.width <= 2:
+            # Not enough space for vertical line, return original image
+            return img, text_bbox
+            
         col = np.random.randint(1, img.width - 1)
         thickness = np.random.randint(*self.thickness)
 
