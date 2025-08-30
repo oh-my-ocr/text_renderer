@@ -24,6 +24,11 @@ class DropoutVertical(Effect):
         self.thickness = thickness
 
     def apply(self, img: PILImage, text_bbox: BBox) -> Tuple[PILImage, BBox]:
+        # Check if there's enough space for the dropout effect
+        if img.width <= self.thickness + 1:
+            # Not enough space for dropout, return original image
+            return img, text_bbox
+            
         pim = img.load()
 
         for _ in range(self.num_line):
