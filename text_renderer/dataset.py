@@ -109,6 +109,9 @@ class ImgDataset(Dataset):
     'images' subdirectory and maintains a JSON file with labels and metadata.
 
     JSON file format:
+
+    .. code-block:: text
+
         {
             "labels": {
                 "000000000": "test",
@@ -120,6 +123,10 @@ class ImgDataset(Dataset):
             },
             "num-samples": 2
         }
+
+    Where:
+        - width: Image width in pixels
+        - height: Image height in pixels
 
     Args:
         data_dir (str): Directory path for storing dataset files
