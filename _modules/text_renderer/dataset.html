@@ -1,0 +1,473 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>text_renderer.dataset &mdash; Text Renderer 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=2389946f"></script>
+      <script src="../../_static/doctools.js?v=888ff710"></script>
+      <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Text Renderer
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Readme</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../config.html">Config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../note/render_pipeline.html">Image rendering process</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../dataset.html">Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../corpus/index.html">Corpus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../effect/index.html">Effect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../layout/index.html">Layout</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Text Renderer</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">text_renderer.dataset</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for text_renderer.dataset</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Dataset utilities for text rendering operations.</span>
+
+<span class="sd">This module provides dataset classes for storing and retrieving generated text images</span>
+<span class="sd">and their corresponding labels. It supports both image file storage and LMDB database storage.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">lmdb</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+
+<div class="viewcode-block" id="Dataset"><a class="viewcode-back" href="../../dataset.html#text_renderer.dataset.Dataset">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Dataset</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base class for dataset storage and retrieval.</span>
+
+<span class="sd">    This class provides a common interface for storing generated text images</span>
+<span class="sd">    and their corresponding labels. It supports both image file storage and</span>
+<span class="sd">    database storage formats.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data_dir (str): Directory path for storing dataset files</span>
+<span class="sd">        jpg_quality (int): JPEG compression quality (1-100, default: 95)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">jpg_quality</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">95</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">=</span> <span class="n">data_dir</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jpg_quality</span> <span class="o">=</span> <span class="n">jpg_quality</span>
+
+<div class="viewcode-block" id="Dataset.encode_param"><a class="viewcode-back" href="../../dataset.html#text_renderer.dataset.Dataset.encode_param">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">encode_param</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get JPEG encoding parameters for image compression.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: OpenCV JPEG encoding parameters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">IMWRITE_JPEG_QUALITY</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">jpg_quality</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Dataset.write"><a class="viewcode-back" href="../../dataset.html#text_renderer.dataset.Dataset.write">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write an image and its label to the dataset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): Unique identifier for the image</span>
+<span class="sd">            image (np.ndarray): Image data as numpy array</span>
+<span class="sd">            label (str): Text label corresponding to the image</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Dataset.read"><a class="viewcode-back" href="../../dataset.html#text_renderer.dataset.Dataset.read">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read an image and its metadata from the dataset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): Unique identifier for the image</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dict: Dictionary containing:</span>
+<span class="sd">                - &quot;image&quot;: Image data as numpy array</span>
+<span class="sd">                - &quot;label&quot;: Text label for the image</span>
+<span class="sd">                - &quot;size&quot;: [width, height] of the image</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Dataset.read_count"><a class="viewcode-back" href="../../dataset.html#text_renderer.dataset.Dataset.read_count">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">read_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the total number of samples in the dataset.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: Number of samples in the dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Dataset.write_count"><a class="viewcode-back" href="../../dataset.html#text_renderer.dataset.Dataset.write_count">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">write_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write the total count of samples to the dataset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            count (int): Total number of samples</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Dataset.close"><a class="viewcode-back" href="../../dataset.html#text_renderer.dataset.Dataset.close">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Close the dataset and release any resources.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Context manager entry.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Context manager exit.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ImgDataset"><a class="viewcode-back" href="../../dataset.html#text_renderer.dataset.ImgDataset">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ImgDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save generated images as JPEG files with labels and metadata in JSON.</span>
+
+<span class="sd">    This dataset implementation stores images as individual JPEG files in an</span>
+<span class="sd">    &#39;images&#39; subdirectory and maintains a JSON file with labels and metadata.</span>
+
+<span class="sd">    JSON file format:</span>
+
+<span class="sd">    .. code-block:: text</span>
+
+<span class="sd">        {</span>
+<span class="sd">            &quot;labels&quot;: {</span>
+<span class="sd">                &quot;000000000&quot;: &quot;test&quot;,</span>
+<span class="sd">                &quot;000000001&quot;: &quot;text2&quot;</span>
+<span class="sd">            },</span>
+<span class="sd">            &quot;sizes&quot;: {</span>
+<span class="sd">                &quot;000000000&quot;: [width, height],</span>
+<span class="sd">                &quot;000000001&quot;: [width, height]</span>
+<span class="sd">            },</span>
+<span class="sd">            &quot;num-samples&quot;: 2</span>
+<span class="sd">        }</span>
+
+<span class="sd">    Where:</span>
+<span class="sd">        - width: Image width in pixels</span>
+<span class="sd">        - height: Image height in pixels</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data_dir (str): Directory path for storing dataset files</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">LABEL_NAME</span> <span class="o">=</span> <span class="s2">&quot;labels.json&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_img_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;images&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_img_dir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_img_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_label_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">LABEL_NAME</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;num-samples&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;labels&quot;</span><span class="p">:</span> <span class="p">{},</span> <span class="s2">&quot;sizes&quot;</span><span class="p">:</span> <span class="p">{}}</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_label_path</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_label_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write an image as JPEG file and update the JSON metadata.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): Unique identifier for the image</span>
+<span class="sd">            image (np.ndarray): Image data as numpy array</span>
+<span class="sd">            label (str): Text label corresponding to the image</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">img_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_img_dir</span><span class="p">,</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;.jpg&quot;</span><span class="p">)</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">img_path</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">encode_param</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">][</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span>
+
+        <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;sizes&quot;</span><span class="p">][</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="n">img_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_img_dir</span><span class="p">,</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;.jpg&quot;</span><span class="p">)</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">img_path</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">][</span><span class="n">name</span><span class="p">]</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;sizes&quot;</span><span class="p">][</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="n">image</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="n">size</span><span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">read_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read only the size information for an image.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): Unique identifier for the image</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple[int, int]: (width, height) of the image</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;sizes&quot;</span><span class="p">][</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">read_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;num-samples&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;num-samples&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">count</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_label_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LmdbDataset"><a class="viewcode-back" href="../../dataset.html#text_renderer.dataset.LmdbDataset">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">LmdbDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save generated images into LMDB database format.</span>
+
+<span class="sd">    This dataset implementation stores images in LMDB (Lightning Memory-Mapped Database)</span>
+<span class="sd">    format, which is compatible with PaddleOCR and provides efficient storage and</span>
+<span class="sd">    retrieval for large datasets.</span>
+
+<span class="sd">    LMDB Keys format:</span>
+<span class="sd">        - image-{name}: Image raw bytes (JPEG encoded)</span>
+<span class="sd">        - label-{name}: Text label as string</span>
+<span class="sd">        - size-{name}: Image dimensions as &quot;width,height&quot; string</span>
+<span class="sd">        - num-samples: Total number of samples in the dataset</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data_dir (str): Directory path for the LMDB database</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the LMDB dataset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data_dir (str): Directory path for the LMDB database</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lmdb_env</span> <span class="o">=</span> <span class="n">lmdb</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">map_size</span><span class="o">=</span><span class="mi">1099511627776</span><span class="p">)</span>  <span class="c1"># 1T</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lmdb_txn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lmdb_env</span><span class="o">.</span><span class="n">begin</span><span class="p">(</span><span class="n">write</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write an image and its label to the LMDB database.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): Unique identifier for the image</span>
+<span class="sd">            image (np.ndarray): Image data as numpy array</span>
+<span class="sd">            label (str): Text label corresponding to the image</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lmdb_txn</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">image_key</span><span class="p">(</span><span class="n">name</span><span class="p">),</span>
+            <span class="n">cv2</span><span class="o">.</span><span class="n">imencode</span><span class="p">(</span><span class="s2">&quot;.jpg&quot;</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">encode_param</span><span class="p">())[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tobytes</span><span class="p">(),</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lmdb_txn</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_key</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="n">label</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+
+        <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lmdb_txn</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size_key</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">width</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">height</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read an image and its metadata from the LMDB database.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): Unique identifier for the image</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dict: Dictionary containing:</span>
+<span class="sd">                - &quot;image&quot;: Image data as numpy array</span>
+<span class="sd">                - &quot;label&quot;: Text label for the image</span>
+<span class="sd">                - &quot;size&quot;: [width, height] of the image</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lmdb_txn</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_key</span><span class="p">(</span><span class="n">name</span><span class="p">))</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+        <span class="n">size_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lmdb_txn</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size_key</span><span class="p">(</span><span class="n">name</span><span class="p">))</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">it</span><span class="p">)</span> <span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="n">size_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)]</span>
+
+        <span class="n">image_bytes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lmdb_txn</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_key</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        <span class="n">image_buf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imdecode</span><span class="p">(</span><span class="n">image_buf</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_UNCHANGED</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="n">image</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="n">size</span><span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">read_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read only the size information for an image from the LMDB database.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): Unique identifier for the image</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple[int, int]: (width, height) of the image</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">size_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lmdb_txn</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size_key</span><span class="p">(</span><span class="n">name</span><span class="p">))</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+        <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">size_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">read_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the total number of samples in the LMDB dataset.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: Number of samples in the dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lmdb_txn</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;num-samples&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">count</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write the total count of samples to the LMDB dataset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            count (int): Total number of samples</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lmdb_txn</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;num-samples&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span> <span class="nb">str</span><span class="p">(</span><span class="n">count</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">image_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate the LMDB key for image data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): Image identifier</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bytes: Encoded key for image data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;image-</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">label_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate the LMDB key for label data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): Image identifier</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bytes: Encoded key for label data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;label-</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">size_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate the LMDB key for size data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): Image identifier</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bytes: Encoded key for size data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;size-</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Context manager entry.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Context manager exit.</span>
+
+<span class="sd">        This method properly closes the LMDB transaction and environment</span>
+<span class="sd">        to ensure data is committed and resources are released.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lmdb_txn</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lmdb_env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># image = cv2.imread(&quot;f_004.jpg&quot;)</span>
+    <span class="c1"># label = &quot;test&quot;</span>
+
+    <span class="k">with</span> <span class="n">LmdbDataset</span><span class="p">(</span><span class="s2">&quot;./test/train&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer</span><span class="p">:</span>
+        <span class="c1"># writer.write(&quot;test&quot;, image, label)</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">write_count</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">writer</span><span class="o">.</span><span class="n">read_count</span><span class="p">())</span>
+
+    <span class="c1"># with LmdbDataset(&quot;train&quot;) as ld:</span>
+    <span class="c1">#     data = ld.read(&quot;test&quot;)</span>
+    <span class="c1">#     cv2.imwrite(&quot;test.jpg&quot;, data[&quot;image&quot;])</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, ohmyocr.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
