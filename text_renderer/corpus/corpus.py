@@ -38,6 +38,9 @@ class CorpusCfg:
         horizontal : bool
             generate the horizontal(default) or vertical text
             Set False to generate vertical text
+        stroke_width: (Union[int, tuple[int, int]])
+            Add stroke width to text. If tuple, random choice between (min, max)
+            Set -1 to disable
     """
     font_dir: Path
     font_size: Tuple[int, int]
@@ -46,6 +49,7 @@ class CorpusCfg:
     char_spacing: Union[float, Tuple[float, float]] = -1
     text_color_cfg: TextColorCfg = field(default_factory=SimpleTextColorCfg)
     horizontal: bool = True
+    stroke_width: Union[int, Tuple[int, int]] = -1
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)

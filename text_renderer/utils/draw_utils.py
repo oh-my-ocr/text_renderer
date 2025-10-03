@@ -23,6 +23,7 @@ def draw_text_on_bg(
     font_text: FontText,
     text_color: Tuple[int, int, int, int] = (0, 0, 0, 255),
     char_spacing: Union[float, Tuple[float, float]] = -1,
+    stroke_width: Union[int, Tuple[int, int]] = -1
 ) -> PILImage:
     """
 
@@ -34,7 +35,9 @@ def draw_text_on_bg(
     char_spacing : Union[float, Tuple[float, float]]
         Draw character with spacing. If tuple, random choice between [min, max)
         Set -1 to disable
-
+    stroke_width: (Union[int, tuple[int, int]])
+        Add stroke width to text. If tuple, random choice between (min, max)
+        Set -1 to disable
     Returns
     -------
         PILImage:
@@ -42,9 +45,23 @@ def draw_text_on_bg(
     -------
 
     """
+    # Determine the text stroke width
+    if stroke_width == -1:
+        actual_stroke_width = 0
+    elif isinstance(stroke_width, int):
+        actual_stroke_width = max(0, stroke_width)
+    elif isinstance(stroke_width, Tuple) and len(stroke_width) == 2:
+        try:
+            actual_stroke_width = max(0, int(np.random.uniform(stroke_width[0], stroke_width[1])))
+        except (ValueError, TypeError):
+            actual_stroke_width = 0
+    else:
+        actual_stroke_width = 0
+
+    print(f"Stroke width: {actual_stroke_width}")
     if char_spacing == -1:
         if font_text.horizontal:
-            return _draw_text_on_bg(font_text, text_color)
+            return _draw_text_on_bg(font_text, text_color, actual_stroke_width)
         else:
             char_spacing = 0
 
@@ -95,12 +112,12 @@ def draw_text_on_bg(
     if font_text.horizontal:
         y_offset = font_text.offset[1]
         for i, c in enumerate(font_text.text):
-            draw.text((c_x, c_y - y_offset), c, fill=text_color, font=font_text.font)
+            draw.text((c_x, c_y - y_offset), c, fill=text_color, font=font_text.font, stroke_width=actual_stroke_width, stroke_fill=text_color)
             c_x += chars_size[i][0] + char_spacings[i]
     else:
         x_offset = font_text.offset[0]
         for i, c in enumerate(font_text.text):
-            draw.text((c_x - x_offset, c_y), c, fill=text_color, font=font_text.font)
+            draw.text((c_x - x_offset, c_y), c, fill=text_color, font=font_text.font, stroke_width=actual_stroke_width, stroke_fill=text_color)
             c_y += chars_size[i][1] + char_spacings[i]
         text_mask = text_mask.rotate(90, expand=True)
 
@@ -110,6 +127,7 @@ def draw_text_on_bg(
 def _draw_text_on_bg(
     font_text: FontText,
     text_color: Tuple[int, int, int, int] = (0, 0, 0, 255),
+    stroke_width: Union[int, Tuple[int, int]] = -1
 ) -> PILImage:
     """
     Draw text
@@ -119,7 +137,9 @@ def _draw_text_on_bg(
     font_text : FontText
     text_color : RGBA
         Default is black
-
+    stroke_width: (Union[int, tuple[int, int]])
+        Add stroke width to text. If tuple, random choice between (min, max)
+        Set -1 to disable
     Returns
     -------
         PILImage:
@@ -138,6 +158,8 @@ def _draw_text_on_bg(
         font=font_text.font,
         fill=text_color,
         anchor=None,
+        stroke_width=stroke_width,
+        stroke_fill=text_color
     )
 
     return text_mask
