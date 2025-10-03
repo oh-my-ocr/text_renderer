@@ -58,7 +58,6 @@ def draw_text_on_bg(
     else:
         actual_stroke_width = 0
 
-    print(f"Stroke width: {actual_stroke_width}")
     if char_spacing == -1:
         if font_text.horizontal:
             return _draw_text_on_bg(font_text, text_color, actual_stroke_width)
