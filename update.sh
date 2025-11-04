@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set - e
+set -e
 
 python3 main.py \
 --config example_data/effect_layout_example.py \
