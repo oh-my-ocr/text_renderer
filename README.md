@@ -2,8 +2,7 @@
 Generate text line images for training deep learning OCR model (e.g. [CRNN](https://github.com/bgshih/crnn)). ![example](./image/example.gif)
 
 - [x] Modular design. You can easily add different components: [Corpus](https://oh-my-ocr.github.io/text_renderer/corpus/index.html), [Effect](https://oh-my-ocr.github.io/text_renderer/effect/index.html), [Layout](https://oh-my-ocr.github.io/text_renderer/layout/index.html).
-- [x] Integrate with [Albumentations](https://github.com/albumentations-team/albumentations), see [albumentations_example](https://github.com/oh-my-ocr/text_renderer/blob/master/example_data/albumentations_example.py) for usage.
-- [x] Support for [Albumentations](https://github.com/albumentations-team/albumentations) for image augmentation effects.
+- [x] Integrate with [Albumentations](https://github.com/albumentations-team/albumentations) for image augmentation effects.
 - [x] Support render multi corpus on image with different effects. [Layout](https://oh-my-ocr.github.io/text_renderer/layout/index.html) is responsible for the layout between multiple corpora
 - [x] Support apply effects on different stages of rendering process [corpus_effects](https://oh-my-ocr.github.io/text_renderer/config.html#text_renderer.config.RenderCfg), [layout_effects](https://oh-my-ocr.github.io/text_renderer/config.html#text_renderer.config.RenderCfg), [render_effects](https://oh-my-ocr.github.io/text_renderer/config.html#text_renderer.config.RenderCfg).
 - [x] Generate vertical text.
@@ -158,6 +157,43 @@ Run `main.py`, it only has 4 arguments:
 - dataset: Dataset format `img` or `lmdb`
 - num_processes: Number of processes used
 - log_period: Period of log printing. (0, 100)
+
+## Using Albumentations Effects
+
+Text renderer integrates with [Albumentations](https://github.com/albumentations-team/albumentations) for image augmentation. The following Albumentations effects are available:
+
+- `AlbumentationsEffect` - Generic wrapper for any Albumentations augmenter
+- `AlbumentationsEmboss` / `Emboss` - Emboss effect
+- `AlbumentationsMotionBlur` / `MotionBlur` - Motion blur effect
+- `GaussianBlur` - Gaussian blur
+- `Noise`, `UniformNoise`, `SaltPepperNoise`, `PoissonNoise` - Various noise effects
+- `BrightnessContrast` - Brightness and contrast adjustment
+- `Rotate` - Rotation
+- `ShiftScaleRotate` - Combined shift, scale, and rotate
+- `ElasticTransform` - Elastic transformation
+- `GridDistortion` - Grid distortion
+- `OpticalDistortion` - Optical distortion
+
+### Example Usage
+
+```python
+from text_renderer.effect import AlbumentationsEffect, AlbumentationsEmboss, Effects
+import albumentations as A
+
+# Using built-in Albumentations effects
+effects = Effects([
+    AlbumentationsEmboss(alpha=(0.9, 1.0), strength=(1.5, 1.6)),
+])
+
+# Using custom Albumentations augmenter
+custom_aug = A.Compose([
+    A.GaussianBlur(blur_limit=(0, 1), p=1.0),
+    A.RandomBrightnessContrast(brightness_limit=0.2, contrast_limit=0.2, p=1.0)
+])
+effects = Effects([
+    AlbumentationsEffect(transform=custom_aug),
+])
+```
 
 ## All Effect/Layout Examples
 
