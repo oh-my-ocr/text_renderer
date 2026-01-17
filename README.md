@@ -1,9 +1,24 @@
 # Text Renderer
 Generate text line images for training deep learning OCR model (e.g. [CRNN](https://github.com/bgshih/crnn)). ![example](./image/example.gif)
 
+## Table of Contents
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Run Example](#run-example)
+- [Quick Start](#quick-start)
+- [Using Albumentations Effects](#using-albumentations-effects)
+- [All Effect/Layout Examples](#all-effectlayout-examples)
+- [Contribution](#contribution)
+- [Font Viewer](#font-viewer)
+- [Build docs](#build-docs)
+- [Citing text_renderer](#citing-text_renderer)
+
+## Features
+
 - [x] Modular design. You can easily add different components: [Corpus](https://oh-my-ocr.github.io/text_renderer/corpus/index.html), [Effect](https://oh-my-ocr.github.io/text_renderer/effect/index.html), [Layout](https://oh-my-ocr.github.io/text_renderer/layout/index.html).
 - [x] Integrate with [Albumentations](https://github.com/albumentations-team/albumentations) for image augmentation effects.
-- [x] Support render multi corpus on image with different effects. [Layout](https://oh-my-ocr.github.io/text_renderer/layout/index.html) is responsible for the layout between multiple corpora
+- [x] Support render multiple corpora on image with different effects. [Layout](https://oh-my-ocr.github.io/text_renderer/layout/index.html) is responsible for the layout between multiple corpora
 - [x] Support apply effects on different stages of rendering process [corpus_effects](https://oh-my-ocr.github.io/text_renderer/config.html#text_renderer.config.RenderCfg), [layout_effects](https://oh-my-ocr.github.io/text_renderer/config.html#text_renderer.config.RenderCfg), [render_effects](https://oh-my-ocr.github.io/text_renderer/config.html#text_renderer.config.RenderCfg).
 - [x] Generate vertical text.
 - [x] Support generate `lmdb` dataset which compatible with [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR), see [Dataset](https://oh-my-ocr.github.io/text_renderer/dataset.html)
@@ -11,6 +26,11 @@ Generate text line images for training deep learning OCR model (e.g. [CRNN](http
 - [ ] Corpus sampler: helpful to perform character balance
 
 [Documentation](https://oh-my-ocr.github.io/text_renderer/index.html)
+
+## Prerequisites
+
+- Python 3.7+
+- Operating System: Linux, macOS, or Windows
 
 ## Installation
 
@@ -22,7 +42,7 @@ pip install -r requirements.txt
 
 ## Run Example
 
-Run following command to generate images using example data:
+Run the following command to generate images using example data:
 
 ```bash
 python main.py \
@@ -32,7 +52,12 @@ python main.py \
     --log_period 10
 ```
 
-The data is generated in the `example_data/output` directory. A `labels.json` file contains all annotations in follow format:
+> **Note for Windows users:** Use `^` instead of `\` for line continuation, or write the command on a single line:
+> ```cmd
+> python main.py --config example_data/example.py --dataset img --num_processes 2 --log_period 10
+> ```
+
+The data is generated in the `example_data/output` directory. A `labels.json` file contains all annotations in the following format:
 ```json
 {
   "labels": {
@@ -66,13 +91,13 @@ or follow the [Quick Start](https://github.com/oh-my-ocr/text_renderer#quick-sta
 ## Quick Start
 ### Prepare file resources
    
-- Font files: `.ttf`、`.otf`、`.ttc`
+- Font files: `.ttf`, `.otf`, `.ttc`
 - Background images of any size, either from your business scenario or from publicly available datasets ([COCO](https://cocodataset.org/#home), [VOC](http://host.robots.ox.ac.uk/pascal/VOC/))
 - Corpus: text_renderer offers a wide variety of [text sampling methods](https://oh-my-ocr.github.io/text_renderer/corpus/index.html), 
-to use these methods, you need to consider the preparation of the corpus from two perspectives：
+to use these methods, you need to consider the preparation of the corpus from two perspectives:
 1. The corpus must be in the target language for which you want to perform OCR recognition
 2. The corpus should meets your actual business needs, such as education field, medical field, etc.
-- Charset file [Optional but recommend]: OCR models in real-world scenarios (e.g. CRNN) usually support only a limited character set, 
+- Charset file [Optional but recommended]: OCR models in real-world scenarios (e.g. CRNN) usually support only a limited character set, 
 so it's better to filter out characters outside the character set during data generation. 
 You can do this by setting the [chars_file](https://oh-my-ocr.github.io/text_renderer/corpus/char_corpus.html) parameter
 
@@ -94,8 +119,7 @@ workspace
 ```
 
 ### Create config file
-Create a `config.py` file in `workspace` directory. One configuration file must have a `configs` variable, it's 
-a list of [GeneratorCfg](https://oh-my-ocr.github.io/text_renderer/config.html#text_renderer.config.GeneratorCfg). 
+Create a `config.py` file in `workspace` directory. One configuration file must have a `configs` variable, which is a list of [GeneratorCfg](https://oh-my-ocr.github.io/text_renderer/config.html#text_renderer.config.GeneratorCfg). 
 
 The complete configuration file is as follows:
 ```python
@@ -152,8 +176,8 @@ In the above configuration we have done the following things:
 4. Specifies font-related parameters: `font_size`, `font_dir`
 
 ### Run 
-Run `main.py`, it only has 4 arguments:
-- config：Python config file path
+Run `main.py`. It has 4 arguments:
+- config: Python config file path
 - dataset: Dataset format `img` or `lmdb`
 - num_processes: Number of processes used
 - log_period: Period of log printing. (0, 100)
