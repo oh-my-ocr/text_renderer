@@ -1,0 +1,56 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "text_renderer"
+version = "0.1.0"
+description = "Generate text line images for training deep learning OCR models"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+dependencies = [
+    "albumentations>=1.3.0,<2.0",
+    "fontTools>=4.12.1",
+    "lmdb>=0.98",
+    "loguru>=0.6.0",
+    "numpy>=1.21.5,<2.3",
+    "opencv-python>=4.5.0",
+    "pillow>=8.0.0",
+    "scipy>=1.7.3,<1.16",
+    "tenacity>=8.0.0",
+    "tqdm>=4.60.0",
+]
+
+[project.optional-dependencies]
+docs = [
+    "recommonmark>=0.6.0",
+    "sphinx>=3.1.2",
+    "sphinx-markdown-tables>=0.0.3",
+    "sphinx-rtd-theme>=0.5.0",
+]
+tools = [
+    "fire>=0.4.0",
+    "rich>=10.0.0",
+    "streamlit>=1.0.0",
+    "typer>=0.4.0",
+]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=3.0.0",
+    "pytest>=6.0.0",
+]
+
+[tool.black]
+line-length = 88
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.pytest.ini_options]
+testpaths = ["text_renderer/tests"]
+
+[tool.mypy]
+ignore_missing_imports = true

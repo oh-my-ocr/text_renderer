@@ -15,6 +15,7 @@ notebook
 .ipynb
 
 text_renderer.egg-info/
+.venv/
 workspace
 workspace2
 node_modules/

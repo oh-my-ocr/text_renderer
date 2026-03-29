@@ -1,10 +1,7 @@
-import os
 import shutil
 from pathlib import Path
 
-import pandas as pd
-
-CURRENT_DIR = Path(os.path.abspath(os.path.dirname(__file__)))
+CURRENT_DIR = Path(__file__).resolve().parent
 
 if __name__ == "__main__":
     effect_layout_image_dir = (
@@ -18,15 +15,11 @@ if __name__ == "__main__":
             shutil.copy(img_p, img_save_path)
             shutil.rmtree(subdir)
 
-    markdown_data = []
-    for img_p in effect_layout_image_dir.glob("*.jpg"):
-        markdown_data.append(
-            {
-                "Name": img_p.stem,
-                "Example": f"![{img_p.name}](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/{img_p.name})",
-            }
-        )
-    markdown_data.sort(key=lambda x: x["Name"])
-    df = pd.DataFrame(markdown_data)
-    markdown_table = df.to_markdown()
-    print(markdown_table)
+    rows = []
+    for img_p in sorted(effect_layout_image_dir.glob("*.jpg"), key=lambda p: p.stem):
+        url = f"https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/{img_p.name}"
+        rows.append(f"| {img_p.stem} | ![{img_p.name}]({url}) |")
+
+    print("| Name | Example |")
+    print("|------|---------|")
+    print("\n".join(rows))
