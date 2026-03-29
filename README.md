@@ -29,7 +29,7 @@ Generate text line images for training deep learning OCR model (e.g. [CRNN](http
 
 ## Prerequisites
 
-- Python 3.7+
+- Python 3.10+
 - Operating System: Linux, macOS, or Windows
 
 ## Installation
@@ -37,7 +37,14 @@ Generate text line images for training deep learning OCR model (e.g. [CRNN](http
 ```bash
 git clone https://github.com/oh-my-ocr/text_renderer
 cd text_renderer
-pip install -r requirements.txt
+uv sync
+```
+
+Or with pip:
+
+```bash
+pip install '.[tools]'   # includes font viewer and utility scripts
+pip install '.[docs]'    # includes Sphinx for building documentation
 ```
 
 ## Run Example
@@ -45,7 +52,7 @@ pip install -r requirements.txt
 Run the following command to generate images using example data:
 
 ```bash
-python main.py \
+uv run python main.py \
     --config example_data/example.py \
     --dataset img \
     --num_processes 2 \
@@ -54,7 +61,7 @@ python main.py \
 
 > **Note for Windows users:** Use `^` instead of `\` for line continuation, or write the command on a single line:
 > ```cmd
-> python main.py --config example_data/example.py --dataset img --num_processes 2 --log_period 10
+> uv run python main.py --config example_data/example.py --dataset img --num_processes 2 --log_period 10
 > ```
 
 The data is generated in the `example_data/output` directory. A `labels.json` file contains all annotations in the following format:
@@ -265,18 +272,21 @@ Setup [Commitizen](http://commitizen.github.io/cz-cli/) for commit message
 
 
 ## Font Viewer
-Start font viewer
+
+Install the tools extra, then start font viewer:
 
 ```bash
-streamlit run tools/font_viewer.py -- web /path/to/fonts_dir
+uv sync --extra tools
+uv run streamlit run tools/font_viewer.py -- web /path/to/fonts_dir
 ```
 ![image](./image/font_viewer.png)
 
 ## Build docs
 
 ```bash
+uv sync --extra docs
 cd docs
-make html
+uv run make html
 open _build/html/index.html
 ```
 

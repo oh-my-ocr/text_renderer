@@ -11,17 +11,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v5
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
+    - name: Install uv
+      uses: astral-sh/setup-uv@v7
       with:
-        python-version: '3.8'
+        python-version: "3.10"
 
     - name: Install dependencies
-      run: |
-        python3 -m pip install --upgrade pip setuptools wheel
-        pip3 install -r requirements.txt
+      run: uv sync --locked
 
-    - name: Run test
-      run: pytest
+    - name: Run tests
+      run: uv run pytest
