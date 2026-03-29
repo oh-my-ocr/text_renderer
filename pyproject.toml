@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "text_renderer"
-version = "0.1.0"
+version = "0.2.0"
 description = "Generate text line images for training deep learning OCR models"
 readme = "README.md"
 license = "MIT"
