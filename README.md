@@ -259,6 +259,7 @@ Find all effect/layout config example at [link](https://github.com/oh-my-ocr/tex
 | 21 | perspective_transform                | ![perspective_transform.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/perspective_transform.jpg)                               |
 | 22 | same_line_layout_different_font_size | ![same_line_layout_different_font_size.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/same_line_layout_different_font_size.jpg) |
 | 23 | vertical_text                        | ![vertical_text.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/vertical_text.jpg)                                               |
+| 24 | text_stroke_width                        | ![text_stroke_width.jpg](https://github.com/oh-my-ocr/text_renderer/raw/master/example_data/effect_layout_image/text_stroke_width.jpg)                                               |
 
 
 ## Contribution

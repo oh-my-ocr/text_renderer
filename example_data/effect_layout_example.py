@@ -213,10 +213,15 @@ def emboss():
 
     return cfg
 
+def text_stroke_width():
+    cfg = base_cfg(inspect.currentframe().f_code.co_name)
+    cfg.render_cfg.corpus.cfg.stroke_width = (0, 2)
+    return cfg
+
 
 configs = [
     # bg_and_text_mask()
-    emboss()
+    # emboss()
     # vertical_text()
     # extra_text_line_layout()
     # char_spacing_compact(),
@@ -229,4 +234,5 @@ configs = [
     # dropout_vertical(),
     # padding(),
     # same_line_layout_different_font_size(),
+    text_stroke_width()
 ]
