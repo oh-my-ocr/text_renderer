@@ -6,6 +6,7 @@ rectangular bounding boxes used in text rendering operations.
 """
 
 import copy
+import math
 from dataclasses import dataclass
 from typing import List, Tuple
 
@@ -291,3 +292,113 @@ class BBox:
             pnt (Point): New origin point
         """
         self.offset_((0, 0), pnt)
+
+
+@dataclass
+class CharBBox:
+    """
+    Represents a single character bounding box.
+
+    Args:
+        char (str): Character associated with this bounding box
+        left (int): Left edge x-coordinate
+        top (int): Top edge y-coordinate
+        right (int): Right edge x-coordinate
+        bottom (int): Bottom edge y-coordinate
+    """
+
+    char: str
+    left: int
+    top: int
+    right: int
+    bottom: int
+
+    def to_dict(self) -> dict:
+        """
+        Convert the character bounding box into a serializable dictionary.
+
+        Returns:
+            dict: {"char": <char>, "bbox": [left, top, right, bottom]}
+        """
+        return {"char": self.char, "bbox": [self.left, self.top, self.right, self.bottom]}
+
+    def offset(self, dx: int, dy: int) -> "CharBBox":
+        """
+        Return a new character bounding box translated by the given offset.
+
+        Args:
+            dx (int): Horizontal offset
+            dy (int): Vertical offset
+
+        Returns:
+            CharBBox: Offset bounding box
+        """
+        return CharBBox(
+            self.char,
+            self.left + dx,
+            self.top + dy,
+            self.right + dx,
+            self.bottom + dy,
+        )
+
+    def scale(self, sx: float, sy: float) -> "CharBBox":
+        """
+        Return a scaled copy of the character bounding box.
+
+        Args:
+            sx (float): Horizontal scale factor
+            sy (float): Vertical scale factor
+
+        Returns:
+            CharBBox: Scaled bounding box
+        """
+        # Use floor/ceil so the scaled box encloses the scaled glyph
+        # when sx/sy are non-integer; plain int() truncates toward zero
+        # and under-bounds negative left/top or fractional right/bottom.
+        return CharBBox(
+            self.char,
+            int(math.floor(self.left * sx)),
+            int(math.floor(self.top * sy)),
+            int(math.ceil(self.right * sx)),
+            int(math.ceil(self.bottom * sy)),
+        )
+
+    def pnts(self) -> np.ndarray:
+        """
+        Get the four corner points of the bounding box as a float32 array.
+
+        Returns:
+            np.ndarray: Array of shape (4, 2)
+        """
+        return np.array(
+            [
+                [self.left, self.top],
+                [self.right, self.top],
+                [self.right, self.bottom],
+                [self.left, self.bottom],
+            ],
+            dtype=np.float32,
+        )
+
+    @staticmethod
+    def from_pnts(char: str, pnts: np.ndarray) -> "CharBBox":
+        """
+        Create an axis-aligned character bounding box from corner points.
+
+        Args:
+            char (str): Character associated with the bounding box
+            pnts (np.ndarray): Corner points with shape (4, 2)
+
+        Returns:
+            CharBBox: Bounding box enclosing the provided points
+        """
+        # Use floor/ceil to ensure the returned bbox encloses non-integer
+        # transformed points; plain int() truncates toward zero and would
+        # produce a box that excludes points like -0.4 or 20.9.
+        return CharBBox(
+            char,
+            int(math.floor(pnts[:, 0].min())),
+            int(math.floor(pnts[:, 1].min())),
+            int(math.ceil(pnts[:, 0].max())),
+            int(math.ceil(pnts[:, 1].max())),
+        )

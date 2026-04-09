@@ -37,7 +37,7 @@ class TextBorder(Effect):
             border_width (int, int): border width range
             border_color_cfg (TextColorCfg): border color configuration
             border_style (str): border style - 'solid', 'dashed', 'dotted'
-            blur_radius (int): Gaussian blur radius for border (0 for no blur)
+            blur_radius (float): Gaussian blur radius for border (0 for no blur)
             enable (bool): whether to enable text border effect
             fraction (float): fraction of applying text border
             light_enable (bool): whether to enable light border
@@ -80,6 +80,10 @@ class TextBorder(Effect):
         if img.mode != "RGBA":
             img = img.convert("RGBA")
 
+        # Capture input alpha so the bbox update can be based on pixels this
+        # effect actually changed, not all pre-existing opaque pixels.
+        input_alpha = np.array(img.split()[-1])
+
         # Create a copy of the image
         result_img = img.copy()
 
@@ -89,28 +93,79 @@ class TextBorder(Effect):
         # Get border color based on text color
         border_color = self._get_border_color(img, text_bbox)
 
-        # Create border mask
-        border_mask = self._create_border_mask(img, border_width)
+        # Render using the full-image seed so stale upstream bboxes don't
+        # drop real glyph pixels from the rendered outline.
+        render_border_mask = self._create_border_mask(img, border_width)
+        render_style_mask = self._style_border_mask(render_border_mask, border_width)
+        render_style_mask = self._blur_mask(render_style_mask)
+        border_layer = self._create_border_layer(render_style_mask, border_color)
+        result_img = Image.alpha_composite(result_img, border_layer)
 
-        # Apply border based on style
-        if self.border_style == "solid":
-            result_img = self._apply_solid_border(result_img, border_mask, border_color)
-        elif self.border_style == "dashed":
-            result_img = self._apply_dashed_border(
-                result_img, border_mask, border_color, border_width
-            )
-        elif self.border_style == "dotted":
-            result_img = self._apply_dotted_border(
-                result_img, border_mask, border_color, border_width
-            )
-
-        # Apply blur if specified
-        if self.blur_radius > 0:
-            result_img = result_img.filter(
-                ImageFilter.GaussianBlur(radius=self.blur_radius)
-            )
+        # Update bbox from only the authoritative text content claimed by
+        # text_bbox.  Decorations from prior effects can still be bordered
+        # in the rendered image, but they must not widen the reported text
+        # bbox.  Use a bbox-specific seed mask and derive growth from the
+        # added alpha footprint instead of scanning a heuristic window.
+        bbox_border_mask = self._create_border_mask(
+            img, border_width, text_bbox=text_bbox, filter_decorations=True
+        )
+        bbox_style_mask = self._style_border_mask(bbox_border_mask, border_width)
+        bbox_style_mask = self._blur_mask(bbox_style_mask)
+        bbox_border_alpha = self._mask_to_alpha_array(
+            bbox_style_mask, border_color[3]
+        )
+        changed = (bbox_border_alpha > 0) & (input_alpha < 255)
+        coords = np.argwhere(changed)
+        if coords.size > 0:
+            top = min(text_bbox.top, int(coords[:, 0].min()))
+            bottom = max(text_bbox.bottom, int(coords[:, 0].max()) + 1)
+            left = min(text_bbox.left, int(coords[:, 1].min()))
+            right = max(text_bbox.right, int(coords[:, 1].max()) + 1)
+            text_bbox = BBox(left, top, right, bottom)
 
         return result_img, text_bbox
+
+    def _blur_mask(self, border_mask: PILImage) -> PILImage:
+        """Blur the alpha mask directly so RGB doesn't mix with black."""
+        if self.blur_radius <= 0:
+            return border_mask
+        return border_mask.filter(ImageFilter.GaussianBlur(radius=self.blur_radius))
+
+    def _style_border_mask(
+        self, border_mask: PILImage, border_width: int
+    ) -> PILImage:
+        """Apply the configured style to a border alpha mask."""
+        if self.border_style == "solid":
+            return border_mask
+        if self.border_style == "dashed":
+            return self._create_dashed_border_mask(border_mask, border_width)
+        if self.border_style == "dotted":
+            return self._create_dotted_border_mask(border_mask, border_width)
+        return Image.new("L", border_mask.size, 0)
+
+    def _create_border_layer(
+        self,
+        border_mask: PILImage,
+        border_color: Tuple[int, int, int, int],
+    ) -> PILImage:
+        """Colorize the border after styling/blur so soft edges keep color."""
+        border_layer = Image.new("RGBA", border_mask.size, border_color[:3] + (0,))
+        border_layer.putalpha(
+            Image.fromarray(
+                self._mask_to_alpha_array(border_mask, border_color[3]), mode="L"
+            )
+        )
+        return border_layer
+
+    def _mask_to_alpha_array(
+        self, border_mask: PILImage, base_alpha: int
+    ) -> np.ndarray:
+        """Scale an L-mode mask by the configured border alpha."""
+        alpha = np.array(border_mask, dtype=np.uint8)
+        if base_alpha >= 255:
+            return alpha
+        scaled = np.rint(alpha.astype(np.float32) * (base_alpha / 255.0))
+        return scaled.astype(np.uint8)
 
     def _get_border_color(
         self, img: PILImage, text_bbox: BBox
@@ -206,28 +261,161 @@ class TextBorder(Effect):
 
         return (r, g, b, 255)
 
-    def _create_border_mask(self, img: PILImage, border_width: int) -> PILImage:
-        """Create a mask for the border area around text"""
-        # Convert to grayscale for mask creation
-        gray_img = img.convert("L")
-        img_array = np.array(gray_img)
-
-        # Create binary mask (text is white, background is black)
-        # Assuming text is darker than background (common case)
-        threshold = 128
-        text_mask = (img_array < threshold).astype(np.uint8) * 255
+    def _create_border_mask(
+        self,
+        img: PILImage,
+        border_width: int,
+        text_bbox: BBox = None,
+        filter_decorations: bool = False,
+    ) -> PILImage:
+        """Create a mask for the border area around text."""
+        text_mask = self._create_text_mask(
+            img, text_bbox=text_bbox, filter_decorations=filter_decorations
+        )
+        text_mask_array = np.array(text_mask, dtype=np.uint8)
 
         # Create border mask by dilating the text mask
         from scipy import ndimage
 
-        border_mask = ndimage.binary_dilation(text_mask, iterations=border_width)
+        border_mask = ndimage.binary_dilation(
+            text_mask_array > 0, iterations=border_width
+        )
         border_mask = border_mask.astype(np.uint8) * 255
 
         # Subtract original text mask to get only border area
-        border_only = border_mask - text_mask
+        border_only = border_mask - text_mask_array
         border_only = np.clip(border_only, 0, 255)
 
         return Image.fromarray(border_only, mode="L")
+
+    def _create_text_mask(
+        self,
+        img: PILImage,
+        text_bbox: BBox = None,
+        filter_decorations: bool = False,
+    ) -> PILImage:
+        """Create the binary text seed mask used for border dilation."""
+        gray_img = img.convert("L")
+        img_array = np.array(gray_img)
+        alpha_array = (
+            np.array(img.split()[-1])
+            if img.mode == "RGBA"
+            else np.full_like(img_array, 255)
+        )
+
+        threshold = 128
+        text_mask = (img_array < threshold) & (alpha_array > 0)
+        if text_bbox is not None:
+            text_mask = self._restrict_text_mask_to_bbox(
+                text_mask, text_bbox, filter_decorations=filter_decorations
+            )
+
+        return Image.fromarray(text_mask.astype(np.uint8) * 255, mode="L")
+
+    def _restrict_text_mask_to_bbox(
+        self,
+        text_mask: np.ndarray,
+        text_bbox: BBox,
+        filter_decorations: bool = False,
+    ) -> np.ndarray:
+        """Clip to text_bbox and optionally suppress thin decoration cores."""
+        clipped_bbox = self._clip_bbox_to_image(text_bbox, text_mask.shape[::-1])
+        restricted = np.zeros_like(text_mask, dtype=bool)
+        if clipped_bbox is None:
+            return restricted
+
+        restricted[
+            clipped_bbox.top : clipped_bbox.bottom,
+            clipped_bbox.left : clipped_bbox.right,
+        ] = text_mask[
+            clipped_bbox.top : clipped_bbox.bottom,
+            clipped_bbox.left : clipped_bbox.right,
+        ]
+
+        if not filter_decorations or not restricted.any():
+            return restricted
+
+        # A small opening removes 1-2 px horizontal/vertical rules that
+        # effects such as Line add without changing text_bbox.  Use the
+        # opened mask only to locate the authoritative text core, then keep
+        # the original pixels inside that core so thin glyph edges survive.
+        from scipy import ndimage
+
+        text_core = ndimage.binary_opening(
+            restricted, structure=np.ones((3, 3), dtype=bool)
+        )
+        if not text_core.any():
+            return restricted
+
+        core_coords = np.argwhere(text_core)
+        core_top = int(core_coords[:, 0].min())
+        core_bottom = int(core_coords[:, 0].max()) + 1
+        core_left = int(core_coords[:, 1].min())
+        core_right = int(core_coords[:, 1].max()) + 1
+
+        filtered = np.zeros_like(restricted, dtype=bool)
+        filtered[core_top:core_bottom, core_left:core_right] = restricted[
+            core_top:core_bottom, core_left:core_right
+        ]
+        return filtered
+
+    def _clip_bbox_to_image(
+        self, text_bbox: BBox, size: Tuple[int, int]
+    ) -> BBox | None:
+        """Clamp bbox bounds to the image before numpy slicing."""
+        width, height = size
+        left = max(int(text_bbox.left), 0)
+        top = max(int(text_bbox.top), 0)
+        right = min(int(text_bbox.right), width)
+        bottom = min(int(text_bbox.bottom), height)
+        if left >= right or top >= bottom:
+            return None
+        return BBox(left, top, right, bottom)
+
+    def _create_dashed_border_mask(
+        self, border_mask: PILImage, border_width: int
+    ) -> PILImage:
+        """Apply dashed styling to a border mask."""
+        dash_length = border_width * 2
+        gap_length = border_width
+
+        border_array = np.array(border_mask)
+        dashed_mask = np.zeros_like(border_array)
+
+        for i in range(0, border_array.shape[0], dash_length + gap_length):
+            end_i = min(i + dash_length, border_array.shape[0])
+            dashed_mask[i:end_i] = border_array[i:end_i]
+
+        for j in range(0, border_array.shape[1], dash_length + gap_length):
+            end_j = min(j + dash_length, border_array.shape[1])
+            dashed_mask[:, j:end_j] = border_array[:, j:end_j]
+
+        return Image.fromarray(dashed_mask, mode="L")
+
+    def _create_dotted_border_mask(
+        self, border_mask: PILImage, border_width: int
+    ) -> PILImage:
+        """Apply dotted styling to a border mask."""
+        dot_spacing = border_width * 2
+
+        border_array = np.array(border_mask)
+        dotted_mask = np.zeros_like(border_array)
+
+        for i in range(0, border_array.shape[0], dot_spacing):
+            for j in range(0, border_array.shape[1], dot_spacing):
+                if i < border_array.shape[0] and j < border_array.shape[1]:
+                    dot_size = border_width // 2
+                    start_i = max(0, i - dot_size)
+                    end_i = min(border_array.shape[0], i + dot_size)
+                    start_j = max(0, j - dot_size)
+                    end_j = min(border_array.shape[1], j + dot_size)
+
+                    if border_array[i, j] > 0:
+                        dotted_mask[start_i:end_i, start_j:end_j] = border_array[
+                            start_i:end_i, start_j:end_j
+                        ]
+
+        return Image.fromarray(dotted_mask, mode="L")
 
     def _apply_solid_border(
         self,
