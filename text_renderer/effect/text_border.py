@@ -101,13 +101,15 @@ class TextBorder(Effect):
         border_layer = self._create_border_layer(render_style_mask, border_color)
         result_img = Image.alpha_composite(result_img, border_layer)
 
-        # Update bbox from only the authoritative text content claimed by
-        # text_bbox.  Decorations from prior effects can still be bordered
-        # in the rendered image, but they must not widen the reported text
-        # bbox.  Use a bbox-specific seed mask and derive growth from the
-        # added alpha footprint instead of scanning a heuristic window.
+        # Update bbox from a seed restricted to text_bbox so non-text pixels
+        # outside the claimed text region don't widen the reported bbox.
+        # Pixels inside text_bbox that aren't actually text (e.g. a Line
+        # decoration drawn through the text region) still seed the bbox —
+        # distinguishing them from glyphs reliably needs an out-of-band
+        # decoration mask threaded through the effect pipeline, not a
+        # pixel-level heuristic here.
         bbox_border_mask = self._create_border_mask(
-            img, border_width, text_bbox=text_bbox, filter_decorations=True
+            img, border_width, text_bbox=text_bbox
         )
         bbox_style_mask = self._style_border_mask(bbox_border_mask, border_width)
         bbox_style_mask = self._blur_mask(bbox_style_mask)
@@ -266,12 +268,9 @@ class TextBorder(Effect):
         img: PILImage,
         border_width: int,
         text_bbox: BBox = None,
-        filter_decorations: bool = False,
     ) -> PILImage:
         """Create a mask for the border area around text."""
-        text_mask = self._create_text_mask(
-            img, text_bbox=text_bbox, filter_decorations=filter_decorations
-        )
+        text_mask = self._create_text_mask(img, text_bbox=text_bbox)
         text_mask_array = np.array(text_mask, dtype=np.uint8)
 
         # Create border mask by dilating the text mask
@@ -292,7 +291,6 @@ class TextBorder(Effect):
         self,
         img: PILImage,
         text_bbox: BBox = None,
-        filter_decorations: bool = False,
     ) -> PILImage:
         """Create the binary text seed mask used for border dilation."""
         gray_img = img.convert("L")
@@ -306,58 +304,19 @@ class TextBorder(Effect):
         threshold = 128
         text_mask = (img_array < threshold) & (alpha_array > 0)
         if text_bbox is not None:
-            text_mask = self._restrict_text_mask_to_bbox(
-                text_mask, text_bbox, filter_decorations=filter_decorations
-            )
+            clipped_bbox = self._clip_bbox_to_image(text_bbox, text_mask.shape[::-1])
+            restricted = np.zeros_like(text_mask, dtype=bool)
+            if clipped_bbox is not None:
+                restricted[
+                    clipped_bbox.top : clipped_bbox.bottom,
+                    clipped_bbox.left : clipped_bbox.right,
+                ] = text_mask[
+                    clipped_bbox.top : clipped_bbox.bottom,
+                    clipped_bbox.left : clipped_bbox.right,
+                ]
+            text_mask = restricted
 
         return Image.fromarray(text_mask.astype(np.uint8) * 255, mode="L")
-
-    def _restrict_text_mask_to_bbox(
-        self,
-        text_mask: np.ndarray,
-        text_bbox: BBox,
-        filter_decorations: bool = False,
-    ) -> np.ndarray:
-        """Clip to text_bbox and optionally suppress thin decoration cores."""
-        clipped_bbox = self._clip_bbox_to_image(text_bbox, text_mask.shape[::-1])
-        restricted = np.zeros_like(text_mask, dtype=bool)
-        if clipped_bbox is None:
-            return restricted
-
-        restricted[
-            clipped_bbox.top : clipped_bbox.bottom,
-            clipped_bbox.left : clipped_bbox.right,
-        ] = text_mask[
-            clipped_bbox.top : clipped_bbox.bottom,
-            clipped_bbox.left : clipped_bbox.right,
-        ]
-
-        if not filter_decorations or not restricted.any():
-            return restricted
-
-        # A small opening removes 1-2 px horizontal/vertical rules that
-        # effects such as Line add without changing text_bbox.  Use the
-        # opened mask only to locate the authoritative text core, then keep
-        # the original pixels inside that core so thin glyph edges survive.
-        from scipy import ndimage
-
-        text_core = ndimage.binary_opening(
-            restricted, structure=np.ones((3, 3), dtype=bool)
-        )
-        if not text_core.any():
-            return restricted
-
-        core_coords = np.argwhere(text_core)
-        core_top = int(core_coords[:, 0].min())
-        core_bottom = int(core_coords[:, 0].max()) + 1
-        core_left = int(core_coords[:, 1].min())
-        core_right = int(core_coords[:, 1].max()) + 1
-
-        filtered = np.zeros_like(restricted, dtype=bool)
-        filtered[core_top:core_bottom, core_left:core_right] = restricted[
-            core_top:core_bottom, core_left:core_right
-        ]
-        return filtered
 
     def _clip_bbox_to_image(
         self, text_bbox: BBox, size: Tuple[int, int]
