@@ -14,7 +14,7 @@ def hello(name="World"):
 def lmdb2img(input: str, output: str, num: int = -1):
     labels = []
     if os.path.exists(output):
-        print(f"Output exists.")
+        print("Output exists.")
         return
     else:
         os.makedirs(output)

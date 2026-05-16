@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import List
 
 from rich import print
 from rich.table import Table

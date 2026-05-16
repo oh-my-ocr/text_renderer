@@ -40,7 +40,7 @@ def get_char_corpus():
             chars_file=CHAR_DIR / "chn.txt",
             length=(5, 10),
             char_spacing=(-0.3, 1.3),
-            **font_cfg
+            **font_cfg,
         ),
     )
 
@@ -84,7 +84,7 @@ def enum_data():
                 text_paths=[TEXT_DIR / "enum_text.txt"],
                 filter_by_chars=True,
                 chars_file=CHAR_DIR / "chn.txt",
-                **font_cfg
+                **font_cfg,
             ),
         ),
     )
@@ -107,7 +107,7 @@ def eng_word_data():
                 text_paths=[TEXT_DIR / "eng_text.txt"],
                 filter_by_chars=True,
                 chars_file=CHAR_DIR / "eng.txt",
-                **font_cfg
+                **font_cfg,
             ),
         ),
     )
@@ -124,7 +124,7 @@ def same_line_data():
                     text_paths=[TEXT_DIR / "enum_text.txt"],
                     filter_by_chars=True,
                     chars_file=CHAR_DIR / "chn.txt",
-                    **font_cfg
+                    **font_cfg,
                 ),
             ),
             CharCorpus(

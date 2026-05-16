@@ -46,10 +46,10 @@ class FontText:
         # Use getbbox() instead of deprecated getoffset()
         bbox = self.font.getbbox(self.text)
         if bbox[2] > bbox[0] and bbox[3] > bbox[1]:  # Valid bbox
-            left, top, right, bottom = bbox
+            left, top, _, _ = bbox
         else:
             # Fallback for empty or invalid bbox
-            left, top, right, bottom = 0, 0, 0, self.font.size
+            left, top = 0, 0
         return 0 - left, 0 - top
 
     @property

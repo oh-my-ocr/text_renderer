@@ -1,1 +1,1 @@
-from .font_text import FontText
+from .font_text import FontText as FontText

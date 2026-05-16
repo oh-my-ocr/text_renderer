@@ -2,7 +2,7 @@ import typing
 from typing import Tuple
 
 import numpy as np
-from PIL import Image, ImageDraw, ImageFilter
+from PIL import Image, ImageFilter
 
 from text_renderer.utils.bbox import BBox
 from text_renderer.utils.types import PILImage

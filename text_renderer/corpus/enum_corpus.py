@@ -2,9 +2,6 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List
 
-import numpy as np
-from loguru import logger
-
 from text_renderer.utils.errors import PanicError
 from text_renderer.utils.utils import random_choice
 
@@ -50,10 +47,10 @@ class EnumCorpus(Corpus):
 
         self.cfg: EnumCorpusCfg
         if len(self.cfg.text_paths) == 0 and len(self.cfg.items) == 0:
-            raise PanicError(f"text_paths or items must not be empty")
+            raise PanicError("text_paths or items must not be empty")
 
         if len(self.cfg.text_paths) != 0 and len(self.cfg.items) != 0:
-            raise PanicError(f"only one of text_paths or items can be set")
+            raise PanicError("only one of text_paths or items can be set")
 
         self.texts: List[str] = []
 

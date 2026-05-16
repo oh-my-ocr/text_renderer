@@ -27,6 +27,7 @@ class CharCorpusCfg(CorpusCfg):
         filter_font_min_support_chars (int): If intersection of font support chars with chars file is lower
                                              than filter_font_min_support_chars, filter this font file.
     """
+
     text_paths: List[Path] = field(default_factory=list)
     length: Tuple[int, int] = (5, 10)
     filter_by_chars: bool = False
@@ -50,7 +51,7 @@ class CharCorpus(Corpus):
         self.text = ""
 
         if len(self.cfg.text_paths) == 0:
-            raise PanicError(f"text_paths must not contain path")
+            raise PanicError("text_paths must not contain path")
 
         for p in self.cfg.text_paths:
             if not os.path.exists(p):

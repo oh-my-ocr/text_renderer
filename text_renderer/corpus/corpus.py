@@ -1,11 +1,10 @@
-import os
 from abc import abstractmethod
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Tuple, Union
 
 from loguru import logger
-from tenacity import retry, stop_after_attempt
+from tenacity import retry
 
 from text_renderer.config import SimpleTextColorCfg, TextColorCfg
 from text_renderer.font_manager import FontManager
@@ -39,6 +38,7 @@ class CorpusCfg:
             generate the horizontal(default) or vertical text
             Set False to generate vertical text
     """
+
     font_dir: Path
     font_size: Tuple[int, int]
     font_list_file: Path = None
@@ -155,7 +155,7 @@ class Corpus:
                     filtered_chars.append(c)
                 total_count += 1
         logger.info(
-            f"Filter {(filtered_count/total_count)*100:.2f}%({filtered_count}) chars in input text。"
+            f"Filter {(filtered_count / total_count) * 100:.2f}%({filtered_count}) chars in input text。"
             f"Unique chars({len(set(filtered_chars))}): {set(filtered_chars)}"
         )
         return out
