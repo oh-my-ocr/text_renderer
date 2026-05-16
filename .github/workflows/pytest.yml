@@ -41,5 +41,8 @@ jobs:
     - name: Install dependencies
       run: uv sync --locked
 
-    - name: Run tests
-      run: uv run pytest
+    - name: Run tests with coverage
+      run: uv run coverage run -m pytest
+
+    - name: Coverage report (fail if below baseline)
+      run: uv run coverage report --fail-under=45
