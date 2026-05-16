@@ -7,6 +7,26 @@ on:
     branches: [ master ]
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v5
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v7
+      with:
+        python-version: "3.10"
+
+    - name: Install dependencies
+      run: uv sync --locked
+
+    - name: Ruff lint
+      run: uv run ruff check .
+
+    - name: Ruff format check
+      run: uv run ruff format --check .
+
   test:
     runs-on: ubuntu-latest
 

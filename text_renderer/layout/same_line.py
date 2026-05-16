@@ -4,7 +4,6 @@ import numpy as np
 
 from text_renderer.utils.bbox import BBox
 
-from ..utils import FontText
 from .layout import Layout
 
 

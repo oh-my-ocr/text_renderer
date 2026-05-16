@@ -31,9 +31,9 @@ class ExtraTextLineLayout(Layout):
         text_bboxes: List[BBox],
         img_bboxes: List[BBox],
     ) -> List[BBox]:
-        assert (
-            len(text_bboxes) == 2
-        ), "ExtraTextLineLayout only support input two text bboxes"
+        assert len(text_bboxes) == 2, (
+            "ExtraTextLineLayout only support input two text bboxes"
+        )
 
         main_text_mask_bbox, extra_text_mask_bbox = (
             img_bboxes[0],

@@ -31,11 +31,13 @@ class BgManager:
                         self.bg_imgs.append(self._get_bg(str(p)))
 
         if len(self.bg_imgs) == 0:
-            logger.warning("No background images found. Creating a default white background.")
+            logger.warning(
+                "No background images found. Creating a default white background."
+            )
             # Create a default white background
-            default_bg = Image.new('RGB', (800, 600), (255, 255, 255))
+            default_bg = Image.new("RGB", (800, 600), (255, 255, 255))
             self.bg_imgs = [default_bg]
-            self.bg_paths = ['default_white']
+            self.bg_paths = ["default_white"]
 
     def _is_transparent_image(self, p: Path):
         pil_img: PILImage = Image.open(p)

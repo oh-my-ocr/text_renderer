@@ -244,9 +244,9 @@ def get_cfg(config_file: str) -> List[GeneratorCfg]:
     if cfgs is None:
         raise RuntimeError(f"Load configs failed: {config_file}")
 
-    assert all(
-        [isinstance(cfg, GeneratorCfg) for cfg in cfgs]
-    ), "Please make sure all items in configs is GeneratorCfg"
+    assert all([isinstance(cfg, GeneratorCfg) for cfg in cfgs]), (
+        "Please make sure all items in configs is GeneratorCfg"
+    )
 
     return cfgs
 

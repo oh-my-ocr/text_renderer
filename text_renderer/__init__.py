@@ -13,7 +13,7 @@ Main components:
 Example:
     from text_renderer import Render
     from text_renderer.config import RenderCfg
-    
+
     cfg = RenderCfg(...)
     renderer = Render(cfg)
     image, text = renderer()

@@ -3,19 +3,13 @@
 # 2. Update README.md
 import inspect
 import os
-from dataclasses import dataclass
 from pathlib import Path
-
-import numpy as np
 
 from text_renderer.config import (
     FixedPerspectiveTransformCfg,
     FixedTextColorCfg,
     GeneratorCfg,
-    NormPerspectiveTransformCfg,
     RenderCfg,
-    SimpleTextColorCfg,
-    TextColorCfg,
 )
 from text_renderer.corpus import *
 from text_renderer.effect import *

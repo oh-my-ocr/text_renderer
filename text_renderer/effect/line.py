@@ -75,7 +75,7 @@ class Line(Effect):
         if img.height <= 2:
             # Not enough space for horizontal line, return original image
             return img, text_bbox
-            
+
         row = np.random.randint(1, img.height - 1)
         thickness = np.random.randint(*self.thickness)
 
@@ -96,7 +96,7 @@ class Line(Effect):
         if img.width <= 2:
             # Not enough space for vertical line, return original image
             return img, text_bbox
-            
+
         col = np.random.randint(1, img.width - 1)
         thickness = np.random.randint(*self.thickness)
 

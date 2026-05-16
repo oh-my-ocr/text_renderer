@@ -37,14 +37,10 @@ Generate text line images for training deep learning OCR model (e.g. [CRNN](http
 ```bash
 git clone https://github.com/oh-my-ocr/text_renderer
 cd text_renderer
-uv sync
-```
-
-Or with pip:
-
-```bash
-pip install '.[tools]'   # includes font viewer and utility scripts
-pip install '.[docs]'    # includes Sphinx for building documentation
+uv sync                              # core dependencies
+uv sync --extra tools                # + font viewer and utility scripts
+uv sync --extra docs                 # + Sphinx for building documentation
+uv sync --all-extras                 # everything
 ```
 
 ## Run Example

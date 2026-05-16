@@ -28,7 +28,7 @@ class DropoutHorizontal(Effect):
         if img.height <= self.thickness + 1:
             # Not enough space for dropout, return original image
             return img, text_bbox
-            
+
         pim = img.load()
 
         for _ in range(self.num_line):
