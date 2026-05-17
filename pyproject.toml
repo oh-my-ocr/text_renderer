@@ -38,6 +38,7 @@ tools = [
 
 [dependency-groups]
 dev = [
+    "coverage[toml]>=7.0.0",
     "pre-commit>=3.0.0",
     "pytest>=6.0.0",
     "ruff>=0.4.0",
@@ -55,6 +56,18 @@ extend-select = ["I"]
 
 [tool.pytest.ini_options]
 testpaths = ["text_renderer/tests"]
+
+[tool.coverage.run]
+source = ["text_renderer"]
+omit = ["text_renderer/tests/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
 
 [tool.mypy]
 ignore_missing_imports = true

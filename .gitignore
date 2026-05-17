@@ -1,6 +1,10 @@
 .idea/
 .vscode/
 .mypy_cache
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
 __pycache__/
 *.pyc
 .DS_Store
