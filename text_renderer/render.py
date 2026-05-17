@@ -107,7 +107,7 @@ class Render:
 
                 np_img = np.array(merge_target)
                 np_img = cv2.cvtColor(np_img, cv2.COLOR_RGBA2BGR)
-                np_img = self.norm(np_img)
+                np_img = self.norm(np_img, width_multiple=3)
             else:
                 img = img.convert("RGB")
                 np_img = np.array(img)
@@ -339,7 +339,7 @@ class Render:
         """
         return isinstance(self.corpus, list) and len(self.corpus) > 1
 
-    def norm(self, image: np.ndarray) -> np.ndarray:
+    def norm(self, image: np.ndarray, width_multiple: int = 1) -> np.ndarray:
         """
         Normalize the image according to configuration settings.
 
@@ -349,6 +349,7 @@ class Render:
 
         Args:
             image (np.ndarray): Input image as numpy array
+            width_multiple (int): Keep resized image width divisible by this value.
 
         Returns:
             np.ndarray: Normalized image
@@ -359,6 +360,8 @@ class Render:
         if self.cfg.height != -1 and self.cfg.height != image.shape[0]:
             height, width = image.shape[:2]
             width = int(width // (height / self.cfg.height))
+            if width_multiple > 1:
+                width = max(width_multiple, width - width % width_multiple)
             image = cv2.resize(
                 image, (width, self.cfg.height), interpolation=cv2.INTER_CUBIC
             )
