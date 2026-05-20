@@ -149,7 +149,7 @@ class Render:
             text_color = self.corpus.cfg.text_color_cfg.get_color(bg)
 
         text_mask = draw_text_on_bg(
-            font_text, text_color, char_spacing=self.corpus.cfg.char_spacing
+            font_text, text_color, char_spacing=self.corpus.cfg.char_spacing, stroke_width=self.corpus.cfg.stroke_width
         )
 
         if self.cfg.corpus_effects is not None:
@@ -217,7 +217,7 @@ class Render:
             else:
                 _text_color = text_color
             text_mask = draw_text_on_bg(
-                font_text, _text_color, char_spacing=self.corpus[i].cfg.char_spacing
+                font_text, _text_color, char_spacing=self.corpus[i].cfg.char_spacing, stroke_width=self.corpus[i].cfg.stroke_width
             )
 
             text_bbox = BBox.from_size(text_mask.size)
